@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Prepper</title>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Prepper</title>
 
-    <!-- Bootstrap's CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/prepper.css" rel="stylesheet">
-  </head>
-  <body>
-    <!-- Our Prepper layout will go here. -->
-    <nav class="navbar navbar-fixed-top navbar-default">
+  <!-- Bootstrap's CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/prepper.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Our Prepper layout will go here. -->
+  <nav class="navbar navbar-default navbar-fixed-top">
       <!-- ".container-fluid" expands to fill the entire browser view's width.
-           ".container" will use the same width as the ".container" in the body,
-           which contains the three columns of content.
-           
-           We want ".container" here so the navbar is the same width as the content.
+      ".container" will use the same width as the ".container" in the body,
+      which contains the three columns of content.
 
-           Confused? Try switching between the two container classes once you have a
-           complete navbar to see the difference. -->
+      We want ".container" here so the navbar is the same width as the content.
+
+      Confused? Try switching between the two container classes once you have a
+      complete navbar to see the difference. -->
       <div class="container">
         <!-- This code is only active when viewing the site on mobile. We will not
-             cover responsive design, but we'll leave this in, as it's part of the
-             example code.-->
+        cover responsive design, but we'll leave this in, as it's part of the
+        example code.-->
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
@@ -33,52 +33,59 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
+          <a href="#">
+            <img alt="Brand" src="img/pic.png">
+          </a>
           <!-- Use a "home" glyphicon as a logo. -->
-          <a class="navbar-brand" href="#">
-            <!-- This is how you display a glyphicon. -->
-            <span class="glyphicon glyphicon-home"></span> Home
-          </a> 
         </div>
 
         <!-- On mobile, this div is hidden by default. The user hits the button
-             in the `navbar-header` to see the content of the div.
-             On desktop, this div is visible all of the time. -->
+        in the `navbar-header` to see the content of the div.
+        On desktop, this div is visible all of the time. -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <a class="navbar-brand" href="#">
-            <span class="glyphicon glyphicon-flash"></span> Interview
-          </a> 
-          <div class="nav navbar-nav navbar-right">
-            <!-- Right-aligned items -->
-            <div class="btn-toolbar navbar-right" role="toolbar">
+          <form class="navbar-form navbar-right" role="search">
+            <!-- Right-aligned items. -->
+            <div class="btn-group" role="group">
               <div class="btn-group" role="group">
-                <button type="button" class="navbar-btn btn btn-default">
+                <button type="button" class="btn btn-default dropdown-toggle navbar-btn" data-toggle="dropdown">
                   PIC
+                  <span class="caret"></span>
                 </button>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Profile</a></li>
+                  <li><a href="#">Log out...</a></li>
+                </ul>
               </div>
+            </div>
+          </form>
+
+          <div class="nav navbar-nav navbar-left">
+            <!-- Left-aligned items -->
+            <div class="btn-toolbar pull-left" role="toolbar">
               <div class="btn-group" role="group">
-                <button type="button" class="navbar-btn btn btn-default">
-                  USERNAME
+                <button type="button" class="btn btn-default navbar-btn fb-notifications">
+                  <span class="glyphicon glyphicon-user"></span>
+                  <span class="badge">5</span>
+                </button>
+                <button type="button" class="btn btn-default navbar-btn fb-notifications">
+                  <span class="glyphicon glyphicon-comment"></span>
+                  <span class="badge">1</span>
+                </button>
+                <button type="button" class="btn btn-default navbar-btn fb-notifications">
+                  <span class="glyphicon glyphicon-globe"></span>
+                  <span class="badge">3</span>
                 </button>
               </div>
             </div>
-            <form class="navbar-form navbar-right" role="search">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search candidates">
-                <span class="input-group-btn">
-                  <button type="submit" class="btn btn-default">
-                    <span class="glyphicon glyphicon-search"></span>
-                  </button>
-                </span>
-              </div>
-            </form>
           </div>
+
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
     </nav>
-    <!-- ...and here. -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-  </body>
+  <!-- ...and here. -->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="js/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+</body>
 </html>
