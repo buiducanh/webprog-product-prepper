@@ -1,0 +1,31 @@
+body {
+  background-color: #e4d9d6;
+}
+
+.btn-default {
+  background: #C1DAD6; /* pastel blue buttons */
+}
+
+.navbar {
+ background-color: #ea806b; /* coral salmon navbar */
+}
+
+.panel-default > .panel-heading {
+  background-color: #c1846a;
+  border-color: #c7c7d6;
+}
+
+.panel-default > .panel-body {
+  background-color: #ECCFBD; /* light pink pastel */
+  border-color: #c7c7d6;
+}
+
+.panel > .panel-footer {
+    background-color: #fecd7d; /* yellow */
+    border-color: #c7c7d6;
+}
+
+.list-group > .list-group-item {
+  background-color: #ECCFBD;
+  border-color: #c7c7d6;
+}
