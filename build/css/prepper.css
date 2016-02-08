@@ -3,12 +3,6 @@ body {
 }
 
 
-/* Blue background */
-.navbar {
-  background-color: #0EA5C3;
-}
-
-
 /* Remove the background color and border of all navbar buttons. Make their
    color dark blue, like Facebook. */
 .navbar button {
