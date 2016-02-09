@@ -3,3 +3,6 @@ node_modules
 # Ignores your built application.
 build/js/app.js
 *.swp
+
+# Ignore debug log
+npm-debug.log
