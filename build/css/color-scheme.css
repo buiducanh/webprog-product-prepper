@@ -1,5 +1,7 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:400,700);
 body {
   background-color: #e4d9d6;
+  font-family: 'Lato', 'sans-serif';
 }
 
 .btn-default {
@@ -12,12 +14,12 @@ body {
 
 .panel-default > .panel-heading {
   background-color: #c1846a;
-  border-color: #c7c7d6;
+  border-color: #ECCFBD #ECCFBD #c7c7d6 #ECCFBD;
 }
 
 .panel-default > .panel-body {
   background-color: #ECCFBD; /* light pink pastel */
-  border-color: #c7c7d6;
+  border-color: #ECCFBD #ECCFBD #c7c7d6 #ECCFBD;
 }
 
 .panel > .panel-footer {
@@ -25,7 +27,11 @@ body {
     border-color: #c7c7d6;
 }
 
-.list-group > .list-group-item {
+.list-group-item:first-child {
+  border-color: #ECCFBD #ECCFBD #c7c7d6 #ECCFBD;
+}
+
+.list-group-item {
   background-color: #ECCFBD;
-  border-color: #c7c7d6;
+  border-color: #c7c7d6 #ECCFBD #c7c7d6 #ECCFBD;
 }

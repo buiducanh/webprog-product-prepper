@@ -5,8 +5,8 @@
   "author": "John Vilk <jvilk@cs.umass.edu>",
   "license": "MIT",
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
-    "serve": "./node_modules/.bin/webpack-dev-server --content-base build"
+    "build": "webpack",
+    "serve": "webpack-dev-server --content-base build"
   },
   "devDependencies": {
     "babel": "^6.3.26",
@@ -16,6 +16,7 @@
     "babel-preset-react": "^6.3.13",
     "eslint": "^1.10.3",
     "eslint-plugin-react": "^3.14.0",
+    "lodash": "^4.3.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "webpack": "^1.12.12",

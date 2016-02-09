@@ -18,3 +18,26 @@ body {
 .logo {
   padding-top: 5px;
 }
+
+.textbox-modification textarea {
+  resize: none !important;
+  /* Needs to be !important, since Bootstrap sets this elsewhere. */
+}
+
+.small-text {
+  font-size: 65%;
+  color: #777;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.interview-list {
+  padding-top: 0px;
+}
+
+.interview-info {
+  padding-left: 15px;
+  color: #777;
+  font-weight: 500;
+}
+
