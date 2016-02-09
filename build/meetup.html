@@ -129,20 +129,32 @@
                               });
             return marker;
         }
-        var marker1 = addMarker({position: { lat: 42.373222, lng: -72.519854 }, type: "library"});
+        var marker1 = addMarker({position: { lat: 42.373864, lng: -72.515388 }, type: "library"});
         var marker2 = addMarker({position: { lat: 42.373468, lng: -72.524271 }, type: "library"});
         var marker3 = addMarker({position: { lat: 42.371344, lng: -72.520924 }, type: "library"});
 
         var user = '<div id="content">'+
          '<div id="siteNotice">'+
          '</div>'+
-         '<h1 id="firstHeading" class="firstHeading">NewUser</h1>'+
+         '<h4 id="firstHeading" class="firstHeading">NewUser</h4>'+
+         '<button class="btn btn-default" type="button">'+
+         'Request'+
+         '</button>'+
          '</div>';
-        var infowindow = new google.maps.InfoWindow({
+        var infoWindow = new google.maps.InfoWindow({
           content: user
         });
         marker1.addListener('click', function() {
-
+          infoWindow.close();
+          infoWindow.open(map, marker1);
+        });
+        marker2.addListener('click', function() {
+          infoWindow.close();
+          infoWindow.open(map, marker2);
+        });
+        marker3.addListener('click', function() {
+          infoWindow.close();
+          infoWindow.open(map, marker3);
         });
       }
     </script>
