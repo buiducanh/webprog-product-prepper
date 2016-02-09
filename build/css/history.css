@@ -1,0 +1,46 @@
+body {
+  padding-top: 60px;
+}
+
+/* Make the Bootstrap badges more Facebook-style in the navbar */
+.navbar .badge {
+  background-color: red;
+  color: white;
+  border-radius: 3px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 1px solid black;
+  /* Offset the badge a bit so it hovers over the glyphicon. */
+  right: 8px;
+  top: -10px;
+}
+
+.logo {
+  padding-top: 5px;
+}
+.part-header {
+  font-size: 21px;
+  font-weight: bold;
+  padding-left: 15px;
+}
+.mock-list-element {
+  list-style-type:none;
+  font-size: 19px;
+}
+.panel-heading, .panel {
+  border-radius: 10px;
+}
+.keyword {
+  color: blue;
+}
+.rating {
+  text-align: left;
+  unicode-bidi: bidi-override;
+  direction: ltr;
+}
+.rating > span {
+  font-size: 30px;
+  display: inline-block;
+  position: relative;
+  width: 1.1em;
+}
