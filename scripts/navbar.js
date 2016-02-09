@@ -1,6 +1,7 @@
 var fs = require('fs');
-var pathToWrite = __dirname + "/../" + process.argv[2];
-var pathToRead = __dirname + "/../build/base.html";
+var path = require('path');
+var pathToWrite = path.join(__dirname, "/../", process.argv[2]);
+var pathToRead = path.join(__dirname, "/../build/base.html");
 var file = fs.readFileSync(pathToRead, "utf8", function(err, data) {
   if (err) {
     return console.log(err);
