@@ -7,7 +7,7 @@ var file = fs.readFileSync(pathToRead, "utf8", function(err, data) {
     return console.log(err);
   }
 });
-var navRe = /(<nav)((.|\n(?!<\/nav>))*?)(<\/nav>)/
+var navRe = /(<nav)((.|\n|\r(?!<\/nav>))*?)(<\/nav>)/
 var matched = navRe.exec(file)[0]
 
 var pathsToW = ['home.html', 'interview.html', 'user_profile.html', 'matching.html', 'feedback.html', 'history.html', 'meetup.html', 'meetup_chat.html']
