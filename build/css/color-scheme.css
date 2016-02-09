@@ -3,7 +3,7 @@ body {
 }
 
 .btn-default {
-  background: #C1DAD6 !important; /* pastel blue buttons */
+  background-color: #C1DAD6 !important; /* pastel blue buttons */
 }
 
 .navbar {
