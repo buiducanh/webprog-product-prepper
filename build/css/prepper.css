@@ -18,3 +18,8 @@ body {
 .logo {
   padding-top: 5px;
 }
+
+.textbox-modification textarea {
+  resize: none !important;
+  /* Needs to be !important, since Bootstrap sets this elsewhere. */
+}
