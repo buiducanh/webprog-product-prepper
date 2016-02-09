@@ -10,6 +10,7 @@
     <!-- Bootstrap's CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/prepper.css" rel="stylesheet">
+    <link href="css/color-scheme.css" rel="stylesheet">
   </head>
   <body>
     <!-- Our Prepper layout will go here. -->
@@ -33,10 +34,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <!-- Use a "home" glyphicon as a logo. -->
-          <a class="navbar-brand" href="#">
-            <!-- This is how you display a glyphicon. -->
-            <span class="glyphicon glyphicon-home"></span> Home
+          <a href="#">
+            <img class="logo" alt="Brand" src="img/pic.png">
           </a> 
         </div>
 
@@ -44,9 +43,11 @@
              in the `navbar-header` to see the content of the div.
              On desktop, this div is visible all of the time. -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <a class="navbar-brand" href="#">
-            <span class="glyphicon glyphicon-flash"></span> Interview
-          </a> 
+          <div class="nav navbar-nav navbar-left">
+            <button type="button" class="navbar-btn btn btn-default">
+              <span class="glyphicon glyphicon-flash"></span> Interview
+            </button>
+          </div> 
           <div class="nav navbar-nav navbar-right">
             <!-- Right-aligned items -->
             <div class="btn-toolbar navbar-right" role="toolbar">
@@ -56,9 +57,18 @@
                 </button>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="navbar-btn btn btn-default">
+                <button type="button" class="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown">
                   USERNAME
+                  <span class="caret"></span>
                 </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="#">Profile</a>
+                  </li>
+                  <li>
+                    <a href="#">Log out</a>
+                  </li>
+                </ul>
               </div>
             </div>
             <form class="navbar-form navbar-right" role="search">
@@ -84,13 +94,69 @@
           <div class="panel panel-default">
             <div class="panel-body">
               <div class="row">
-                <div class="col-md-12">
-                  SOME KIND OF FEED NEWS
+                <div class="col-md-7">
+                  <div class="media">
+                    <div class="media-left media-top">
+                      PIC
+                    </div>
+                    <div class="media-body">
+                      <a href="#">NASA</a> <span class="glyphicon glyphicon-check"></span>
+                      <br>@NASA
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="btn-group pull-right" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-asterisk"></span></button>
+                    <button type="button" class="btn btn-default">Following</button>
+                  </div>
                 </div>
               </div> <!-- /.row -->
+              <div class="row">
+                <div class="col-md-12">
+                  This spiral galaxy hosts a supermassive black hole that's also super-hungry: <a href="http://go.nasa.gov/1Rp6V2w">http://go.nasa.gov/1Rp6V2w</a> <a href="#">@NASA_Hubble</a> 
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-md-12">
+                  12:44 PM - 8 Jan 2016
+                  <br>
+                  <ul class="twitter-buttons list-inline">
+                    <li>
+                    <a href="#"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                    </li>
+                    <li>
+                    <a href="#"><span class="glyphicon glyphicon-refresh"></span></a>
+                    </li>
+                    <li>
+                    <a href="#"><span class="glyphicon glyphicon-heart"></span></a>
+                    </li>
+                    <li>
+                    <a href="#"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div> <!-- /.panel-body -->
+            <div class="panel-footer">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="media">
+                    <div class="media-left media-top">
+                      PIC
+                    </div>
+                    <div class="media-body">
+                      <div class="input-group">
+                        <input type="text" class="twitter-reply form-control" placeholder="Reply to @NASA @NASA_Hubble">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- /.panel-footer -->
           </div> <!-- /.panel -->
-        </div>
+        </div> <!-- /.col-md-6 --> 
         <div class="col-md-3">
           <img src="http://www.businessinsider.com/image/4f3433986bb3f7b67a00003c/cute-cat.jpg" alt="No Cats 404" width="100%">
           Maybe CATS ?
