@@ -3,7 +3,7 @@ body {
 }
 
 /* Make the Bootstrap badges more Facebook-style in the navbar */
-.navbar .badge {
+/*.navbar .badge {
   background-color: red;
   color: white;
   border-radius: 3px;
@@ -13,7 +13,7 @@ body {
   /* Offset the badge a bit so it hovers over the glyphicon. */
   right: 8px;
   top: -10px;
-}
+}*/
 
 .logo {
   padding-top: 5px;
@@ -41,3 +41,11 @@ body {
   font-weight: 500;
 }
 
+.dropdown-menu.meetup {
+  width: 250px;
+}
+
+.dropdown-menu.meetup .media,
+.dropdown-menu.meetup .media-body {
+  overflow: visible;
+}
