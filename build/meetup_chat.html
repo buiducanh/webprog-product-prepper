@@ -144,16 +144,57 @@
     </nav>
     <div class="container">
       <div class="row">
-        <div class="col-md-3">
-          USERSER
-          <div class="panel panel-default">
-            <div class="panel-body">
-              Chatting box
+        <div class="col-md-3 online-column">
+          <div class="panel online-panel panel-default">
+            <div class="panel-heading">
+              1 online user
+            </div>
+            <div class="panel-body online-users">
+              <ul>
+                <li>
+                  NEWUSER1 <span class="online glyphicon glyphicon-ok-sign"></span>
+                </li>
+                <li>
+                  NEWUSER2 <span class="offline glyphicon glyphicon-ban-circle"></span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-        <div class="col-md-9">
-          CHAT
+        <div class="col-md-9 chat-column">
+          <div class="panel online-panel panel-default">
+            <div class="panel-heading">
+              Connected
+            </div>
+            <div class="panel-body chat-history">
+              <ul class="list-inline">
+                <li class="chat-message">
+                  <strong>NEWUSER1</strong>: Hey there NEWUSER2, I like your name
+                </li>
+                <li class="chat-message">
+                  <strong>NEWUSER2</strong>: Thanks NEWUSER1, your name  is not too shabby either
+                </li>
+                <li class="chat-message">
+                  <strong>NEWUSER1</strong>: shall we get down to business?
+                </li>
+                <li class="chat-message">
+                  <strong>NEWUSER2</strong>: what business? ugh, oh, my connection is lagging.
+                </li>
+                <li class="chat-message">
+                  <strong>NEWUSER1</strong>: what? are you still here?
+                </li>
+                <li class="chat-message">
+                  <strong>NEWUSER1</strong>: hey talk to me
+                </li>
+              </ul>
+            </div>
+            <div class="panel-footer chat-box">
+              <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1">@NewUser1</span>
+                    <input type="text" class="form-control" placeholder="Chat Message" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </div>
         </div> <!-- /.col-md-9 -->
       </div> <!-- /.row -->
     </div>

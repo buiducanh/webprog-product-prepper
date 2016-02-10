@@ -49,3 +49,35 @@ body {
 .dropdown-menu.meetup .media-body {
   overflow: visible;
 }
+
+.online {
+  color: green;
+}
+
+.offline {
+  color: red;
+}
+
+.online-panel {
+  border: 1px solid black;
+}
+
+.online-users {
+  height: 368px;
+}
+
+.chat-message {
+  width: 100%;
+}
+
+.chat-history {
+  height: 313px;
+}
+
+.online-column {
+  padding: 0;
+}
+
+.chat-column {
+  padding: 0;
+}
