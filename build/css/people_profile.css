@@ -1,0 +1,37 @@
+.main {
+    margin-left: 15px;
+    padding: 20px 0;
+    min-height: 250px;
+}
+.main .btn {
+    border:0;
+    border-radius: 10;
+    background: #ea806b;
+    color: #ffffff;
+}
+.main .btn:hover,
+.main .btn:focus {
+    background: #2a6496;
+    color: #ffffff;
+}
+.main .dropdown-menu  {
+    background-color: #C1DAD6;
+    border:0;
+    padding: 0;
+    border-radius: 0;
+}
+.main .dropdown-menu a  {
+    color: #ffffff;
+    padding: 5%;
+}
+
+.wrapper1 {
+    background-color: #ea806b
+}
+
+h4 {
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: #FFF;
+}
