@@ -40,10 +40,15 @@
 .profile
 {
 
-    margin-top: 0px !important;
-    min-height: 365px;
+    /*margin-top: 0px !important;*/
+    min-height: 385px;
     display: inline-block;
     background-color: #ECCFBD;
+}
+
+.info hr {
+  margin-top: 8px ;
+  margin-bottom: 6px ;
 }
 figcaption.ratings
 {
