@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
-import { IndexRoute, Router, Route, browserHistory } from 'react-router'
+import { IndexRoute, Router, Route, hashHistory } from 'react-router'
 
 /**
  * The primary component in our application.
@@ -12,14 +12,14 @@ class App extends React.Component {
   render() {
     return (
       <div>{this.props.children}</div>
-    )
+    );
   }
 }
 
 ReactDOM.render((
-  <Router history={browserHistory}>
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <IndexRoute component={HomePage} />
+      <IndexRoute user={4} component={HomePage} />
     </Route>
   </Router>
   ), document.getElementById('main-container')
