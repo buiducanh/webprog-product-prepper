@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
-import Matching from './components/matching.js'
-import { IndexRoute, Router, Route, browserHistory } from 'react-router'
+import Matching from './components/matching.js';
+import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
 /**
  * The primary component in our application.
@@ -13,7 +13,7 @@ class App extends React.Component {
   render() {
     return (
       <div>{this.props.children}</div>
-    )
+    );
   }
 }
 
@@ -24,10 +24,10 @@ class MatchingPage extends React.Component {
 }
 
 ReactDOM.render((
-  <Router history={browserHistory}>
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <IndexRoute component={HomePage} />
       <Route path="match" component={MatchingPage} />
+      <IndexRoute user={4} component={HomePage} />
     </Route>
   </Router>
   ), document.getElementById('main-container')
