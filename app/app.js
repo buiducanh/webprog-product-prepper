@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
+import Matching from './components/matching.js'
 import { IndexRoute, Router, Route, browserHistory } from 'react-router'
 
 /**
@@ -16,10 +17,17 @@ class App extends React.Component {
   }
 }
 
+class MatchingPage extends React.Component {
+  render() {
+    return <Matching/>;
+  }
+}
+
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={HomePage} />
+      <Route path="match" component={MatchingPage} />
     </Route>
   </Router>
   ), document.getElementById('main-container')
