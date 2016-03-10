@@ -24,17 +24,11 @@ class App extends React.Component {
   }
 }
 
-class MatchingPage extends React.Component {
-  render() {
-    return <Matching/>;
-  }
-}
-
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={App}>
       <IndexRoute user={4} component={HomePage} />
-      <Route path="match" component={MatchingPage} />
+      <Route path="match" component={Matching} />
       <Route path="interview" component={Interview} />
     </Route>
   </Router>
