@@ -28,7 +28,7 @@ export default class HomePage extends React.Component {
               return (<InterviewSession key={i} user={this.props.route.user} interviewsession={interview}/>);
             })
           }
-        </div> 
+        </div>
       </div>
     )
   }
