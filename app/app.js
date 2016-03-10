@@ -4,6 +4,8 @@ import HomePage from './components/homepage.js';
 import Interview from './components/interview.js';
 import Matching from './components/matching.js';
 import Navbar from './components/navbar.js';
+import UserProfile from './components/userprofile.js';
+
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
 /**
@@ -37,6 +39,7 @@ ReactDOM.render((
       <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={MatchingPage} />
       <Route path="interview" component={Interview} />
+      <Route path="userprofile/:id" component={UserProfile} />
     </Route>
   </Router>
   ), document.getElementById('main-container')
