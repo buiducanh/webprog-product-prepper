@@ -1,5 +1,6 @@
 import React from 'react';
 import {ResetDatabase} from '../database';
+import {Link} from 'react-router';
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class Navbar extends React.Component {
           </button>
           <a href="#">
             <img className="logo" alt="Brand" src="img/pic.png"></img>
-          </a> 
+          </a>
         </div>
       <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <div className="nav navbar-nav navbar-left">
@@ -28,6 +29,12 @@ export default class Navbar extends React.Component {
             <button type="button" className="navbar-btn btn btn-default">
               <span className="glyphicon glyphicon-flash"></span> Interview
             </button>
+
+
+            <Link to='/interview'><button type="button" className="navbar-btn btn btn-default">
+              <span className="glyphicon glyphicon-flash"></span> Test
+            </button></Link>
+
             <button type="button" className="navbar-btn btn btn-default">
               <span className="glyphicon glyphicon-globe"></span> Meetup
             </button>
@@ -84,8 +91,8 @@ export default class Navbar extends React.Component {
                   </div>
                 </li>
               </ul>
-            </div> 
-          </div> 
+            </div>
+          </div>
           <div className="nav navbar-nav navbar-right">
             <div className="btn-toolbar navbar-right" role="toolbar">
               <div className="btn-group" role="group">
@@ -127,5 +134,3 @@ export default class Navbar extends React.Component {
     )
   }
 }
-        
-
