@@ -24,10 +24,12 @@ class App extends React.Component {
   }
 }
 
+localStorage.setItem("userId", 4);
+
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <IndexRoute user={4} component={HomePage} />
+      <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={Matching} />
       <Route path="interview" component={Interview} />
     </Route>
