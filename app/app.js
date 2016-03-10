@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
 import Matching from './components/matching.js';
+import Navbar from './components/navbar.js';
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
 /**
@@ -12,7 +13,12 @@ import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 class App extends React.Component {
   render() {
     return (
-      <div>{this.props.children}</div>
+      <div>
+        <nav id="navbar-container" className="navbar navbar-fixed-top navbar-default">
+          <Navbar />
+        </nav>
+        {this.props.children}
+      </div>
     );
   }
 }
