@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
 import Interview from './components/interview.js';
+import History from './components/history.js';
 import Matching from './components/matching.js';
 import Navbar from './components/navbar.js';
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
@@ -32,6 +33,7 @@ ReactDOM.render((
       <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={Matching} />
       <Route path="interview" component={Interview} />
+      <Route path="history" component={History} />
     </Route>
   </Router>
   ), document.getElementById('main-container')
