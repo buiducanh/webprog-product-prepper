@@ -13,26 +13,34 @@ var initialData = {
       "_id": 1,
       "email": "someone@gmail.com",
       "fullName": "Someone",
-      "interview": []
+      "interview": [],
+      "languages": ["Java", "Python"],
+      "experience": 2
     },
     "2": {
       "_id": 2,
       "email": "else@gmail.com",
       "fullName": "Someone Else",
-      "interview": []
+      "interview": [],
+      "languages": ["Java"],
+      "experience": 1
     },
     "3": {
       "_id": 3,
       "email": "another@gmail.com",
       "fullName": "Another Person",
-      "interview": []
+      "interview": [],
+      "languages": ["Java", "C"],
+      "experience": 2
     },
     // This is "you"!
     "4": {
       "_id": 4,
       "email": "pepperasalt@gmail.com",
       "fullName": "Pepper & Salt",
-      "interview": [1]
+      "interview": [1],
+      "languages": ["Java"],
+      "experience": 2
     }
   },
   // all the interview sessions
@@ -43,7 +51,9 @@ var initialData = {
       "feedback": 1,
       "interviewer": 1,
       "interviewee": 4,
-      "timestamp": 1453668480000
+      "timestamp": 1453668480000,
+      "duration": "45 minutes",
+      "result": "Successful"
     }
   },
   "feedbacks": {
@@ -68,7 +78,8 @@ var initialData = {
       "_id": 1,
       "title": "simple binary tree",
       "question": "print a binary tree inorder",
-      "answer": "def ....."
+      "answer": "def .....",
+      "difficulty": "Easy"
     }
   }
 };
