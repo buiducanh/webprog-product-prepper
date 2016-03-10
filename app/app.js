@@ -2,9 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HomePage from './components/homepage.js';
 import Interview from './components/interview.js';
+import Feedback from './components/feedback.js';
 import History from './components/history.js';
 import Matching from './components/matching.js';
 import Navbar from './components/navbar.js';
+import UserProfile from './components/userprofile.js';
+
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
 /**
@@ -25,6 +28,13 @@ class App extends React.Component {
   }
 }
 
+
+class MatchingPage extends React.Component {
+  render() {
+    return <Matching/>;
+  }
+}
+
 localStorage.setItem("userId", 4);
 
 ReactDOM.render((
@@ -33,7 +43,10 @@ ReactDOM.render((
       <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={Matching} />
       <Route path="interview" component={Interview} />
+      <Route path="userprofile/:id" component={UserProfile} />
+      <Route path="feedback" component={Feedback} />
       <Route path="history" component={History} />
+
     </Route>
   </Router>
   ), document.getElementById('main-container')

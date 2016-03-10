@@ -1,6 +1,8 @@
 import React from 'react';
 import {ResetDatabase} from '../database';
 import {Link} from 'react-router';
+import UserProfile from './userprofile.js'
+
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -33,6 +35,10 @@ export default class Navbar extends React.Component {
 
             <Link to='/interview'><button type="button" className="navbar-btn btn btn-default">
               <span className="glyphicon glyphicon-flash"></span> Test
+            </button></Link>
+
+            <Link to='/feedback'><button type="button" className="navbar-btn btn btn-default">
+              <span className="glyphicon glyphicon-flash"></span> Feedback
             </button></Link>
 
             <button type="button" className="navbar-btn btn btn-default">
@@ -110,7 +116,7 @@ export default class Navbar extends React.Component {
                     <a href="#">Meetup chat</a>
                   </li>
                   <li>
-                    <a href="#">Profile</a>
+                    <Link to={"/userprofile/" + localStorage.getItem("userId") } >Profile</Link>
                   </li>
                   <li>
                     <a href="#">Log out</a>
