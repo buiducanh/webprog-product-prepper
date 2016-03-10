@@ -35,6 +35,10 @@ export default class Navbar extends React.Component {
               <span className="glyphicon glyphicon-flash"></span> Test
             </button></Link>
 
+            <Link to='/feedback'><button type="button" className="navbar-btn btn btn-default">
+              <span className="glyphicon glyphicon-flash"></span> Feedback
+            </button></Link>
+
             <button type="button" className="navbar-btn btn btn-default">
               <span className="glyphicon glyphicon-globe"></span> Meetup
             </button>
