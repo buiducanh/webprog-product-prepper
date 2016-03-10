@@ -43,7 +43,9 @@ var initialData = {
       "feedback": 1,
       "interviewer": 1,
       "interviewee": 4,
-      "timestamp": 1453668480000
+      "timestamp": 1453668480000,
+      "duration": "45 minutes",
+      "result": "Successful"
     }
   },
   "feedbacks": {
@@ -64,7 +66,8 @@ var initialData = {
       "_id": 1,
       "title": "simple binary tree",
       "question": "print a binary tree inorder",
-      "answer": "def ....."
+      "answer": "def .....",
+      "difficulty": "Easy"
     }
   }
 };

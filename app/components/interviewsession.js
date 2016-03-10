@@ -58,12 +58,12 @@ export default class InterviewSession extends React.Component {
                 <span className="label label-default">Role</span>
               </div>
               <div className="col-md-7">
-                <span className="interview-info">{"{WIP}"}</span><br></br>
-                <span className="interview-info">{"{WIP}"}</span><br></br>
+                <span className="interview-info">{data.duration}</span><br></br>
+                <span className="interview-info">{data.problem.difficulty}</span><br></br>
                 <span className="interview-info">{myRole}</span>
               </div>
               <div className="col-md-4">
-                <h3 className="pull-right"><span className="label label-success">{"{WIP}"}</span></h3>
+                <h3 className="pull-right"><span className="label label-success">{data.result}</span></h3>
               </div>
             </div>
           </div>
