@@ -1,6 +1,19 @@
 import React from 'react';
 
 export default class Matching extends React.Component {
+
+  onPost(postContents) {
+  // Send to server.
+  // postPreferences(4, "Amherst, MA", postContents, () => {
+  //   // Database is now updated. Refresh the feed.
+  //   this.refresh();
+  //   });
+  // }
+
+  componentDidMount() {
+    this.refresh();
+  }
+
   render() {
     return (
       <div className="container">
@@ -65,7 +78,7 @@ export default class Matching extends React.Component {
                       </div>
                     </li>
                   </ul>
-                  <button type="button" className="btn btn-default">
+                  <button type="button" className="btn btn-default" onPost>
                     Find me an interview!
                   </button>
                 </form>

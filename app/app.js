@@ -28,13 +28,6 @@ class App extends React.Component {
   }
 }
 
-
-class MatchingPage extends React.Component {
-  render() {
-    return <Matching/>;
-  }
-}
-
 localStorage.setItem("userId", 4);
 
 ReactDOM.render((
