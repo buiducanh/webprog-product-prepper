@@ -23,19 +23,6 @@ export default class Meetup extends React.Component {
     this.setState(this.state);
   }
 
-  handleMapClick(event) {
-    var markers = this.state.markers;
-    markers = update(markers, {
-      $push: [
-        {
-          position: event.latLng,
-          defaultAnimation: 2,
-          showInfo: false,
-        },
-      ],
-    });
-    this.setState({ markers });
-  }
   handleMarkerRightClick(index, event) {
     /*
      * All you modify is data, and the view is driven by data.
@@ -56,11 +43,12 @@ export default class Meetup extends React.Component {
     return 'interviewer';
   }
 
-  handleMeetupRequest(clickEvent, userData) {
+  handleMeetupRequest(clickEvent, marker) {
     clickEvent.preventDefault();
+    this.handleMarkerClose(marker);
     if (clickEvent.button === 0) {
-      var callbackFunction = () => {this.forceUpdate()};
-      postNotifications(localStorage.getItem("userId"), userData._id, callbackFunction);
+      var callbackFunction = (notiData) => {this.forceUpdate()};
+      postNotifications(Number(localStorage.getItem("userId")), marker.userData._id, callbackFunction);
     }
   }
 
@@ -70,8 +58,8 @@ export default class Meetup extends React.Component {
       <div id="content">
         <div id="siteNotice">
         </div>
-        <h4 id="firstHeading" className="firstHeading">userData.fullName</h4>
-        <button className="btn btn-default" type="button" onClick={(e) => this.handleMeetupRequest(e, userData)}>
+        <h4 id="firstHeading" className="firstHeading">{userData.fullName}</h4>
+        <button className="btn btn-default" type="button" onClick={(e) => this.handleMeetupRequest(e, marker)}>
            Request
         </button>
       </div>
@@ -91,7 +79,6 @@ export default class Meetup extends React.Component {
   refresh() {
     var callbackFunction = (nearbyUsers) => {
       var markers = this.state.markers;
-      console.log(nearbyUsers);
       nearbyUsers.map((user) => {
         markers = update(markers, {
           $push: [
@@ -111,7 +98,6 @@ export default class Meetup extends React.Component {
 
   componentDidMount() {
     this.ready = true;
-    console.log(google);
     while (google === undefined) {};
     this.refresh();
   }
@@ -145,7 +131,6 @@ export default class Meetup extends React.Component {
                       ref={(map) => (this._googleMapComponent = map) && console.log(map)}
                       defaultZoom={13}
                       defaultCenter={{lat: 42.373222, lng: -72.519854}}
-                      onClick={this.handleMapClick.bind(this)}
                     >
                       {this.state.markers.map((marker, index) => {
                         const ref = `marker_${index}`;

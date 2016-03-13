@@ -9,6 +9,7 @@ import Navbar from './components/navbar.js';
 import UserProfile from './components/userprofile.js';
 import Meetup from './components/meetup';
 import PeopleProfile from './components/peopleprofile.js';
+import MeetupChat from './components/meetupchat.js';
 
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
@@ -43,6 +44,7 @@ ReactDOM.render((
       <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
       <Route path="history/:userId" component={History} />
       <Route path="peopleprofile" component={PeopleProfile} />
+      <Route path="meetupchat/:id" component={MeetupChat} />
     </Route>
   </Router>
   ), document.getElementById('main-container')

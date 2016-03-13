@@ -6,6 +6,9 @@ var startupName = "Prepper";
 
 // Put your mock objects here, as in Workshop 4
 var initialData = {
+  "onlineUsers": {
+    "1": [1, 4]
+  },
   // The "user" collection. Contains all of the users in our Prepper system.
   "users": {
     // This user has id "1".
@@ -27,7 +30,7 @@ var initialData = {
     "2": {
       "_id": 2,
       "email": "else@gmail.com",
-      "fullName": "Someone Else",
+      "fullName": "Mike",
       "interview": [2],
       "languages": ["Java"],
       "experience": 1,
@@ -39,7 +42,7 @@ var initialData = {
     "3": {
       "_id": 3,
       "email": "another@gmail.com",
-      "fullName": "Another Person",
+      "fullName": "Alex",
       "interview": [],
       "languages": ["Java", "C"],
       "experience": 2,
@@ -140,7 +143,11 @@ var initialData = {
       "_id": 1,
       "requester": 2,
       "requestee": 4,
-      "resolved": false
+    },
+    "2": {
+      "_id": 2,
+      "requester": 1,
+      "requestee": 4,
     }
   }
 };

@@ -1,4 +1,5 @@
 import {readDocument, writeDocument, addDocument, readAllCollection} from './database.js';
+import _ from "lodash";
 
 /**
  * Emulates how a REST call is *asynchronous* -- it calls your function back
@@ -80,9 +81,26 @@ export function getNearbyUsers(radius, userId, cb) {
 export function postNotifications(requester, requestee, cb) {
   var newNoti = {
     requester: requester,
-    requestee: requestee,
-    resolved: false
+    requestee: requestee
   }
   var notiData = addDocument("notifications", newNoti);
   emulateServerReturn(notiData, cb);
+}
+
+export function getNotifications(userId, cb) {
+  var notifications = readAllCollection('notifications');
+  notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
+  notifications = notifications.map((noti) => {
+    noti.requester = readDocument("users", noti.requester);
+    return noti;
+  });
+  emulateServerReturn(notifications, cb);
+}
+
+export function getOnlineUsers(cb) {
+  var onlineUsers = readDocument('onlineUsers', 1);
+  onlineUsers = onlineUsers.map((user) => {
+    return readDocument("users", user);
+  });
+  emulateServerReturn(onlineUsers, cb);
 }
