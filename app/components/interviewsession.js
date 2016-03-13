@@ -31,7 +31,7 @@ export default class InterviewSession extends React.Component {
                       PIC
                     </div>
                     <div className="media-body">
-                      <a href="#">{data[myRole].fullName}</a>
+                      <a href="#">{data[this.otherRole(myRole)].fullName}</a>
                     </div>
                   </div>
                 </li>
