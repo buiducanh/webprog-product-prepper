@@ -2,14 +2,10 @@ import React from 'react';
 import {Link} from 'react-router';
 
 export default class CodeEditor extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
 
   render() {
-    var interviewerId = this.state.interviewSessions.interviewer;
-    var intervieweeId = this.state.interviewSessions.interviewee;
+    var interviewerId = this.props.interviewsession.interviewer;
+    var intervieweeId = this.props.interviewsession.interviewee;
 
     return(
         <div className="col-md-8">
