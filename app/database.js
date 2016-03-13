@@ -48,7 +48,7 @@ var initialData = {
       "_id": 4,
       "email": "pepperasalt@gmail.com",
       "fullName": "Pepper & Salt",
-      "interview": [1],
+      "interview": [1,2],
       "languages": ["Java"],
       "experience": 2,
       "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
