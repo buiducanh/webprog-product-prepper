@@ -66,6 +66,7 @@ var initialData = {
       "interviewee": 4,
       "timestamp": 1453668480000,
       "duration": "45 minutes",
+      "code" : "def ...",
       "result": "Successful"
     },
     "2": {
@@ -76,6 +77,7 @@ var initialData = {
       "interviewee": 4,
       "timestamp": 1453668880000,
       "duration": "45 minutes",
+      "code" : "def ...",
       "result": "Successful"
     }
   },

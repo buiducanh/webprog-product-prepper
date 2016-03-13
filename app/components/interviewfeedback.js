@@ -45,10 +45,19 @@ export default class InterviewFeedback extends React.Component {
             </div>
             <div className="panel panel-default">
               <div className="panel-heading">
-                <div className="row part-header"> Your code </div>
+                <div className="row part-header"> Solution </div>
                 <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
                 <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
                   {this.props.data.problem.answer}
+                </div>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Your code </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
+                  {this.props.data.code}
                 </div>
               </div>
             </div>
@@ -90,22 +99,3 @@ export default class InterviewFeedback extends React.Component {
       )}
   }
 }
-// <div className="panel panel-default">
-//   <div className="panel-heading">
-//     <div className="row part-header"> Solution </div>
-//     <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-//     <div> This question can be solve in time O(x) and space O(y) using z algorithm as below: </div>
-//     <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
-//       <span className="keyword"> class </span> Solution(object): <br></br>
-//           &emsp;<span className="keyword">def </span> countNodes(self, root):<br></br>
-//           &emsp;&emsp;<span className="keyword">return</span> 0;
-//           <br></br>
-//           <br></br>
-//           <br></br>
-//           <br></br>
-//           <br></br>
-//     </div>
-//   </div>
-// </div>
-
-// <span> ★ </span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span><span>☆</span><span>☆</span>
