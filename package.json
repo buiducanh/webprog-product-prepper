@@ -22,5 +22,8 @@
     "react-router": "^2.0.0",
     "webpack": "^1.12.12",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "react-google-maps": "^4.9.1"
   }
 }

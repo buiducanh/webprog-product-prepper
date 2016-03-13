@@ -39,6 +39,11 @@ export function getInterviewData(user, cb) {
   emulateServerReturn(interviewData, cb);
 }
 
+export function getUserData(userId, cb) {
+  var userData = readDocument('users', userId);
+  emulateServerReturn(interviewData, cb);
+}
+
 /**
  * Adds a new status update to the database.
  */

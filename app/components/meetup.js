@@ -1,91 +1,85 @@
 import React from 'react';
+import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps";
 
-export default class InterviewSession extends React.Component {
+export default class Meetup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      markers: [{
+        position: {
+          lat: 25.0112183,
+          lng: 121.52067570000001,
+        },
+        key: `Taiwan`,
+        defaultAnimation: 2,
+      }]
+    }
+  }
+
+  handleMapClick(event) {
+    var markers = this.state;
+    markers = update(markers, {
+      $push: [
+        {
+          position: event.latLng,
+          defaultAnimation: 2,
+          key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
+        },
+      ],
+    });
+    this.setState({ markers });
+
+    if (markers.length === 3) {
+      this.props.toast(
+        `Right click on the marker to remove it`,
+        `Also check the code!`
+      );
+    }
+  }
   otherRole(role) {
     if (role === 'interviewer') return 'interviewee';
     return 'interviewer';
   }
+  componentDidMount() {
+  }
   render() {
-    var data = this.props.interviewsession;
-    var myRole = '';
-    if (data.interviewer._id === this.props.user) {
-      myRole = 'interviewer';
-    }
-    else {
-      myRole = 'interviewee';
-    }
     return (
-      <div className="panel panel-default">
-        <div className="panel-body">
-          <div className="row">
-            <div className="col-md-6">
-              <ul className="interview-list list-inline">
-                <li className="small-text">
-                  {unixTimeToString(data.timestamp)}
-                </li>
-                <li>
-                  <div className="media">
-                    <div className="media-left media-top">
-                      PIC
-                    </div>
-                    <div className="media-body">
-                      <a href="#">{data[myRole].fullName}</a>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div> 
-            <div className="col-md-6">
-              <button type="button" className="btn btn-default pull-right glyphicon glyphicon-new-window"></button>
-            </div> 
-          </div> 
-          <div className="row">
-            <div className="col-md-12">
-              <div className="well well-sm">
-                <h4>{data.problem.title}</h4>
-                {data.problem.question}
-              </div>
+      <div className="container">
+        <div className="row">
+          <div className="embed-responsive embed-responsive-16by9">
+            <div className="embed-responsive-item">
+              <section style={{height: "100%"}}>
+                <GoogleMapLoader
+                  containerElement={
+                    <div
+                      {...this.props}
+                      style={{
+                        height: "100%" 
+                      }}
+                    />
+                  }
+                  googleMapElement={
+                    <GoogleMap
+                      ref={(map) => (this._googleMapComponent = map) && console.log(map)}
+                      defaultZoom={3}
+                      defaultCenter={{lat: -25.363882, lng: 131.044922}}
+                      onClick={this.handleMapClick.bind(this)}
+                    >
+                      {this.state.markers.map((marker, index) => {
+                        return (
+                          <Marker
+                            {...marker}
+                             />
+                        );
+                      })}
+                    </GoogleMap>
+                  }
+                />
+              </section>
             </div>
           </div>
-          <hr></hr>
-          <div className="row">
-            <div className="col-md-12">
-              <div className="col-md-1">
-                <span className="label label-default">Duration</span><br></br>
-                <span className="label label-default">Class</span><br></br>
-                <span className="label label-default">Role</span>
-              </div>
-              <div className="col-md-7">
-                <span className="interview-info">{data.duration}</span><br></br>
-                <span className="interview-info">{data.problem.difficulty}</span><br></br>
-                <span className="interview-info">{myRole}</span>
-              </div>
-              <div className="col-md-4">
-                <h3 className="pull-right"><span className="label label-success">{data.result}</span></h3>
-              </div>
-            </div>
-          </div>
-        </div> 
-        <div className="panel-footer">
-          <div className="row">
-            <div className="col-md-12">
-              {data.feedback[this.otherRole(myRole) + "_comment"]}
-              <ul className="list-inline pull-right">
-                {
-                  _.times(data.feedback[this.otherRole(myRole) + "_rating"], (i) => 
-                    <li key={i}>
-                      <a href="#">
-                        <span className="glyphicon glyphicon-star"></span>
-                      </a>
-                    </li>
-                  )
-                }
-              </ul>
-            </div>
-          </div>
-        </div> 
-      </div> 
+        </div>
+      </div>
     )
   }
 }
-
