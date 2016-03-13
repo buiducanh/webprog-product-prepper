@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 
 export default class InterviewFeedback extends React.Component {
@@ -69,7 +70,18 @@ export default class InterviewFeedback extends React.Component {
                 <div className="row part-header"> Rating </div>
                 <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
                 <div className="rating">
-                  {this.props.data.feedback.interviewer_rating}/10
+                  <ul className="list-inline pull-left">
+                    {
+                      _.times(this.props.data.feedback.interviewer_rating, (i) =>
+                        <li key={i}>
+                          <a>
+                            <span className="glyphicon glyphicon-star"></span>
+                          </a>
+                        </li>
+                      )
+                    }
+                  </ul>
+                  <br></br>
                 </div>
               </div>
             </div>
