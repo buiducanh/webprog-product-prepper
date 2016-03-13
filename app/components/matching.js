@@ -2,17 +2,17 @@ import React from 'react';
 
 export default class Matching extends React.Component {
 
-  onPost(postContents) {
+  //  onPost(postContents) {
   // Send to server.
   // postPreferences(4, "Amherst, MA", postContents, () => {
   //   // Database is now updated. Refresh the feed.
   //   this.refresh();
   //   });
-  // }
+  //}
 
-  componentDidMount() {
-    this.refresh();
-  }
+  //componentDidMount() {
+  //  this.refresh();
+  //}
 
   render() {
     return (

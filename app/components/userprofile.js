@@ -4,8 +4,7 @@ export default class UserProfile extends React.Component {
 
   render () {
     return (
-      <div>
-
+      <div className="userprofile">
         <div className="container">
           <div className="row">
 
