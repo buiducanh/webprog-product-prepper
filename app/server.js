@@ -104,3 +104,22 @@ export function getOnlineUsers(cb) {
   });
   emulateServerReturn(onlineUsers, cb);
 }
+
+export function postInterviewSession(userId, cb) {
+  // Get the current UNIX time.
+  var time = new Date().getTime();
+  var newIntvSession =
+  {
+    "_id": userId,
+    "problem": "",
+    "feedback": undefined,
+    "interviewer": 1,
+    "interviewee": 4,
+    "timestamp": time,
+    "duration": "",
+    "code" : "",
+    "result": "WIP"
+  };
+  newIntvSession = addDocument('interviewSessions', newIntvSession);
+  emulateServerReturn(newIntvSession, cb);
+}
