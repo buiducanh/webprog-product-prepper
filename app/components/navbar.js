@@ -1,6 +1,6 @@
 import React from 'react';
 import {ResetDatabase} from '../database';
-import {getNotifications} from '../server';
+import {getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
 import UserProfile from './userprofile.js'
 
@@ -9,7 +9,8 @@ export default class Navbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      notifications: []
+      notifications: [],
+      users: {languages: [], interview: []}
     };
   }
 
@@ -18,6 +19,9 @@ export default class Navbar extends React.Component {
       this.setState({ notifications: notificationData });
       console.log(notificationData);
     }
+    getUserData(this.props.userId, (userData) => {
+      this.setState({users: userData});
+    });
     getNotifications(localStorage.getItem("userId"), callbackFunction);
   }
 
@@ -107,7 +111,7 @@ export default class Navbar extends React.Component {
               </div>
               <div className="btn-group" role="group">
                 <button type="button" className="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown">
-                  USERNAME
+                  {this.state.users.fullName}
                   <span className="caret"></span>
                 </button>
                 <ul className="dropdown-menu">

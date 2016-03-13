@@ -23,7 +23,7 @@ class App extends React.Component {
     return (
       <div>
         <nav id="navbar-container" className="navbar navbar-fixed-top navbar-default">
-          <Navbar />
+          <Navbar userId={localStorage.getItem("userId")}/>
         </nav>
         {this.props.children}
       </div>
