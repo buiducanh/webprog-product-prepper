@@ -1,6 +1,22 @@
 import React from 'react';
+import {getUserData} from '../server';
+import {Link} from 'react-router';
 
 export default class UserProfile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {users: {languages: [], interview: []}} ;
+  }
+
+  refresh() {
+    getUserData(this.props.params.id, (userData) => {
+      this.setState({users: userData});
+    });
+  }
+
+  componentDidMount() {
+    this.refresh();
+  }
 
   render () {
     return (
@@ -11,10 +27,10 @@ export default class UserProfile extends React.Component {
             <div className="col-md-offset-1 col-lg-9">
               <div className="card">
                 <div className="card-image">
-                  <img className="img-responsive" style={{"maxHeight":"2000px",height:"350px", "maxWidth":"2000px",width:"1000px"}} src={"http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full"}> </img>
+                  <img className="img-responsive" style={{"maxHeight":"2000px",height:"350px", "maxWidth":"2000px",width:"1000px"}} src={this.state.users.cover}> </img>
                 </div>
                 <div className="card-user">
-                  <img className="img-responsive userpic" style={{"maxHeight":"200px", height:"100px", "maxWidth":"200px", width:"100px"}} src={"http://i100.independent.co.uk/image/28166-4lg5eo.jpg"}></img>
+                  <img className="img-responsive userpic" style={{"maxHeight":"200px", height:"100px", "maxWidth":"200px", width:"100px"}} src={this.state.users.avatar}></img>
                 </div>
               </div>
             </div>
@@ -28,54 +44,27 @@ export default class UserProfile extends React.Component {
             <div className="profile">
               <div className="col-sm-12">
                 <div className="col-md-12 info">
-                  <h2>Harry Potter</h2>
-                  <p><strong>Email: </strong> Web Designer / UI. </p>
+                  <h2>{this.state.users.fullName}</h2>
+                  <p><strong>Email: </strong> {this.state.users.email} </p>
                   <hr />
                   <p><strong>Skills: </strong>
-                    <span className="tags">html5</span>
-                    <span className="tags">css3</span>
-                    <span className="tags">jquery</span>
-                    <span className="tags">bootstrap3</span>
+                    {
+                      this.state.users.languages.map((language, i) => {
+                        return (<span key={i} className="tags">{language}</span>);
+                      })
+                    }
                   </p>
-                </div>
-
-                <div className="col-xs-12 col-sm-4 text-center">
-                  <figure>
-                    <figcaption className="ratings">
-                      <p>Ratings
-                        <a href="#">
-                          <span className="glyphicon glyphicon-star"></span>
-                        </a>
-                        <a href="#">
-                          <span className="glyphicon glyphicon-star"></span>
-                        </a>
-                        <a href="#">
-                          <span className="glyphicon glyphicon-star"></span>
-                        </a>
-                        <a href="#">
-                          <span className="glyphicon glyphicon-star"></span>
-                        </a>
-                        <a href="#">
-                          <span className="glyphicon glyphicon-star"></span>
-                        </a>
-                      </p>
-                    </figcaption>
-                  </figure>
                 </div>
               </div>
 
 
               <div className="col-xs-12 divider text-center">
                 <div className="col-xs-12 col-sm-4 emphasis">
-                  <h2><strong> 20 </strong></h2>
+                  <h2><strong> {this.state.users.interview.length} </strong></h2>
                   <p><small>Interviews</small></p>
-                  <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> See History </button>
+                  <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/" } >See History</Link> </button>
                 </div>
-                <div className="col-xs-12 col-sm-4 emphasis">
-                  <h2><strong>245</strong></h2>
-                  <p><small>Followers</small></p>
-                  <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-user"></span> View Followers </button>
-                </div>
+
                 <div className="col-xs-12 col-sm-4 emphasis">
                   <h2><strong>43</strong></h2>
                   <p><small>Snippets</small></p>

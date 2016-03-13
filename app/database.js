@@ -15,7 +15,9 @@ var initialData = {
       "fullName": "Someone",
       "interview": [],
       "languages": ["Java", "Python"],
-      "experience": 2
+      "experience": 2,
+      "cover": "",
+      "avatar": ""
     },
     "2": {
       "_id": 2,
@@ -23,7 +25,9 @@ var initialData = {
       "fullName": "Someone Else",
       "interview": [],
       "languages": ["Java"],
-      "experience": 1
+      "experience": 1,
+      "cover": "",
+      "avatar": ""
     },
     "3": {
       "_id": 3,
@@ -31,7 +35,10 @@ var initialData = {
       "fullName": "Another Person",
       "interview": [],
       "languages": ["Java", "C"],
-      "experience": 2
+      "experience": 2,
+      "cover": "",
+      "avatar": ""
+
     },
     // This is "you"!
     "4": {
@@ -40,7 +47,9 @@ var initialData = {
       "fullName": "Pepper & Salt",
       "interview": [1],
       "languages": ["Java"],
-      "experience": 2
+      "experience": 2,
+      "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
+      "avatar": "http://i100.independent.co.uk/image/28166-4lg5eo.jpg"
     }
   },
   // all the interview sessions
@@ -134,6 +143,10 @@ export function addDocument(collectionName, newDoc) {
   newDoc._id = nextId;
   writeDocument(collectionName, newDoc);
   return newDoc;
+}
+
+export function readAllCollection(collectionName) {
+  return data[collectionName];
 }
 
 /**
