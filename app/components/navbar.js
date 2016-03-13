@@ -28,22 +28,22 @@ export default class Navbar extends React.Component {
             <span id="db-reset">
               <ResetDatabase />
             </span>
-            <button type="button" className="navbar-btn btn btn-default">
-              <span className="glyphicon glyphicon-flash"></span> Interview
-            </button>
 
-
-            <Link to='/interview'><button type="button" className="navbar-btn btn btn-default">
-              <span className="glyphicon glyphicon-flash"></span> Test
-            </button></Link>
+            <Link to={"/match"}>
+              <button type="button" className="navbar-btn btn btn-default">
+                <span className="glyphicon glyphicon-flash"></span> Interview
+              </button>
+            </Link>
 
             <Link to='/feedback'><button type="button" className="navbar-btn btn btn-default">
               <span className="glyphicon glyphicon-flash"></span> Feedback
             </button></Link>
 
-            <button type="button" className="navbar-btn btn btn-default">
-              <span className="glyphicon glyphicon-globe"></span> Meetup
-            </button>
+            <Link to='/meetup'>
+              <button type="button" className="navbar-btn btn btn-default">
+                <span className="glyphicon glyphicon-globe"></span> Meetup
+              </button>
+            </Link>
             <div className="btn-group" role="group">
               <button type="button" className="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 <span className="glyphicon glyphicon-comment"></span> Notifications <span className="badge">4</span>

@@ -19,15 +19,17 @@ export default class HomePage extends React.Component {
 
   render() {
     return (
-      <div className="row">
-        <div className="col-md-3">
-        </div>
-        <div className="col-md-6">
-          {
-            this.state.interview.map((interview, i) => {
-              return (<InterviewSession key={i} user={this.props.route.user} interviewsession={interview}/>);
-            })
-          }
+      <div className="container">
+        <div className="row">
+          <div className="col-md-3">
+          </div>
+          <div className="col-md-6">
+            {
+              this.state.interview.map((interview, i) => {
+                return (<InterviewSession key={i} user={this.props.route.user} interviewsession={interview}/>);
+              })
+            }
+          </div>
         </div>
       </div>
     )

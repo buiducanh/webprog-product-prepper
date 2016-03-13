@@ -1,44 +1,43 @@
-.main {
+.peopleprofile .main {
     margin-left: 15px;
     padding: 20px 0;
     min-height: 230px;
-
 }
-.main .btn {
+.peopleprofile .main .btn {
     border:0;
     border-radius: 10;
     background: #C1DAD6;
     color: #000000;
 }
-.main .btn:hover,
-.main .btn:focus {
+.peopleprofile .main .btn:hover,
+.peopleprofile .main .btn:focus {
     background: #C1DAD6;
     color: #000000;
 }
-.main .dropdown-menu  {
+.peopleprofile .main .dropdown-menu  {
     background-color: #C1DAD6;
     border:0;
     padding: 0;
     border-radius: 0;
 }
-.main .dropdown-menu a  {
+.peopleprofile .main .dropdown-menu a  {
     color: #000000;
     padding: 5%;
 }
 
-.wrapper1 {
+.peopleprofile .wrapper1 {
 
     background-color: #ea806b;
     margin-right: 69px;
 
 }
 
-h4 {
+.peopleprofile h4 {
     text-align: center;
     padding-top: 15px;
     padding-bottom: 15px;
     color: #000000;
 }
-.well {
+.peopleprofile .well {
   background-color: #ECCFBD;
 }

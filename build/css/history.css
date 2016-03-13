@@ -1,24 +1,24 @@
-.part-header {
+.history .part-header {
   font-size: 21px;
   font-weight: bold;
   padding-left: 15px;
 }
-.mock-list-element {
+.history .mock-list-element {
   list-style-type:none;
   font-size: 19px;
 }
-.panel-heading, .panel {
+.history .panel-heading, .panel {
   border-radius: 10px;
 }
-.keyword {
+.history .keyword {
   color: blue;
 }
-.rating {
+.history .rating {
   text-align: left;
   unicode-bidi: bidi-override;
   direction: ltr;
 }
-.rating > span {
+.history .rating > span {
   font-size: 30px;
   display: inline-block;
   position: relative;

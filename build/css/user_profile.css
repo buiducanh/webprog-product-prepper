@@ -1,8 +1,8 @@
-.card {
+.userprofile .card {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.card {
+.userprofile .card {
   margin-top: 5px;
   margin-bottom: 0px !important;
   box-sizing: border-box;
@@ -10,34 +10,34 @@
   background-clip: padding-box;
 }
 
-.card .card-image {
+.userprofile .card .card-image {
   position: relative;
   overflow: hidden;
 }
-.card .card-image img {
+.userprofile .card .card-image img {
   border-radius: 2px 2px 0 0;
   background-clip: padding-box;
   position: relative;
   z-index: -1;
 }
-.card .card-image span.card-title {
+.userprofile .card .card-image span.card-title {
   position: absolute;
   bottom: 0;
   left: 0;
   padding: 16px;
 }
 
-.card-user{
+.userprofile .card-user{
     float: left;
 }
-.userpic {
+.userprofile .userpic {
     border-radius: 1000px !important;
     border: 5px solid white;
     bottom: 47px;
     position: relative;
 }
 
-.profile
+.userprofile .profile
 {
 
     /*margin-top: 0px !important;*/
@@ -46,41 +46,41 @@
     background-color: #ECCFBD;
 }
 
-.info hr {
+.userprofile .info hr {
   margin-top: 8px ;
   margin-bottom: 6px ;
 }
-figcaption.ratings
+.userprofile figcaption.ratings
 {
     margin-top:20px;
     }
-figcaption.ratings a
+.userprofile figcaption.ratings a
 {
     color:#f1c40f;
     font-size:11px;
     }
-figcaption.ratings a:hover
+.userprofile figcaption.ratings a:hover
 {
     /*color:#f39c12;*/
     text-decoration:none;
     }
-.divider
+.userprofile .divider
 {
     border-top:1px solid rgba(0,0,0,0.1);
     }
-.emphasis
+.userprofile .emphasis
 {
     border-top: 4px solid transparent;
     }
-.emphasis:hover
+.userprofile .emphasis:hover
 {
     border-top: 4px solid #1abc9c;
     }
-.emphasis h2
+.userprofile .emphasis h2
 {
     margin-bottom:0;
     }
-span.tags
+.userprofile span.tags
 {
     background: #ea806b;
     border-radius: 2px;
@@ -88,7 +88,7 @@ span.tags
     font-weight: bold;
     padding: 2px 4px;
     }
-.dropdown-menu
+.userprofile .dropdown-menu
 {
     background-color: #FF9969;
     box-shadow: none;
@@ -97,19 +97,19 @@ span.tags
     margin-left: -125px;
     left: 50%;
     }
-.dropdown-menu .divider
+.userprofile .dropdown-menu .divider
 {
     background:none;
     }
-.dropdown-menu>li>a
+.userprofile .dropdown-menu>li>a
 {
     color:#000000;
     }
-.dropup .dropdown-menu
+.userprofile .dropup .dropdown-menu
 {
     margin-bottom:10px;
     }
-.dropup .dropdown-menu:before
+.userprofile .dropup .dropdown-menu:before
 {
     content: "";
     border-top: 10px solid #34495e;
@@ -120,4 +120,4 @@ span.tags
     left: 50%;
     margin-left: -10px;
     z-index: 10;
-    }
+}

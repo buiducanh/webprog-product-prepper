@@ -6,3 +6,4 @@ build/js/app.js
 
 # Ignore debug log
 npm-debug.log
+notes.md
