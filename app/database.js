@@ -16,8 +16,9 @@ var initialData = {
       "interview": [],
       "languages": ["Java", "Python"],
       "experience": 2,
-      "cover": "",
-      "avatar": ""
+      "cover": "http://www.f-covers.com/cover/geek-typography-code-css-command-facebook-cover-timeline-banner-for-fb.jpg",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-ponsy-deer.png",
+      "location": "New York, NY"
     },
     "2": {
       "_id": 2,
@@ -26,8 +27,9 @@ var initialData = {
       "interview": [],
       "languages": ["Java"],
       "experience": 1,
-      "cover": "",
-      "avatar": ""
+      "cover": "http://facecoverz.com/static/img/uploads/o_facecoverz.com-1317912175824.png",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-cupcake-guy.png",
+      "location": "Boston, MA"
     },
     "3": {
       "_id": 3,
@@ -36,8 +38,9 @@ var initialData = {
       "interview": [],
       "languages": ["Java", "C"],
       "experience": 2,
-      "cover": "",
-      "avatar": ""
+      "cover": "http://www.pickycovers.com/uploads/cover/f217c2b1ab2ff9369fd7fad92185fae3.jpg",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-short-hair-girl.png",
+      "location": "San Francisco, CA"
 
     },
     // This is "you"!
@@ -49,7 +52,8 @@ var initialData = {
       "languages": ["Java"],
       "experience": 2,
       "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
-      "avatar": "http://i100.independent.co.uk/image/28166-4lg5eo.jpg"
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png",
+      "location": "Amherst, MA"
     }
   },
   // all the interview sessions

@@ -54,40 +54,25 @@ export default class UserProfile extends React.Component {
                       })
                     }
                   </p>
+                  <hr />
+                  <p><strong>Location: </strong> {this.state.users.location} </p>
                 </div>
               </div>
 
 
               <div className="col-xs-12 divider text-center">
-                <div className="col-xs-12 col-sm-4 emphasis">
+
+                <div className="col-sm-2 emphasis">
+
+
+                </div>
+                <div className="col-xs-12 col-sm-6 emphasis">
                   <h2><strong> {this.state.users.interview.length} </strong></h2>
                   <p><small>Interviews</small></p>
                   <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/" } >See History</Link> </button>
                 </div>
 
-                <div className="col-xs-12 col-sm-4 emphasis">
-                  <h2><strong>43</strong></h2>
-                  <p><small>Snippets</small></p>
-                  <div className="btn-group dropup btn-group-justified">
-                    <div className="btn-group">
-                      <button type="button" className="btn btn-default"><span className="glyphicon glyphicon-asterisk"></span> Options </button>
-                    </div>
-                    <div className="btn-group">
-                      <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <span className="caret"></span>
-                        <span className="sr-only">Toggle Dropdown</span>
-                      </button>
-                      <ul className="dropdown-menu text-left" role="menu">
-                        <li><a href="#"><span className="glyphicon glyphicon-envelope pull-right"></span> Send an email </a></li>
-                        <li><a href="#"><span className="glyphicon glyphicon-check pull-right"></span> Add or remove from a list  </a></li>
-                        <li className="divider"></li>
-                        <li><a href="#"><span className="glyphicon glyphicon-ban-circle pull-right"></span>Report this user for spam</a></li>
-                        <li className="divider"></li>
-                        <li><a href="#" className="btn disabled" role="button"> Unfollow </a></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>
