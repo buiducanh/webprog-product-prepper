@@ -1,6 +1,7 @@
 import React from 'react';
 import {unixTimeToString} from '../util';
 import _ from 'lodash';
+import {Link} from 'react-router';
 
 export default class InterviewSession extends React.Component {
   otherRole(role) {
@@ -31,16 +32,16 @@ export default class InterviewSession extends React.Component {
                       PIC
                     </div>
                     <div className="media-body">
-                      <a href="#">{data[this.otherRole(myRole)].fullName}</a>
+                      <Link to={"/userprofile/" + data[this.otherRole(myRole)]._id } ><a href="#">{data[this.otherRole(myRole)].fullName}</a></Link> 
                     </div>
                   </div>
                 </li>
               </ul>
-            </div> 
+            </div>
             <div className="col-md-6">
               <button type="button" className="btn btn-default pull-right glyphicon glyphicon-new-window"></button>
-            </div> 
-          </div> 
+            </div>
+          </div>
           <div className="row">
             <div className="col-md-12">
               <div className="well well-sm">
@@ -67,14 +68,14 @@ export default class InterviewSession extends React.Component {
               </div>
             </div>
           </div>
-        </div> 
+        </div>
         <div className="panel-footer">
           <div className="row">
             <div className="col-md-12">
               {data.feedback[this.otherRole(myRole) + "_comment"]}
               <ul className="list-inline pull-right">
                 {
-                  _.times(data.feedback[this.otherRole(myRole) + "_rating"], (i) => 
+                  _.times(data.feedback[this.otherRole(myRole) + "_rating"], (i) =>
                     <li key={i}>
                       <a href="#">
                         <span className="glyphicon glyphicon-star"></span>
@@ -85,9 +86,8 @@ export default class InterviewSession extends React.Component {
               </ul>
             </div>
           </div>
-        </div> 
-      </div> 
+        </div>
+      </div>
     )
   }
 }
-
