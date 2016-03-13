@@ -15,6 +15,21 @@ export default class PastInterviewsList extends React.Component {
   componentDidMount() {
     this.refresh();
   }
+  handleInterviewClick(clickEvent, clickedInterview) {
+    // Stop the event from propagating up the DOM tree, since we handle it here.
+    // Also prevents the link click from causing the page to scroll to the top.
+    clickEvent.preventDefault();
+    // 0 represents the 'main mouse button' -- typically a left click
+    // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+    if (clickEvent.button === 0) {
+      // Callback function for both the like and unlike cases.
+        // setState will overwrite the 'likeCounter' field on the current
+        // state, and will keep the other fields in-tact.
+        // This is called a shallow merge:
+        // https://facebook.github.io/react/docs/component-api.html#setstate
+      this.setState({selected: clickedInterview});
+    }
+  }
   render() {
     var selectedStyle = {"listStyleType":"disc","fontWeight": "bold"};
     return (
@@ -30,11 +45,11 @@ export default class PastInterviewsList extends React.Component {
                     // i is comment's index in comments array
                     if (interview._id==this.state.selected._id)
                       return (
-                        <a key = {i} href="#"><li style={selectedStyle} className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
+                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li style={selectedStyle} className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
                       );
                     else
                       return (
-                        <a key = {i} href="#"><li className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
+                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
                       );
                   })
                 }

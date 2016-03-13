@@ -10,9 +10,10 @@ export default class InterviewFeedback extends React.Component {
             <div className="panel panel-default">
               <div className="panel-heading">
                 <div className="row part-header"> Interviewer </div>
-                <a href={`#/userprofile/${this.props.data.interviewer._id}`}><div style={{"fontSize":"20px"}}> <span style={{"border":"1px solid gray"}}> PIC </span> &nbsp;&nbsp;&nbsp;&nbsp;<span> {this.props.data.interviewer.fullName} </span></div></a>
+                <a href={`#/userprofile/${this.props.data.interviewer._id}`}><div style={{"fontSize":"20px"}}> <img src={this.props.data.interviewer.avatar} width='55' height='55'></img> <span> {this.props.data.interviewer.fullName} </span></div></a>
                   <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Email: {this.props.data.interviewer.email}.</div>
                   <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Experience: {this.props.data.interviewer.experience}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Location: {this.props.data.interviewer.location}.</div>
                 <div>
                 </div>
               </div>
@@ -20,9 +21,10 @@ export default class InterviewFeedback extends React.Component {
             <div className="panel panel-default">
               <div className="panel-heading">
                 <div className="row part-header"> Interviewee </div>
-                <a href={`#/userprofile/${this.props.data.interviewee._id}`}><div style={{"fontSize":"20px"}}> <span style={{"border":"1px solid gray"}}> PIC </span> &nbsp;&nbsp;&nbsp;&nbsp;<span> {this.props.data.interviewee.fullName} </span></div></a>
+                <a href={`#/userprofile/${this.props.data.interviewee._id}`}><div style={{"fontSize":"20px"}}> <img src={this.props.data.interviewee.avatar} width='55' height='55'></img><span> {this.props.data.interviewee.fullName} </span></div></a>
                   <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Email: {this.props.data.interviewee.email}.</div>
                   <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Experience: {this.props.data.interviewee.experience}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Location: {this.props.data.interviewee.location}.</div>
                 <div>
                 </div>
               </div>
