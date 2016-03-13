@@ -1,5 +1,6 @@
 import React from 'react';
 import {getUserData, postFeedbackData} from '../server';
+import {Link} from 'react-router';
 
 export default class Feedback extends React.Component {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class Feedback extends React.Component {
       myRole+"_con": con,
       myRole+"_comment": comment,
       myRole+"_rating": rating
+
     };
 
     if (clickEvent.button === 0) {
@@ -82,7 +84,7 @@ export default class Feedback extends React.Component {
                           PIC
                         </div>
                         <div className="media-body">
-                          <a href="#">{otherUserName}</a>
+                          <Link to={"/userprofile/" + 4 } ><a href="#">{otherUserName}</a></Link>
                         </div>
                       </div>
                     </div>
