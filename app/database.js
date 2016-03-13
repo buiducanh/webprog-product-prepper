@@ -54,6 +54,16 @@ var initialData = {
       "timestamp": 1453668480000,
       "duration": "45 minutes",
       "result": "Successful"
+    },
+    "2": {
+      "_id": 2,
+      "problem": 2,
+      "feedback": 2,
+      "interviewer": 2,
+      "interviewee": 4,
+      "timestamp": 1453668880000,
+      "duration": "45 minutes",
+      "result": "Successful"
     }
   },
   "feedbacks": {
@@ -71,6 +81,21 @@ var initialData = {
       "interviewee_rating": 5,
       "interview_session": 1,
       "timestamp": 1453668480000
+    },
+    "2": {
+      "_id": 2,
+      "interviewer": 2,
+      "interviewee": 4,
+      "interviewer_pro": "good problem solving skill",
+      "interviewer_con": "not very confident",
+      "interviewer_comment": "Okay",
+      "interviewer_rating": 6,
+      "interviewee_pro": "helpful",
+      "interviewee_con": "doesn't explain the problem very well",
+      "interviewee_comment": "you did great",
+      "interviewee_rating": 7,
+      "interview_session": 2,
+      "timestamp": 1453668880000
     }
   },
   "problems": {
@@ -78,6 +103,13 @@ var initialData = {
       "_id": 1,
       "title": "simple binary tree",
       "question": "print a binary tree inorder",
+      "answer": "def .....",
+      "difficulty": "Easy"
+    },
+    "2": {
+      "_id": 2,
+      "title": "bit manipulation",
+      "question": "get the bits from position x to position y",
       "answer": "def .....",
       "difficulty": "Easy"
     }
