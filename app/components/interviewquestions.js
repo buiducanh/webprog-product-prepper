@@ -6,9 +6,8 @@ export default class Questions extends React.Component {
     return (
           <div className="panel panel-default">
             <div className="panel-heading">
-              Interview Question
+              Interview Quesions
               <textarea rows="15" cols="43">
-                {this.props.children}
               </textarea>
             </div>
           </div>

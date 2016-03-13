@@ -38,9 +38,9 @@ ReactDOM.render((
       <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={Matching} />
       <Route path="meetup" component={Meetup} />
-      <Route path="interview" component={Interview} />
+      <Route path="interview/:interviewerId/:intervieweeId" component={Interview} />
       <Route path="userprofile/:id" component={UserProfile} />
-      <Route path="feedback" component={Feedback} />
+      <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
       <Route path="history" component={History} />
       <Route path="peopleprofile" component={PeopleProfile} />
     </Route>
