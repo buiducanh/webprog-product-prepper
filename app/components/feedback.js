@@ -12,7 +12,6 @@ export default class Feedback extends React.Component {
   }
 
   handleSubmit(clickEvent) {
-    clickEvent.preventDefault();
     var pro = $("#pro").val();
     var con = $("#con").val();
     var comment = $("#comments").val();
@@ -129,9 +128,11 @@ export default class Feedback extends React.Component {
                   <div className="panel-footer">
                     <div className="row">
                       <div className="col-md-offset-1">
-                        <button className="btn btn-default" type="button" onClick={(e) => this.handleSubmit(e)}>
-                          Submit Feedback
-                        </button>
+                        <Link to="/" onClick={(e) => this.handleSubmit(e)}>
+                          <button className="btn btn-default" type="button">
+                            Submit Feedback
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
