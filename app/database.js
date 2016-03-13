@@ -18,7 +18,11 @@ var initialData = {
       "experience": 2,
       "cover": "http://www.f-covers.com/cover/geek-typography-code-css-command-facebook-cover-timeline-banner-for-fb.jpg",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-ponsy-deer.png",
-      "location": "New York, NY"
+      "location": "New York, NY",
+      position: {
+        lat: 42.373864,
+        lng: -72.515388,
+      }
     },
     "2": {
       "_id": 2,
@@ -29,7 +33,8 @@ var initialData = {
       "experience": 1,
       "cover": "http://facecoverz.com/static/img/uploads/o_facecoverz.com-1317912175824.png",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-cupcake-guy.png",
-      "location": "Boston, MA"
+      "location": "Boston, MA",
+      position: { lat: 42.373468, lng: -72.524271 }
     },
     "3": {
       "_id": 3,
@@ -41,7 +46,7 @@ var initialData = {
       "cover": "http://www.pickycovers.com/uploads/cover/f217c2b1ab2ff9369fd7fad92185fae3.jpg",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-short-hair-girl.png",
       "location": "San Francisco, CA"
-
+      position: { lat: 12.373468, lng: -72.524271 }
     },
     // This is "you"!
     "4": {
@@ -53,7 +58,8 @@ var initialData = {
       "experience": 2,
       "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png",
-      "location": "Amherst, MA"
+      "location": "Amherst, MA",
+      position: { lat: 42.371344, lng: -72.520924 }
     }
   },
   // all the interview sessions

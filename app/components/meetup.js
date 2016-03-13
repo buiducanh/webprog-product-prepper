@@ -1,23 +1,35 @@
 import React from 'react';
-import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps";
+import { GoogleMapLoader, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 import update from "react-addons-update";
 
 export default class Meetup extends React.Component {
   constructor(props) {
     super(props);
+    this.ready = false;
     this.state = {
       markers: [{
         position: {
           lat: 42.373864,
           lng: -72.515388,
         },
-        key: `User1`,
+        showInfo: false,
         defaultAnimation: 2,
       },
-      {position: { lat: 42.373468, lng: -72.524271 }, key: "User2", defaultAnimation: 2},
-      {position: { lat: 42.371344, lng: -72.520924 }, key: "User3", defaultAnimation: 2}
+      {position: { lat: 42.373468, lng: -72.524271 }, defaultAnimation: 2, showInfo: false},
+      {position: { lat: 42.371344, lng: -72.520924 }, defaultAnimation: 2, showInfo: false}
       ]
     }
+  }
+
+  //Toggle to 'true' to show InfoWindow and re-renders component
+  handleMarkerClick(marker) {
+    marker.showInfo = true;
+    this.setState(this.state);
+  }
+  
+  handleMarkerClose(marker) {
+    marker.showInfo = false;
+    this.setState(this.state);
   }
 
   handleMapClick(event) {
@@ -27,18 +39,11 @@ export default class Meetup extends React.Component {
         {
           position: event.latLng,
           defaultAnimation: 2,
-          key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
+          showInfo: false,
         },
       ],
     });
     this.setState({ markers });
-
-    if (markers.length === 3) {
-      this.props.toast(
-        `Right click on the marker to remove it`,
-        `Also check the code!`
-      );
-    }
   }
   handleMarkerRightClick(index, event) {
     /*
@@ -59,9 +64,48 @@ export default class Meetup extends React.Component {
     if (role === 'interviewer') return 'interviewee';
     return 'interviewer';
   }
-  componentDidMount() {
+
+  renderInfoWindow(ref, marker) {
+    var user = (
+      <div id="content">
+        <div id="siteNotice">
+        </div>
+        <h4 id="firstHeading" className="firstHeading">NewUser</h4>
+        <button className="btn btn-default" type="button">
+           Request
+        </button>
+      </div>
+    )
+    return (
+      
+      //You can nest components inside of InfoWindow!
+      <InfoWindow 
+        key={`${ref}_info_window`}
+        onCloseclick={this.handleMarkerClose.bind(this, marker)} >
+        {user}
+      </InfoWindow>
+      
+    );
   }
+
+  refresh() {
+    var nearbyUsers = getNearbyUsers(3, localStorage.getItem("userId"))
+  }
+
+  componentDidMount() {
+    this.ready = true;
+    this.refresh();
+  }
+
   render() {
+    if (!this.ready) {
+      return (
+        <div className="container">
+          <div className="row">
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container">
         <div className="row">
@@ -85,11 +129,21 @@ export default class Meetup extends React.Component {
                       onClick={this.handleMapClick.bind(this)}
                     >
                       {this.state.markers.map((marker, index) => {
+                        const ref = `marker_${index}`;
                         return (
                           <Marker
                             {...marker}
-                            onClick={(e) => this.handleMarkerRightClick(index, e)}
-                             />
+                            key={index}
+                            ref={ref}
+                            onClick={(e) => this.handleMarkerClick(marker, e)}
+                          >
+                          {/* 
+                            Show info window only if the 'showInfo' key of the marker is true. 
+                            That is, when the Marker pin has been clicked and 'handleMarkerClick' has been
+                            Successfully fired.
+                          */}
+                          {marker.showInfo ? this.renderInfoWindow(ref, marker) : null}
+                        </Marker>
                         );
                       })}
                     </GoogleMap>

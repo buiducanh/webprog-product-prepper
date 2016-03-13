@@ -60,3 +60,17 @@ export function postAnswers(feedbackData, cb) {
   var newFeedback = addDocument("feedbacks", feedbackData);
   emulateServerReturn(newFeedback, cb);
 }
+
+export function getNearbyUsers(radius, userId, cb) {
+  var userData = ReadAllCollection('users');
+  var currentUser = userData[userId - 1];
+  userData.splice(userId - 1, 1);
+  var nearbyUsers = [];
+  for(var i = 0; i < userData.length; i++) {
+    var distance = google.maps.geometry.spherical.computeDistanceBetween(currentUser.location, userData[i].location);
+    if (distance <= radius) {
+      nearbyUsers.push(userData[i]);
+    }
+  }
+  emulateServerReturn(nearbyUsers, cb);
+}
