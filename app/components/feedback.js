@@ -19,20 +19,18 @@ export default class Feedback extends React.Component {
     var rating = $("#rating").val();
 
     var myRole = "";
-    if (localStorage.getItem("userId") == this.props.param.intervieweeId) myRole = "interviewee";
-    myRole = "interviewer";
+    if (localStorage.getItem("userId") == this.props.params.intervieweeId) myRole = "interviewee";
+    else {
+      myRole = "interviewer";
     }
-
-    //TODO
     var feedbackData = {
       _id: 1,
-      myRole: this.state.user,
-      myRole+"_pro": pro,
-      myRole+"_con": con,
-      myRole+"_comment": comment,
-      myRole+"_rating": rating
-
-    };
+      myRole: localStorage.getItem("userId")
+    }
+    feedbackData[myRole + "_pro"] = pro;
+    feedbackData[myRole + "_con"] = con;
+    feedbackData[myRole + "_comment"] = comment;
+    feedbackData[myRole + "_rating"] = rating;
 
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
@@ -50,15 +48,17 @@ export default class Feedback extends React.Component {
 
 
   componentDidMount() {
-      var partnerId = '';
-      if (localStorage.getItem("userId") == this.props.param.intervieweeId) partnerId = this.props.param.interviewerId;
-      partnerId = this.props.param.intervieweeId;
+    var partnerId = '';
+    if (localStorage.getItem("userId") === this.props.params.intervieweeId) partnerId = this.props.params.interviewerId;
+    else {
+      partnerId = this.props.params.intervieweeId;
+    }
     getUserData(partnerId, (userData) => {
       this.setState({user: userData});
     });
   }
-  render() {
 
+  render() {
     var otherUserName = this.state.user.fullName;
     var feedbackData = this.state.feedbacks;
     return (
