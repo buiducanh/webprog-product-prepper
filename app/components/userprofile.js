@@ -19,7 +19,6 @@ export default class UserProfile extends React.Component {
   }
 
   render () {
-    console.log()
     return (
       <div className="userprofile">
         <div className="container">
