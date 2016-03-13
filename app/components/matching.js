@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router';
 
 export default class Matching extends React.Component {
 
@@ -78,9 +79,11 @@ export default class Matching extends React.Component {
                       </div>
                     </li>
                   </ul>
-                  <button type="button" className="btn btn-default" onPost>
-                    Find me an interview!
-                  </button>
+                  <Link to={"/interview"}>
+                    <button type="button" className="btn btn-default">
+                      Find me an interview!
+                    </button>
+                  </Link>
                 </form>
               </div>
             </div>
