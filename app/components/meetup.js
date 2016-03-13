@@ -1,5 +1,6 @@
 import React from 'react';
 import { GoogleMapLoader, GoogleMap, Marker } from "react-google-maps";
+import update from "react-addons-update";
 
 export default class Meetup extends React.Component {
   constructor(props) {
@@ -7,17 +8,20 @@ export default class Meetup extends React.Component {
     this.state = {
       markers: [{
         position: {
-          lat: 25.0112183,
-          lng: 121.52067570000001,
+          lat: 42.373864,
+          lng: -72.515388,
         },
-        key: `Taiwan`,
+        key: `User1`,
         defaultAnimation: 2,
-      }]
+      },
+      {position: { lat: 42.373468, lng: -72.524271 }, key: "User2", defaultAnimation: 2},
+      {position: { lat: 42.371344, lng: -72.520924 }, key: "User3", defaultAnimation: 2}
+      ]
     }
   }
 
   handleMapClick(event) {
-    var markers = this.state;
+    var markers = this.state.markers;
     markers = update(markers, {
       $push: [
         {
@@ -36,6 +40,21 @@ export default class Meetup extends React.Component {
       );
     }
   }
+  handleMarkerRightClick(index, event) {
+    /*
+     * All you modify is data, and the view is driven by data.
+     * This is so called data-driven-development. (And yes, it's now in
+     * web front end and even with google maps API.)
+     */
+    var markers = this.state.markers;
+    markers = update(markers, {
+      $splice: [
+        [index, 1],
+      ],
+    });
+    this.setState({ markers });
+  }
+
   otherRole(role) {
     if (role === 'interviewer') return 'interviewee';
     return 'interviewer';
@@ -69,6 +88,7 @@ export default class Meetup extends React.Component {
                         return (
                           <Marker
                             {...marker}
+                            onClick={(e) => this.handleMarkerRightClick(index, e)}
                              />
                         );
                       })}
