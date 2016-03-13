@@ -180,3 +180,9 @@ export function postFeedbackData(feedbackData, cb) {
   var newFeedback = addDocument("feedbacks", feedbackData);
   emulateServerReturn(newFeedback, cb);
 }
+
+export function postAnswers(feedbackData, cb) {
+  // dummy = {_id: 1, text: "dummy"}
+  var newFeedback = addDocument("feedbacks", feedbackData);
+  emulateServerReturn(newFeedback, cb);
+}
