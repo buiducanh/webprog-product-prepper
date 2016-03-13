@@ -35,13 +35,8 @@ export default class Feedback extends React.Component {
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
       var callbackFunction = (feedbackData) => {
-        // setState will overwrite the 'likeCounter' field on the current
-        // state, and will keep the other fields in-tact.
-        // This is called a shallow merge:
-        // https://facebook.github.io/react/docs/component-api.html#setstate
-        this.setState({feedbacks: feedbackData});
+        console.log("submit feedback id: ", feedbackData);
       };
-
       postFeedbackData(feedbackData, callbackFunction);
     }
   }
@@ -60,16 +55,11 @@ export default class Feedback extends React.Component {
 
   render() {
     var otherUserName = this.state.user.fullName;
-    var feedbackData = this.state.feedbacks;
     return (
       <div>
         <div className="container">
           <div className="row">
             <div className="col-md-3">
-              {feedbackData.interviewer_pro}
-              {feedbackData.interviewer_con}
-              {feedbackData.interviewer_comment}
-              {feedbackData.interviewer_rating}
             </div>
               <div className="col-md-6">
                 <div className="panel panel-default textbox-modification textarea">
@@ -84,7 +74,7 @@ export default class Feedback extends React.Component {
                           PIC
                         </div>
                         <div className="media-body">
-                          <Link to={"/userprofile/" + 4 } ><a href="#">{otherUserName}</a></Link>
+                          <Link to={"/userprofile/" + this.state.user._id } ><a href="#">{otherUserName}</a></Link>
                         </div>
                       </div>
                     </div>
