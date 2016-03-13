@@ -32,7 +32,7 @@ export default class CodeEditor extends React.Component {
             </div>
             <div className="panel-body" style={{height: '490px'}}>
             Code Editor<br></br>
-            <textarea rows="15" cols="43">
+          <textarea rows="22" cols="100">
 
             </textarea>
             </div>
