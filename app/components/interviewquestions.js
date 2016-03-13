@@ -8,6 +8,7 @@ export default class Questions extends React.Component {
             <div className="panel-heading">
               Interview Quesions
               <textarea rows="15" cols="43">
+                
               </textarea>
             </div>
           </div>
