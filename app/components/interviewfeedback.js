@@ -3,8 +3,8 @@ import React from 'react';
 
 export default class InterviewFeedback extends React.Component {
   render() {
-    if (this.props.data==null)
-      return(<div></div>)
+    if (this.props.data==null || this.props.data==undefined)
+      return(<div> You have no interview in your history </div>)
     else{
       return(
           <div className="col-md-8">

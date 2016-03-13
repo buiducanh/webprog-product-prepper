@@ -41,7 +41,7 @@ ReactDOM.render((
       <Route path="interview/:interviewerId/:intervieweeId" component={Interview} />
       <Route path="userprofile/:id" component={UserProfile} />
       <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
-      <Route path="history" user={localStorage.getItem("userId")}component={History} />
+      <Route path="history/:userId" component={History} />
       <Route path="peopleprofile" component={PeopleProfile} />
     </Route>
   </Router>
