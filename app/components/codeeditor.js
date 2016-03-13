@@ -7,7 +7,6 @@ export default class CodeEditor extends React.Component {
         <div className="col-md-8">
           <div className="panel panel-default">
             <div className="panel-heading">
-
                 <button type="button" className="btn btn-default" style={{height: '35px'}} >
                   <p> Language
                     <select>
