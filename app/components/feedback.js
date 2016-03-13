@@ -17,16 +17,21 @@ export default class Feedback extends React.Component {
     var comment = $("#comments").val();
     var rating = $("#rating").val();
 
+    var myRole = "";
+    if (localStorage.getItem("userId") == this.props.param.intervieweeId) myRole = "interviewee";
+    myRole = "interviewer";
+    }
 
     //TODO
     var feedbackData = {
-      _id: 1, 
-      interviewer: this.state.user, 
-      interviewer_pro: pro, 
-      interviewer_con: con, 
-      interviewer_comment: comment, 
-      interviewer_rating: rating
+      _id: 1,
+      myRole: this.state.user,
+      myRole+"_pro": pro,
+      myRole+"_con": con,
+      myRole+"_comment": comment,
+      myRole+"_rating": rating
     };
+
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
       var callbackFunction = (feedbackData) => {
@@ -43,12 +48,15 @@ export default class Feedback extends React.Component {
 
 
   componentDidMount() {
-    //TODO
-    getUserData(..., (userData) => {
+      var partnerId = '';
+      if (localStorage.getItem("userId") == this.props.param.intervieweeId) partnerId = this.props.param.interviewerId;
+      partnerId = this.props.param.intervieweeId;
+    getUserData(partnerId, (userData) => {
       this.setState({user: userData});
     });
   }
   render() {
+
     var otherUserName = this.state.user.fullName;
     var feedbackData = this.state.feedbacks;
     return (
