@@ -19,12 +19,12 @@ export default class Feedback extends React.Component {
     var feedbackData = {_id: 1, interviewer: this.state.user, interviewer_pro: pro, interviewer_con: con, interviewer_comment: comment, interviewer_rating: rating};
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
-      var callbackFunction = (dummyData) => {
+      var callbackFunction = (feedbackData) => {
         // setState will overwrite the 'likeCounter' field on the current
         // state, and will keep the other fields in-tact.
         // This is called a shallow merge:
         // https://facebook.github.io/react/docs/component-api.html#setstate
-        this.setState({dummyData: dummyData});
+        this.setState({dummyData: feedbackData});
       };
 
       postFeedbackData(feedbackData, callbackFunction);
@@ -32,13 +32,13 @@ export default class Feedback extends React.Component {
   }
 
   componentDidMount() {
-    getUserData(4, (userName) => {
-      this.setState({user: userName});
+    getUserData(4, (userData) => {
+      this.setState({user: userData});
     });
   }
   render() {
 
-    var otherUserName = this.state.user;
+    var otherUserName = this.state.user.fullName;
 
     return (
       <div>
