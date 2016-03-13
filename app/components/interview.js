@@ -14,7 +14,7 @@ export default class Interview extends React.Component {
             <VoiceChat />
             <Questions />
           </div>
-          <CodeEditor />
+          <CodeEditor/>
         </div>
       </div>
 

@@ -18,7 +18,7 @@ export default class CodeEditor extends React.Component {
                   </p>
                 </button>
 
-                <Link to={"/feedback"}>
+                <Link to={"/feedback/" + interviewerId + "/" + intervieweeId}>
                   <button  type="button" className="btn btn-default" onClick={(e) => this.handleSubmit(e)}>
                     <span className="glyphicon glyphicon-ban-circle"></span>  End Interview
                   </button>

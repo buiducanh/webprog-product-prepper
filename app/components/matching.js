@@ -14,6 +14,10 @@ export default class Matching extends React.Component {
   //componentDidMount() {
   //  this.refresh();
   //}
+  //
+  handleMatching() {
+    return 2;
+  }
 
   render() {
     return (
@@ -79,7 +83,7 @@ export default class Matching extends React.Component {
                       </div>
                     </li>
                   </ul>
-                  <Link to={"/interview"}>
+                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" + this.handleMatching()}>
                     <button type="button" className="btn btn-default">
                       Find me an interview!
                     </button>
