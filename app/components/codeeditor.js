@@ -2,14 +2,11 @@ import React from 'react';
 import {Link} from 'react-router';
 
 export default class CodeEditor extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
 
   render() {
     var interviewerId = this.props.interviewerId;
     var intervieweeId = this.props.intervieweeId;
+
 
     return(
         <div className="col-md-8">
@@ -34,7 +31,10 @@ export default class CodeEditor extends React.Component {
 
             </div>
             <div className="panel-body" style={{height: '490px'}}>
-            Code Editor
+            Code Editor<br></br>
+            <textarea rows="15" cols="43">
+
+            </textarea>
             </div>
           </div>
         </div>

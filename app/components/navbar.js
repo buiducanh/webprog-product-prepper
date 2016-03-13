@@ -34,11 +34,6 @@ export default class Navbar extends React.Component {
                 <span className="glyphicon glyphicon-flash"></span> Interview
               </button>
             </Link>
-
-            <Link to='/feedback'><button type="button" className="navbar-btn btn btn-default">
-              <span className="glyphicon glyphicon-flash"></span> Feedback
-            </button></Link>
-
             <Link to='/meetup'>
               <button type="button" className="navbar-btn btn btn-default">
                 <span className="glyphicon glyphicon-globe"></span> Meetup
@@ -128,7 +123,7 @@ export default class Navbar extends React.Component {
               <div className="input-group">
                 <input type="text" className="form-control" placeholder="Search candidates"></input>
                 <span className="input-group-btn">
-                  <Link to="/peopleprofile"> 
+                  <Link to="/peopleprofile">
                     <button type="submit" className="btn btn-default">
                       <span className="glyphicon glyphicon-search"></span>
                     </button>
