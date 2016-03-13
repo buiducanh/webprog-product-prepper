@@ -8,6 +8,7 @@ import Matching from './components/matching.js';
 import Navbar from './components/navbar.js';
 import UserProfile from './components/userprofile.js';
 import Meetup from './components/meetup';
+import PeopleProfile from './components/peopleprofile.js';
 
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
@@ -41,6 +42,7 @@ ReactDOM.render((
       <Route path="userprofile/:id" component={UserProfile} />
       <Route path="feedback" component={Feedback} />
       <Route path="history" component={History} />
+      <Route path="peopleprofile" component={PeopleProfile} />
     </Route>
   </Router>
   ), document.getElementById('main-container')

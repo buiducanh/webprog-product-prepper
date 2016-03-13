@@ -128,9 +128,11 @@ export default class Navbar extends React.Component {
               <div className="input-group">
                 <input type="text" className="form-control" placeholder="Search candidates"></input>
                 <span className="input-group-btn">
-                  <button type="submit" className="btn btn-default">
-                    <span className="glyphicon glyphicon-search"></span>
-                  </button>
+                  <Link to="/peopleprofile"> 
+                    <button type="submit" className="btn btn-default">
+                      <span className="glyphicon glyphicon-search"></span>
+                    </button>
+                  </Link>
                 </span>
               </div>
             </form>
