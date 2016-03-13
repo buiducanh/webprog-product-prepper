@@ -62,15 +62,27 @@ export function postAnswers(feedbackData, cb) {
 }
 
 export function getNearbyUsers(radius, userId, cb) {
-  var userData = ReadAllCollection('users');
+  var userData = readAllCollection('users');
   var currentUser = userData[userId - 1];
   userData.splice(userId - 1, 1);
   var nearbyUsers = [];
   for(var i = 0; i < userData.length; i++) {
-    var distance = google.maps.geometry.spherical.computeDistanceBetween(currentUser.location, userData[i].location);
+    var curLatLng = new google.maps.LatLng(currentUser.position);
+    var otherLatLng = new google.maps.LatLng(userData[i].position);
+    var distance = google.maps.geometry.spherical.computeDistanceBetween(curLatLng, otherLatLng);
     if (distance <= radius) {
       nearbyUsers.push(userData[i]);
     }
   }
   emulateServerReturn(nearbyUsers, cb);
+}
+
+export function postNotifications(requester, requestee, cb) {
+  var newNoti = {
+    requester: requester,
+    requestee: requestee,
+    resolved: false
+  }
+  var notiData = addDocument("notifications", newNoti);
+  emulateServerReturn(notiData, cb);
 }

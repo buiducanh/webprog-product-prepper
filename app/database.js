@@ -45,7 +45,7 @@ var initialData = {
       "experience": 2,
       "cover": "http://www.pickycovers.com/uploads/cover/f217c2b1ab2ff9369fd7fad92185fae3.jpg",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-short-hair-girl.png",
-      "location": "San Francisco, CA"
+      "location": "San Francisco, CA",
       position: { lat: 12.373468, lng: -72.524271 }
     },
     // This is "you"!
@@ -133,6 +133,14 @@ var initialData = {
       "question": "get the bits from position x to position y",
       "answer": "def .....",
       "difficulty": "Easy"
+    }
+  },
+  "notifications": {
+    "1": {
+      "_id": 1,
+      "requester": 2,
+      "requestee": 4,
+      "resolved": false
     }
   }
 };

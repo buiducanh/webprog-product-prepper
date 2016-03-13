@@ -1,23 +1,14 @@
 import React from 'react';
 import { GoogleMapLoader, GoogleMap, Marker, InfoWindow } from "react-google-maps";
 import update from "react-addons-update";
+import {getNearbyUsers, postNotifications} from "../server";
 
 export default class Meetup extends React.Component {
   constructor(props) {
     super(props);
     this.ready = false;
     this.state = {
-      markers: [{
-        position: {
-          lat: 42.373864,
-          lng: -72.515388,
-        },
-        showInfo: false,
-        defaultAnimation: 2,
-      },
-      {position: { lat: 42.373468, lng: -72.524271 }, defaultAnimation: 2, showInfo: false},
-      {position: { lat: 42.371344, lng: -72.520924 }, defaultAnimation: 2, showInfo: false}
-      ]
+      markers: []
     }
   }
 
@@ -65,13 +56,22 @@ export default class Meetup extends React.Component {
     return 'interviewer';
   }
 
+  handleMeetupRequest(clickEvent, userData) {
+    clickEvent.preventDefault();
+    if (clickEvent.button === 0) {
+      var callbackFunction = () => {this.forceUpdate()};
+      postNotifications(localStorage.getItem("userId"), userData._id, callbackFunction);
+    }
+  }
+
   renderInfoWindow(ref, marker) {
-    var user = (
+    var userData = marker.userData;
+    var userDiv = (
       <div id="content">
         <div id="siteNotice">
         </div>
-        <h4 id="firstHeading" className="firstHeading">NewUser</h4>
-        <button className="btn btn-default" type="button">
+        <h4 id="firstHeading" className="firstHeading">userData.fullName</h4>
+        <button className="btn btn-default" type="button" onClick={(e) => this.handleMeetupRequest(e, userData)}>
            Request
         </button>
       </div>
@@ -82,18 +82,37 @@ export default class Meetup extends React.Component {
       <InfoWindow 
         key={`${ref}_info_window`}
         onCloseclick={this.handleMarkerClose.bind(this, marker)} >
-        {user}
+        {userDiv}
       </InfoWindow>
       
     );
   }
 
   refresh() {
-    var nearbyUsers = getNearbyUsers(3, localStorage.getItem("userId"))
+    var callbackFunction = (nearbyUsers) => {
+      var markers = this.state.markers;
+      console.log(nearbyUsers);
+      nearbyUsers.map((user) => {
+        markers = update(markers, {
+          $push: [
+            {
+              position: user.position,
+              defaultAnimation: 2,
+              showInfo: false,
+              userData: user
+            },
+          ],
+        });
+      });
+      this.setState({ markers });
+    }
+    getNearbyUsers(1000, localStorage.getItem("userId"), callbackFunction);
   }
 
   componentDidMount() {
     this.ready = true;
+    console.log(google);
+    while (google === undefined) {};
     this.refresh();
   }
 
