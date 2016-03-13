@@ -6,7 +6,7 @@ export default class Feedback extends React.Component {
     super(props);
     this.state = {
       user: "",
-      dummyData: {}
+      feedbacks: {}
     };
   }
 
@@ -16,6 +16,8 @@ export default class Feedback extends React.Component {
     var con = $("#con").val();
     var comment = $("#comments").val();
     var rating = $("#rating").val();
+
+
     var feedbackData = {_id: 1, interviewer: this.state.user, interviewer_pro: pro, interviewer_con: con, interviewer_comment: comment, interviewer_rating: rating};
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
@@ -24,12 +26,13 @@ export default class Feedback extends React.Component {
         // state, and will keep the other fields in-tact.
         // This is called a shallow merge:
         // https://facebook.github.io/react/docs/component-api.html#setstate
-        this.setState({dummyData: feedbackData});
+        this.setState({feedbacks: feedbackData});
       };
 
       postFeedbackData(feedbackData, callbackFunction);
     }
   }
+
 
   componentDidMount() {
     getUserData(4, (userData) => {
@@ -39,13 +42,16 @@ export default class Feedback extends React.Component {
   render() {
 
     var otherUserName = this.state.user.fullName;
-
+    var feedbackData = this.state.feedbacks;
     return (
       <div>
         <div className="container">
           <div className="row">
             <div className="col-md-3">
-              {this.state.dummyData.text}
+              {feedbackData.interviewer_pro}
+              {feedbackData.interviewer_con}
+              {feedbackData.interviewer_comment}
+              {feedbackData.interviewer_rating}
             </div>
               <div className="col-md-6">
                 <div className="panel panel-default textbox-modification textarea">
@@ -66,26 +72,6 @@ export default class Feedback extends React.Component {
                     </div>
                   </div>
                   <div className="panel-body">
-                    <div className="row">
-                      <div className="col-md-offset-1">
-                        <strong>I am rating my..</strong>
-                      </div>
-                        <div className="col-md-3 col-md-offset-1">
-                          <div className="radio">
-                            <label>
-                              <input type="radio" name="options" id="option1" /> Interviewer
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col-md-4">
-                          <div className="radio">
-                            <label>
-                              <input type="radio" name="options" id="option2" /> Interviewee
-                            </label>
-                          </div>
-                          </div>
-                      </div>
-                    <br />
                     <div className="row">
                       <div className="col-md-offset-1">
                         Pros:
@@ -118,14 +104,8 @@ export default class Feedback extends React.Component {
                       <div className="col-md-offset-1">
                         Rate your partner(1-10):
                       </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-offset-1">
-                        <div className="row">
-                          <textarea id="rating" rows="1" cols="10">
-                          </textarea>
-                        </div>
-                      </div>
+                      <textarea className="col-md-offset-1" id="rating" rows="1" cols="18">
+                      </textarea>
                     </div>
                   </div>
                   <div className="panel-footer">
