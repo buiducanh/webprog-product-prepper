@@ -178,7 +178,13 @@ export function addDocument(collectionName, newDoc) {
 }
 
 export function readAllCollection(collectionName) {
-  return data[collectionName];
+  var collection = data[collectionName];
+  var length = Object.keys(collection).length;
+  var userData = [];
+  for(var i = 1; i <= length; i++) {
+    userData.push(readDocument(collectionName, i));
+  }
+  return userData;
 }
 
 /**

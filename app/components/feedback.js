@@ -21,11 +21,11 @@ export default class Feedback extends React.Component {
 
     //TODO
     var feedbackData = {
-      _id: 1, 
-      interviewer: this.state.user, 
-      interviewer_pro: pro, 
-      interviewer_con: con, 
-      interviewer_comment: comment, 
+      _id: 1,
+      interviewer: this.state.user,
+      interviewer_pro: pro,
+      interviewer_con: con,
+      interviewer_comment: comment,
       interviewer_rating: rating
     };
     if (clickEvent.button === 0) {
@@ -45,7 +45,7 @@ export default class Feedback extends React.Component {
 
   componentDidMount() {
     //TODO
-    getUserData(..., (userData) => {
+    getUserData(4, (userData) => {
       this.setState({user: userData});
     });
   }
