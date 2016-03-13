@@ -15,7 +15,10 @@ var initialData = {
       "fullName": "Someone",
       "interview": [],
       "languages": ["Java", "Python"],
-      "experience": 2
+      "experience": 2,
+      "cover": "http://www.f-covers.com/cover/geek-typography-code-css-command-facebook-cover-timeline-banner-for-fb.jpg",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-ponsy-deer.png",
+      "location": "New York, NY"
     },
     "2": {
       "_id": 2,
@@ -23,7 +26,10 @@ var initialData = {
       "fullName": "Someone Else",
       "interview": [],
       "languages": ["Java"],
-      "experience": 1
+      "experience": 1,
+      "cover": "http://facecoverz.com/static/img/uploads/o_facecoverz.com-1317912175824.png",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-cupcake-guy.png",
+      "location": "Boston, MA"
     },
     "3": {
       "_id": 3,
@@ -31,7 +37,11 @@ var initialData = {
       "fullName": "Another Person",
       "interview": [],
       "languages": ["Java", "C"],
-      "experience": 2
+      "experience": 2,
+      "cover": "http://www.pickycovers.com/uploads/cover/f217c2b1ab2ff9369fd7fad92185fae3.jpg",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-short-hair-girl.png",
+      "location": "San Francisco, CA"
+
     },
     // This is "you"!
     "4": {
@@ -40,7 +50,10 @@ var initialData = {
       "fullName": "Pepper & Salt",
       "interview": [1],
       "languages": ["Java"],
-      "experience": 2
+      "experience": 2,
+      "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
+      "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png",
+      "location": "Amherst, MA"
     }
   },
   // all the interview sessions
@@ -166,6 +179,16 @@ export function addDocument(collectionName, newDoc) {
   newDoc._id = nextId;
   writeDocument(collectionName, newDoc);
   return newDoc;
+}
+
+export function readAllCollection(collectionName) {
+  var collection = data[collectionName];
+  var length = Object.keys(collection).length;
+  var userData = [];
+  for(var i = 1; i <= length; i++) {
+    userData.push(readDocument(collectionName, i));
+  }
+  return userData;
 }
 
 /**

@@ -1,5 +1,6 @@
 import React from 'react';
 import {getUserData, postFeedbackData} from '../server';
+import {Link} from 'react-router';
 
 export default class Feedback extends React.Component {
   constructor(props) {
@@ -17,16 +18,20 @@ export default class Feedback extends React.Component {
     var comment = $("#comments").val();
     var rating = $("#rating").val();
 
-
-    //TODO
+    var myRole = "";
+    if (localStorage.getItem("userId") == this.props.params.intervieweeId) myRole = "interviewee";
+    else {
+      myRole = "interviewer";
+    }
     var feedbackData = {
-      _id: 1, 
-      interviewer: this.state.user, 
-      interviewer_pro: pro, 
-      interviewer_con: con, 
-      interviewer_comment: comment, 
-      interviewer_rating: rating
-    };
+      _id: 1,
+      myRole: localStorage.getItem("userId")
+    }
+    feedbackData[myRole + "_pro"] = pro;
+    feedbackData[myRole + "_con"] = con;
+    feedbackData[myRole + "_comment"] = comment;
+    feedbackData[myRole + "_rating"] = rating;
+
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
       var callbackFunction = (feedbackData) => {
@@ -43,11 +48,16 @@ export default class Feedback extends React.Component {
 
 
   componentDidMount() {
-    //TODO
-    getUserData(..., (userData) => {
+    var partnerId = '';
+    if (localStorage.getItem("userId") === this.props.params.intervieweeId) partnerId = this.props.params.interviewerId;
+    else {
+      partnerId = this.props.params.intervieweeId;
+    }
+    getUserData(partnerId, (userData) => {
       this.setState({user: userData});
     });
   }
+
   render() {
     var otherUserName = this.state.user.fullName;
     var feedbackData = this.state.feedbacks;
@@ -74,7 +84,7 @@ export default class Feedback extends React.Component {
                           PIC
                         </div>
                         <div className="media-body">
-                          <a href="#">{otherUserName}</a>
+                          <Link to={"/userprofile/" + 4 } ><a href="#">{otherUserName}</a></Link>
                         </div>
                       </div>
                     </div>
