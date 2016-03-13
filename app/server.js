@@ -39,6 +39,13 @@ export function getInterviewData(user, cb) {
   emulateServerReturn(interviewData, cb);
 }
 
+export function getUserData(userId, cb) {
+  var userData = readDocument('users', userId);
+  var userName = userData.fullName;
+
+  emulateServerReturn(userName, cb);
+}
+
 /**
  * Adds a new status update to the database.
  */
@@ -168,4 +175,10 @@ export function unlikeComment(feedItemId, commentId, userId, cb) {
   }
   // Return a resolved version of the likeCounter
   emulateServerReturn(feedItem.comments[commentId].likeCounter.map((userId) => readDocument('users', userId)), cb);
+}
+
+export function postFeedbackData(feedbackData, cb) {
+  // dummy = {_id: 1, text: "dummy"}
+  var newFeedback = addDocument("feedbacks", feedbackData);
+  emulateServerReturn(newFeedback, cb);
 }

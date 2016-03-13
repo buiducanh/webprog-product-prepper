@@ -124,6 +124,9 @@ export function writeDocument(collection, changedDocument) {
  */
 export function addDocument(collectionName, newDoc) {
   var collection = data[collectionName];
+  if (collection === undefined || collection == null) {
+    data[collectionName] = {};
+  }
   var nextId = Object.keys(collection).length;
   while (collection[nextId]) {
     nextId++;
