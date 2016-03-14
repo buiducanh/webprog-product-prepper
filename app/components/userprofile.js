@@ -40,7 +40,7 @@ export default class UserProfile extends React.Component {
       <div classNameName="container">
         <div className="row">
 
-          <div className="col-md-offset-1 col-lg-9">
+          <div className="col-md-offset-1 col-lg-10">
             <div className="profile">
               <div className="col-sm-12">
                 <div className="col-md-12 info">
@@ -63,10 +63,8 @@ export default class UserProfile extends React.Component {
               <div className="col-xs-12 divider text-center">
 
                 <div className="col-sm-2 emphasis">
-
-
                 </div>
-                <div className="col-xs-12 col-sm-6 emphasis">
+                <div className="col-xs-12 col-sm-10 emphasis">
                   <h2><strong> {this.state.users.interview.length} </strong></h2>
                   <p><small>Interviews</small></p>
                   <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/" } >See History</Link> </button>
