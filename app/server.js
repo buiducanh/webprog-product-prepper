@@ -1,4 +1,5 @@
 import {readDocument, writeDocument, addDocument, readAllCollection} from './database.js';
+import _ from "lodash";
 
 /**
  * Emulates how a REST call is *asynchronous* -- it calls your function back
@@ -59,4 +60,66 @@ export function postAnswers(feedbackData, cb) {
   // dummy = {_id: 1, text: "dummy"}
   var newFeedback = addDocument("feedbacks", feedbackData);
   emulateServerReturn(newFeedback, cb);
+}
+
+export function getNearbyUsers(radius, userId, cb) {
+  var userData = readAllCollection('users');
+  var currentUser = userData[userId - 1];
+  userData.splice(userId - 1, 1);
+  var nearbyUsers = [];
+  for(var i = 0; i < userData.length; i++) {
+    var curLatLng = new google.maps.LatLng(currentUser.position);
+    var otherLatLng = new google.maps.LatLng(userData[i].position);
+    var distance = google.maps.geometry.spherical.computeDistanceBetween(curLatLng, otherLatLng);
+    if (distance <= radius) {
+      nearbyUsers.push(userData[i]);
+    }
+  }
+  emulateServerReturn(nearbyUsers, cb);
+}
+
+export function postNotifications(requester, requestee, cb) {
+  var newNoti = {
+    requester: requester,
+    requestee: requestee
+  }
+  var notiData = addDocument("notifications", newNoti);
+  emulateServerReturn(notiData, cb);
+}
+
+export function getNotifications(userId, cb) {
+  var notifications = readAllCollection('notifications');
+  notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
+  notifications = notifications.map((noti) => {
+    noti.requester = readDocument("users", noti.requester);
+    return noti;
+  });
+  emulateServerReturn(notifications, cb);
+}
+
+export function getOnlineUsers(cb) {
+  var onlineUsers = readDocument('onlineUsers', 1);
+  onlineUsers = onlineUsers.map((user) => {
+    return readDocument("users", user);
+  });
+  emulateServerReturn(onlineUsers, cb);
+}
+
+export function postInterviewSession(userId, cb) {
+  // Get the current UNIX time.
+  var time = new Date().getTime();
+  var newIntvSession =
+  {
+    "_id": userId,
+    "problem": "",
+    "feedback": undefined,
+    "interviewer": 1,
+    "interviewee": 4,
+    "timestamp": time,
+    "duration": "",
+    "code" : "",
+    "result": "WIP"
+  };
+  newIntvSession = addDocument('interviewSessions', newIntvSession);
+  emulateServerReturn(newIntvSession, cb);
 }

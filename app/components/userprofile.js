@@ -67,7 +67,7 @@ export default class UserProfile extends React.Component {
                 <div className="col-xs-12 col-sm-10 emphasis">
                   <h2><strong> {this.state.users.interview.length} </strong></h2>
                   <p><small>Interviews</small></p>
-                  <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/" } >See History</Link> </button>
+                  <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/"+this.props.params.id} >See History</Link> </button>
                 </div>
 
 

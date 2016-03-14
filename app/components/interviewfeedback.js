@@ -1,110 +1,101 @@
+import {Link} from 'react-router';
+import _ from 'lodash';
 import React from 'react';
 
 export default class InterviewFeedback extends React.Component {
   render() {
-    return(
-      <div className="col-md-8">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Interviewer </div>
-            <a href="#"><div style={{"fontSize":"20px"}}> <span style={{"border":"1px solid gray"}}> PIC </span> &nbsp;&nbsp;&nbsp;&nbsp;<span> Bill Gates </span></div></a>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Works at Microsoft.</div>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;<a href="#" style={{"color":"#0033CC"}}>Linkedin</a></div>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;<a href="#" style={{"color":"#0033CC"}}>Facebook</a></div>
-            <div>
+    if (this.props.data==null || this.props.data==undefined)
+      return(<div> You have no interview in your history </div>)
+    else{
+      return(
+          <div className="col-md-8">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Interviewer </div>
+                  <Link to={"/userprofile/"+this.props.data.interviewer._id}><div style={{"fontSize":"20px"}}> <img src={this.props.data.interviewer.avatar} width='55' height='55'></img> <span> {this.props.data.interviewer.fullName} </span></div></Link>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Email: {this.props.data.interviewer.email}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Experience: {this.props.data.interviewer.experience}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Location: {this.props.data.interviewer.location}.</div>
+                <div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Interviewee </div>
-            <a href="#"><div style={{"fontSize":"20px"}}> <span style={{"border":"1px solid gray"}}> PIC </span>&nbsp;&nbsp;&nbsp;&nbsp; <span> Mark Zuckerberg </span></div></a>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Works at Facebook.</div>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;<a href="#" style={{"color":"#0033CC"}}>Linkedin</a></div>
-            <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;<a href="#" style={{"color":"#0033CC"}}>Facebook</a></div>
-            <div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Interviewee </div>
+                  <Link to={"/userprofile/"+this.props.data.interviewee._id}><div style={{"fontSize":"20px"}}> <img src={this.props.data.interviewee.avatar} width='55' height='55'></img><span> {this.props.data.interviewee.fullName} </span></div></Link>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Email: {this.props.data.interviewee.email}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Experience: {this.props.data.interviewee.experience}.</div>
+                  <div style={{"fontSize":"20px"}}>&emsp; &emsp; &nbsp;&nbsp;&nbsp;Location: {this.props.data.interviewee.location}.</div>
+                <div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Interview question </div>
-            <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-            <div>
-              <div style={{"fontSize":"19px"}}>Count Complete Tree Nodes</div>
-              <div> Given a complete binary tree, count the number of nodes. <br></br>
-                In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Interview question </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div>
+                  <div style={{"fontSize":"19px"}}>{this.props.data.problem.title}</div>
+                  <div>
+                    {this.props.data.problem.question}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Solution </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
+                  {this.props.data.problem.answer}
+                </div>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Your code </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
+                  {this.props.data.code}
+                </div>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Feedback </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div>
+                  <div style={{"fontSize":"19px"}}> Pros: </div>
+                  {this.props.data.feedback.interviewer_pro}
+                  <div style={{"fontSize":"19px"}}> Cons: </div>
+                  {this.props.data.feedback.interviewer_con}
+                  <div style={{"fontSize":"19px"}}> Other comments </div>
+                  {this.props.data.feedback.interviewer_comment}
+                </div>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="row part-header"> Rating </div>
+                <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
+                <div className="rating">
+                  <ul className="list-inline pull-left">
+                    {
+                      _.times(this.props.data.feedback.interviewer_rating, (i) =>
+                        <li key={i}>
+                          <a>
+                            <span className="glyphicon glyphicon-star"></span>
+                          </a>
+                        </li>
+                      )
+                    }
+                  </ul>
+                  <br></br>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Your code </div>
-            <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-            <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
-              <span className="keyword"> class </span> Solution(object): <br></br>
-                  &emsp;<span className="keyword">def </span> countNodes(self, root):<br></br>
-                  &emsp;&emsp;<span className="keyword">return</span> 0;
-                  <br></br>
-                  <br></br>
-                  <br></br>
-                  <br></br>
-                  <br></br>
-            </div>
-          </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Solution </div>
-            <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-            <div> This question can be solve in time O(x) and space O(y) using z algorithm as below: </div>
-            <div style={{"marginTop":"10px","backgroundColor":"white","padding":"10px","overflowY":"auto","height": "300px"}}>
-              <span className="keyword"> class </span> Solution(object): <br></br>
-                  &emsp;<span className="keyword">def </span> countNodes(self, root):<br></br>
-                  &emsp;&emsp;<span className="keyword">return</span> 0;
-                  <br></br>
-                  <br></br>
-                  <br></br>
-                  <br></br>
-                  <br></br>
-            </div>
-          </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Feedback </div>
-            <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-            <div>
-              <div style={{"fontSize":"19px"}}> Pros: </div>
-              <ul>
-                <li> Code is very clear. </li>
-                <li> Good problem solving skill. </li>
-                <li> Handsome. </li>
-              </ul>
-              <div style={{"fontSize":"19px"}}> Cons: </div>
-              <ul>
-                <li> Need to talk more while coding. </li>
-                <li> Please dont use global variable. </li>
-                <li> Too handsome. </li>
-              </ul>
-              <div style={{"fontSize":"19px"}}> Other comments </div>
-              <div style={{"paddingLeft":"20px"}}>
-                  Woof woof!
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="row part-header"> Rating </div>
-            <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
-            <div className="rating">
-              <span> ★ </span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span><span>☆</span><span>☆</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+      )}
   }
 }

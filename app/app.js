@@ -9,6 +9,7 @@ import Navbar from './components/navbar.js';
 import UserProfile from './components/userprofile.js';
 import Meetup from './components/meetup';
 import PeopleProfile from './components/peopleprofile.js';
+import MeetupChat from './components/meetupchat.js';
 
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
@@ -22,7 +23,7 @@ class App extends React.Component {
     return (
       <div>
         <nav id="navbar-container" className="navbar navbar-fixed-top navbar-default">
-          <Navbar />
+          <Navbar userId={localStorage.getItem("userId")}/>
         </nav>
         {this.props.children}
       </div>
@@ -41,8 +42,9 @@ ReactDOM.render((
       <Route path="interview/:interviewerId/:intervieweeId" component={Interview} />
       <Route path="userprofile/:id" component={UserProfile} />
       <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
-      <Route path="history" component={History} />
+      <Route path="history/:userId" component={History} />
       <Route path="peopleprofile" component={PeopleProfile} />
+      <Route path="meetupchat/:id" component={MeetupChat} />
     </Route>
   </Router>
   ), document.getElementById('main-container')

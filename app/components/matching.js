@@ -1,23 +1,33 @@
 import React from 'react';
 import {Link} from 'react-router';
+import {postInterviewSession} from '../server';
 
 export default class Matching extends React.Component {
 
-  //  onPost(postContents) {
-  // Send to server.
-  // postPreferences(4, "Amherst, MA", postContents, () => {
-  //   // Database is now updated. Refresh the feed.
-  //   this.refresh();
-  //   });
-  //}
+  constructor(props) {
+      super(props);
+      this.state = {
+        language: "",
+        goal: undefined,
+        exp: undefined
+      };
+    }
 
-  //componentDidMount() {
-  //  this.refresh();
-  //}
-  //
-  handleMatching() {
-    return 2;
-  }
+    handleMatching(e) {
+      // Prevent the event from "bubbling" up the DOM tree.
+      e.preventDefault();
+      // Get data from state
+      var language = this.state.language;
+      var goal = this.state.goal;
+      var exp = this.state.exp;
+      if (language !== "" && goal !== undefined && exp !== undefined) {
+        // Add new interview session to db
+        postInterviewSession(4, () => {
+          // Database is now updated. Refresh the feed.
+          this.refresh();
+          });
+      }
+    }
 
   render() {
     return (
@@ -84,7 +94,7 @@ export default class Matching extends React.Component {
                     </li>
                   </ul>
                   <Link to={"/interview/" + localStorage.getItem("userId") + "/" + this.handleMatching()}>
-                    <button type="button" className="btn btn-default">
+                    <button type="button" className="btn btn-default" onClick={(e) => this.handleMatching(e)}>
                       Find me an interview!
                     </button>
                   </Link>

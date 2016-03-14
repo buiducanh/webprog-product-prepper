@@ -2,14 +2,11 @@ import React from 'react';
 import {Link} from 'react-router';
 
 export default class CodeEditor extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
 
   render() {
-    var interviewerId = this.state.interviewSessions.interviewer;
-    var intervieweeId = this.state.interviewSessions.interviewee;
+    var interviewerId = this.props.interviewerId;
+    var intervieweeId = this.props.intervieweeId;
+
 
     return(
         <div className="col-md-8">
@@ -26,7 +23,7 @@ export default class CodeEditor extends React.Component {
                 </button>
 
                 <Link to={"/feedback/" + interviewerId + "/" + intervieweeId}>
-                  <button  type="button" className="btn btn-default" onClick={(e) => this.handleSubmit(e)}>
+                  <button  type="button" className="btn btn-default">
                     <span className="glyphicon glyphicon-ban-circle"></span>  End Interview
                   </button>
                 </Link>
@@ -34,7 +31,10 @@ export default class CodeEditor extends React.Component {
 
             </div>
             <div className="panel-body" style={{height: '490px'}}>
-            Code Editor
+            Code Editor<br></br>
+          <textarea rows="22" cols="100">
+
+            </textarea>
             </div>
           </div>
         </div>

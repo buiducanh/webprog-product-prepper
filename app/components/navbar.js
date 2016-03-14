@@ -1,5 +1,6 @@
 import React from 'react';
 import {ResetDatabase} from '../database';
+import {getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
 import UserProfile from './userprofile.js'
 
@@ -7,9 +8,30 @@ import UserProfile from './userprofile.js'
 export default class Navbar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      notifications: [],
+      users: {languages: [], interview: []}
+    };
+  }
+
+  refresh() {
+    var callbackFunction = (notificationData) => {
+      this.setState({ notifications: notificationData });
+      console.log(notificationData);
+    }
+    getUserData(this.props.userId, (userData) => {
+      this.setState({users: userData});
+    });
+    getNotifications(localStorage.getItem("userId"), callbackFunction);
+  }
+
+  componentDidMount() {
+    while (google === undefined) {};
+    this.refresh();
   }
 
   render() {
+    var notifications = this.state.notifications;
     return (
       <div className="container">
         <div className="navbar-header">
@@ -34,11 +56,6 @@ export default class Navbar extends React.Component {
                 <span className="glyphicon glyphicon-flash"></span> Interview
               </button>
             </Link>
-
-            <Link to='/feedback'><button type="button" className="navbar-btn btn btn-default">
-              <span className="glyphicon glyphicon-flash"></span> Feedback
-            </button></Link>
-
             <Link to='/meetup'>
               <button type="button" className="navbar-btn btn btn-default">
                 <span className="glyphicon glyphicon-globe"></span> Meetup
@@ -46,56 +63,42 @@ export default class Navbar extends React.Component {
             </Link>
             <div className="btn-group" role="group">
               <button type="button" className="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <span className="glyphicon glyphicon-comment"></span> Notifications <span className="badge">4</span>
+                <span className="glyphicon glyphicon-comment"></span> Notifications <span className="badge">{this.state.notifications.length}</span>
               </button>
               <ul className="dropdown-menu meetup">
-                <li>
-                  <div className="media">
-                    <div className="media-left">
-                      Pic
-                    </div>
-                    <div className="media-body">
-                      Request from NewUser1<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-  <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                    </div>
-                  </div>
-                </li>
-                <li role="separator" className="divider"></li>
-                <li>
-                  <div className="media">
-                    <div className="media-left">
-                      Pic
-                    </div>
-                    <div className="media-body">
-                      Request from NewUser1<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-  <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                    </div>
-                  </div>
-                </li>
-                <li role="separator" className="divider"></li>
-                <li>
-                  <div className="media">
-                    <div className="media-left">
-                      Pic
-                    </div>
-                    <div className="media-body">
-                      Request from NewUser1<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-  <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                    </div>
-                  </div>
-                </li>
-                <li role="separator" className="divider"></li>
-                <li>
-                  <div className="media">
-                    <div className="media-left">
-                      Pic
-                    </div>
-                    <div className="media-body">
-                      Request from NewUser1<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-  <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                    </div>
-                  </div>
-                </li>
+                {this.state.notifications.map((noti, i) => {
+                  var requester = noti.requester;
+                  if (i + 1 === this.state.notifications.length) {
+                    return (<div key={i}>
+                      <li>
+                        <div className="media">
+                          <div className="media-left">
+                            Pic
+                          </div>
+                          <div className="media-body">
+                            Request from {requester.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+        <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
+                          </div>
+                        </div>
+                      </li>
+                    </div>);
+                  }
+                  return (<div key={i}>
+                    <li>
+                      <div className="media">
+                        <div className="media-left">
+                          Pic
+                        </div>
+                        <div className="media-body">
+                          Request from {requester.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+      <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
+                        </div>
+                      </div>
+                    </li>
+                    <li role="separator" className="divider"></li>
+                  </div>);
+                  })
+                }
               </ul>
             </div>
           </div>
@@ -108,12 +111,14 @@ export default class Navbar extends React.Component {
               </div>
               <div className="btn-group" role="group">
                 <button type="button" className="navbar-btn btn btn-default dropdown-toggle" data-toggle="dropdown">
-                  USERNAME
+                  {this.state.users.fullName}
                   <span className="caret"></span>
                 </button>
                 <ul className="dropdown-menu">
                   <li>
-                    <a href="#">Meetup chat</a>
+                    <Link to={"/meetupchat/" + localStorage.getItem("userId")}>
+                      <a href="#">Meetup chat</a>
+                    </Link>
                   </li>
                   <li>
                     <Link to={"/userprofile/" + localStorage.getItem("userId") } >Profile</Link>
@@ -128,7 +133,7 @@ export default class Navbar extends React.Component {
               <div className="input-group">
                 <input type="text" className="form-control" placeholder="Search candidates"></input>
                 <span className="input-group-btn">
-                  <Link to="/peopleprofile"> 
+                  <Link to="/peopleprofile">
                     <button type="submit" className="btn btn-default">
                       <span className="glyphicon glyphicon-search"></span>
                     </button>

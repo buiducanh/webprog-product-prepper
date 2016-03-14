@@ -6,6 +6,9 @@ var startupName = "Prepper";
 
 // Put your mock objects here, as in Workshop 4
 var initialData = {
+  "onlineUsers": {
+    "1": [1, 4]
+  },
   // The "user" collection. Contains all of the users in our Prepper system.
   "users": {
     // This user has id "1".
@@ -13,47 +16,53 @@ var initialData = {
       "_id": 1,
       "email": "someone@gmail.com",
       "fullName": "Someone",
-      "interview": [],
+      "interview": [1],
       "languages": ["Java", "Python"],
       "experience": 2,
       "cover": "http://www.f-covers.com/cover/geek-typography-code-css-command-facebook-cover-timeline-banner-for-fb.jpg",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-ponsy-deer.png",
-      "location": "New York, NY"
+      "location": "New York, NY",
+      position: {
+        lat: 42.373864,
+        lng: -72.515388,
+      }
     },
     "2": {
       "_id": 2,
       "email": "else@gmail.com",
-      "fullName": "Someone Else",
-      "interview": [],
+      "fullName": "Mike",
+      "interview": [2],
       "languages": ["Java"],
       "experience": 1,
       "cover": "http://facecoverz.com/static/img/uploads/o_facecoverz.com-1317912175824.png",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-cupcake-guy.png",
-      "location": "Boston, MA"
+      "location": "Boston, MA",
+      position: { lat: 42.373468, lng: -72.524271 }
     },
     "3": {
       "_id": 3,
       "email": "another@gmail.com",
-      "fullName": "Another Person",
+      "fullName": "Alex",
       "interview": [],
       "languages": ["Java", "C"],
       "experience": 2,
       "cover": "http://www.pickycovers.com/uploads/cover/f217c2b1ab2ff9369fd7fad92185fae3.jpg",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-short-hair-girl.png",
-      "location": "San Francisco, CA"
-
+      "location": "San Francisco, CA",
+      position: { lat: 12.373468, lng: -72.524271 }
     },
     // This is "you"!
     "4": {
       "_id": 4,
       "email": "pepperasalt@gmail.com",
       "fullName": "Pepper & Salt",
-      "interview": [1],
+      "interview": [1,2],
       "languages": ["Java"],
       "experience": 2,
       "cover": "http://cdn-img.fimfiction.net/story/8fas-1432553431-172259-full",
       "avatar": "http://www.lovemarks.com/wp-content/uploads/profile-avatars/default-avatar-tech-guy.png",
-      "location": "Amherst, MA"
+      "location": "Amherst, MA",
+      position: { lat: 42.371344, lng: -72.520924 }
     }
   },
   // all the interview sessions
@@ -66,6 +75,7 @@ var initialData = {
       "interviewee": 4,
       "timestamp": 1453668480000,
       "duration": "45 minutes",
+      "code" : "def ...",
       "result": "Successful"
     },
     "2": {
@@ -76,6 +86,7 @@ var initialData = {
       "interviewee": 4,
       "timestamp": 1453668880000,
       "duration": "45 minutes",
+      "code" : "def ...",
       "result": "Successful"
     }
   },
@@ -125,6 +136,18 @@ var initialData = {
       "question": "get the bits from position x to position y",
       "answer": "def .....",
       "difficulty": "Easy"
+    }
+  },
+  "notifications": {
+    "1": {
+      "_id": 1,
+      "requester": 2,
+      "requestee": 4,
+    },
+    "2": {
+      "_id": 2,
+      "requester": 1,
+      "requestee": 4,
     }
   }
 };
