@@ -105,6 +105,20 @@ export function getOnlineUsers(cb) {
   emulateServerReturn(onlineUsers, cb);
 }
 
+export function getChatSessions(sessionId, cb) {
+  var session = readDocument('chatSessions', sessionId);
+  session.initiator = readDocument('users', session.initiator);
+  session.memberLists = session.memberLists.map((member) => {
+    return readDocument('users', member);
+  });
+  session.chatMessages = session.chatMessages.map((message) => {
+    var messageObj = readDocument('chatMessages', message);
+    messageObj.owner = readDocument('users', messageObj.owner);
+    return messageObj;
+  });
+  emulateServerReturn(session, cb);
+}
+
 export function postInterviewSession(userId, cb) {
   // Get the current UNIX time.
   var time = new Date().getTime();
@@ -122,4 +136,18 @@ export function postInterviewSession(userId, cb) {
   };
   newIntvSession = addDocument('interviewSessions', newIntvSession);
   emulateServerReturn(newIntvSession, cb);
+}
+
+export function postChatMessage(value, chatSessionId, userId, cb) {
+  var chatMessage = {
+    "content": value,
+    "owner": userId,
+    "chatSessionId": chatSessionId
+  };
+  chatMessage = addDocument('chatMessages', chatMessage);
+  var chatSession = readDocument('chatSessions', chatSessionId);
+  chatSession.chatMessages.push(chatMessage._id);
+  writeDocument('chatSessions', chatSession);
+  chatMessage.owner = readDocument('users', userId);
+  emulateServerReturn(chatMessage, cb);
 }

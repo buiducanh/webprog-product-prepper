@@ -81,3 +81,7 @@ body {
 .chat-column {
   padding: 0;
 }
+
+.chat-history {
+  overflow: scroll;
+}
