@@ -13,7 +13,7 @@ export default class Matching extends React.Component {
       };
     }
 
-    handleMatching(e) {
+  handleMatching(e) {
       // Prevent the event from "bubbling" up the DOM tree.
       e.preventDefault();
       // Get data from state
@@ -93,7 +93,7 @@ export default class Matching extends React.Component {
                       </div>
                     </li>
                   </ul>
-                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" + this.handleMatching()}>
+                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" }>
                     <button type="button" className="btn btn-default" onClick={(e) => this.handleMatching(e)}>
                       Find me an interview!
                     </button>
