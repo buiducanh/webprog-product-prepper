@@ -149,6 +149,23 @@ var initialData = {
       "requester": 1,
       "requestee": 4,
     }
+  },
+  "chatSessions": {
+    "1": {
+      "_id": 1,
+      "active": true,
+      "initiator": 4,
+      "memberLists": [1, 3, 4],
+      "chatMessages": [1]
+    }
+  },
+  "chatMessages": {
+    "1": {
+      "_id": 1,
+      "content" : "Hello",
+      "owner" : 1,
+      "chatSessionId": 1
+    }
   }
 };
 
