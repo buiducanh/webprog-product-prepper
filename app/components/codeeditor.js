@@ -7,7 +7,6 @@ export default class CodeEditor extends React.Component {
     var interviewerId = this.props.interviewerId;
     var intervieweeId = this.props.intervieweeId;
 
-
     return(
         <div className="col-md-8">
           <div className="panel panel-default">
@@ -32,7 +31,7 @@ export default class CodeEditor extends React.Component {
             </div>
             <div className="panel-body" style={{height: '490px'}}>
             Code Editor<br></br>
-          <textarea rows="22" cols="100">
+            <textarea rows="22" cols="100">
 
             </textarea>
             </div>

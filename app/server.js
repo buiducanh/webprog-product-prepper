@@ -40,6 +40,7 @@ export function getInterviewData(user, cb) {
   emulateServerReturn(interviewData, cb);
 }
 
+
 export function getUserData (user, cb) {
   var userData = readDocument('users', user);
   emulateServerReturn(userData, cb);

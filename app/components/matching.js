@@ -13,9 +13,9 @@ export default class Matching extends React.Component {
       };
     }
 
-  handleMatching(e) {
+  handleMatching() {
       // Prevent the event from "bubbling" up the DOM tree.
-      e.preventDefault();
+      // e.preventDefault();
       // Get data from state
       var language = this.state.language;
       var goal = this.state.goal;
@@ -27,6 +27,7 @@ export default class Matching extends React.Component {
           this.refresh();
           });
       }
+      return 2;
     }
 
   render() {
@@ -93,8 +94,8 @@ export default class Matching extends React.Component {
                       </div>
                     </li>
                   </ul>
-                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" }>
-                    <button type="button" className="btn btn-default" onClick={(e) => this.handleMatching(e)}>
+                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" + this.handleMatching() }>
+                    <button type="button" className="btn btn-default">
                       Find me an interview!
                     </button>
                   </Link>

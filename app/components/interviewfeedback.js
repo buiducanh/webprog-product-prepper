@@ -31,18 +31,20 @@ export default class InterviewFeedback extends React.Component {
                 </div>
               </div>
             </div>
+
             <div className="panel panel-default">
               <div className="panel-heading">
+
                 <div className="row part-header"> Interview question </div>
                 <hr style={{"marginTop": "2px","marginBottom": "2px","borderTop": "1px solid gray"}}></hr>
                 <div>
                   <div style={{"fontSize":"19px"}}>{this.props.data.problem.title}</div>
-                  <div>
-                    {this.props.data.problem.question}
-                  </div>
+                  <div>{this.props.data.problem.question}</div>
                 </div>
+
               </div>
             </div>
+
             <div className="panel panel-default">
               <div className="panel-heading">
                 <div className="row part-header"> Solution </div>
