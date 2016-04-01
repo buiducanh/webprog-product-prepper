@@ -2,6 +2,7 @@ import React from 'react';
 import {postChatMessage, getOnlineUsers, getChatSessions} from '../server';
 import InterviewSession from './interviewsession';
 import _ from 'lodash';
+import ChatHistory from './chathistory';
 
 export default class MeetupChat extends React.Component {
   constructor(props) {
@@ -50,15 +51,6 @@ export default class MeetupChat extends React.Component {
     this.refresh();
   }
 
-  scrollChatHistory() {
-    var el = $('.chat-history');
-    el.scrollTop(el.prop('scrollHeight'));
-  }
-
-  componentDidUpdate() {
-    this.scrollChatHistory();
-  }
-
   render() {
     var partitionedUsers = _.partition(this.state.chatSessions.memberLists, (user) => { 
       return _.find(this.state.onlineUsers, (onlUser) => { return user._id == onlUser._id; }) 
@@ -98,7 +90,7 @@ export default class MeetupChat extends React.Component {
               <div className="panel-heading">
                 Connected
               </div>
-              <div className="panel-body chat-history">
+              <ChatHistory>
                 <ul className="list-inline">
                   {this.state.chatSessions.chatMessages.map((message, i) => {
                     return (<li key={i} className="chat-message">
@@ -107,7 +99,7 @@ export default class MeetupChat extends React.Component {
                   })
                   }
                 </ul>
-              </div>
+              </ChatHistory>
               <div className="panel-footer chat-box">
                 <div className="input-group">
                     <span className="input-group-addon" id="basic-addon1">@{this.state.chatSessions.initiator.fullName}</span>
