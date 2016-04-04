@@ -2,25 +2,9 @@ import React from 'react';
 import VoiceChat from "./voicechat";
 import Questions from "./interviewquestion";
 import CodeEditor from "./codeeditor";
-import {getInterviewData} from '../server';
-
 
 
 export default class Interview extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {interview: []};
-  }
-
-  refresh() {
-    getInterviewData(this.props.params.intervieweeId, (interviewData) => {
-      this.setState({interview: interviewData});
-    });
-  }
-
-  componentDidMount() {
-    this.refresh();
-  }
 
   render() {
     return (
@@ -29,11 +13,7 @@ export default class Interview extends React.Component {
             <div className="col-md-4">
 
               <VoiceChat />
-              {
-                this.state.interview.map((interview, i) => {
-                  return (<Questions key={i} interviewquestion={interview}/>);
-                })
-              }
+              <Questions user={this.props.params.userId}/>
 
             </div>
           <CodeEditor interviewerId={this.props.params.interviewerId} intervieweeId={this.props.params.intervieweeId} />
