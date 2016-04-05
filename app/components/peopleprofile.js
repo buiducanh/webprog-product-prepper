@@ -79,10 +79,6 @@ export default class PeopleProfile extends React.Component {
           </div>
         </div>
       </div>
-
-
-
-
     );
   }
 }
