@@ -119,16 +119,17 @@ export function getChatSessions(sessionId, cb) {
   emulateServerReturn(session, cb);
 }
 
-export function postInterviewSession(userId, cb) {
+export function postInterviewSession(interviewerId, cb) {
   // Get the current UNIX time.
   var time = new Date().getTime();
+  var intervieweeId = 2; // TODO random this number
+  //TODO random role????
   var newIntvSession =
   {
-    "_id": userId,
     "problem": "",
     "feedback": undefined,
-    "interviewer": 1,
-    "interviewee": 4,
+    "interviewer": interviewerId,
+    "interviewee": intervieweeId,
     "timestamp": time,
     "duration": "",
     "code" : "",

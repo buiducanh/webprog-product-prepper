@@ -7,10 +7,10 @@ export default class Questions extends React.Component {
     return (
           <div className="panel panel-default">
             <div className="panel-heading">
-              Interview Quesions
-              <textarea rows="17" cols="42">
+              <h4>Interview Quesions</h4>
+                <div>
 
-                </textarea>
+                </div>
             </div>
           </div>
       )

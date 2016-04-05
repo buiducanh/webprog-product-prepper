@@ -39,7 +39,7 @@ ReactDOM.render((
       <IndexRoute user={localStorage.getItem("userId")} component={HomePage} />
       <Route path="match" component={Matching} />
       <Route path="meetup" component={Meetup} />
-      <Route path="interview/:interviewerId/:intervieweeId" component={Interview} />
+      <Route path="interview/:interviewId" component={Interview} />
       <Route path="userprofile/:id" component={UserProfile} />
       <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
       <Route path="history/:userId" component={History} />
