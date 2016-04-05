@@ -57,7 +57,7 @@ export default class PastInterviewsList extends React.Component {
             </div>
           </div>
         </div>
-        <InterviewFeedback data={this.state.selected} />
+        <InterviewFeedback data={this.state.selected}/>
       </div>
     )
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import VoiceChat from "./voicechat";
-import Questions from "./interviewquestions";
+import Questions from "./interviewquestion";
 import CodeEditor from "./codeeditor";
 
 
@@ -10,14 +10,15 @@ export default class Interview extends React.Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-md-4">
-            <VoiceChat />
-            <Questions />
-          </div>
+            <div className="col-md-4">
+
+              <VoiceChat />
+              <Questions user={this.props.params.userId}/>
+
+            </div>
           <CodeEditor interviewerId={this.props.params.interviewerId} intervieweeId={this.props.params.intervieweeId} />
         </div>
       </div>
-
 
     )
   }
