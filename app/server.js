@@ -151,20 +151,3 @@ export function postChatMessage(value, chatSessionId, userId, cb) {
   chatMessage.owner = readDocument('users', userId);
   emulateServerReturn(chatMessage, cb);
 }
-
-/**
- * Searches for feed items with the given text.
- */
-export function searchForUsers(queryText, cb) {
-  // trim() removes whitespace before and after the query.
-  // toLowerCase() makes the query lowercase.
-  queryText = queryText.trim().toLowerCase();
-  var userData = readAllCollection('users');
-
-  emulateServerReturn(
-
-    userData.filter((user) => {
-      return user.fullName.toLowerCase().indexOf(queryText) !== -1;
-    }), cb
-  );
-}
