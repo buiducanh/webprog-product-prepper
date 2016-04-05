@@ -146,8 +146,8 @@ var initialData = {
     },
     "4": {
       "_id": 4,
-      "title": "calculator",
-      "question": "Implement a basic calculator to evaluate a simple expression string.",
+      "title": "compare version numbers",
+      "question": "Compare two version numbers version1 and version2. If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.",
       "answer": "class Solution(object):\n  def compareVersion(self, version1, version2):\n    \"\"\"\n    :type version1: str\n    :type version2: str\n    :rtype: int\n    \"\"\"\n    v1 = version1.split(\'.\')\n    v2 = version2.split(\'.\')\n    l1, l2 = len(v1), len(v2)\n    for i in xrange(max(l1, l2)):\n        ver1 = int(v1[i]) if i < len(v1) else 0\n        ver2 = int(v2[i]) if i < len(v2) else 0\n        if ver1 > ver2:\n            return 1\n        elif ver1 < ver2:\n            return -1\n    return 0",
       "difficulty": "Easy"
     }
