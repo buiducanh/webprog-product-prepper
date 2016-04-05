@@ -4,3 +4,12 @@
 export function unixTimeToString(time) {
   return new Date(time).toLocaleString();
 }
+
+export function outputHTMLForLinesOfCode(answer) {
+  var arrayOfLines = answer.split("\n");
+  return (
+    arrayOfLines.map((line, i) => {
+      <span key={i}>{line}<br></br></span>
+    })
+  )
+}
