@@ -24,7 +24,7 @@ var initialData = {
       "location": "New York, NY",
       position: {
         lat: 42.373864,
-        lng: -72.515388,
+        lng: -72.515388
       }
     },
     "2": {
@@ -127,14 +127,28 @@ var initialData = {
       "_id": 1,
       "title": "simple binary tree",
       "question": "print a binary tree inorder",
-      "answer": "def .....",
-      "difficulty": "Easy"
+      "answer": "List<Integer> list =new ArrayList();\n    Stack<TreeNode> stack=new Stack();\n    if(root==null) return list;\n    while(root!=null){\n        stack.push(root);\n        root=root.left;\n        while(root==null){\n            if(stack.empty()) return list;\n            root=stack.pop();\n            list.add(root.val);\n            root=root.right;\n        }\n    }\n    return list;",
+      "difficulty": "Medium"
     },
     "2": {
       "_id": 2,
-      "title": "bit manipulation",
-      "question": "get the bits from position x to position y",
-      "answer": "def .....",
+      "title": "calculator",
+      "question": "Implement a basic calculator to evaluate a simple expression string.",
+      "answer": "public int calculate(String s) {\n    Stack<Integer> stackInt = new Stack<>(), stackSign = new Stack<>();\n    int result = 0, sign = 1, num = 0;\n    for(int i=0; i<s.length(); i++) {\n        char c = s.charAt(i);\n        if(c >= \'0\' && c <= \'9\') {\n            int digit = Character.getNumericValue(c);\n            if((Integer.MAX_VALUE-digit)\/10<num) num = Integer.MAX_VALUE;\n            else num = 10 * num + digit;\n        } else if(c == \'+\' || c == \'-\') {\n            result += num * sign;\n            num = 0;\n            sign = c == \'+\' ? 1 : -1;\n        } else if(c == \'(\') {\n            stackInt.push(result);\n            stackSign.push(sign);\n            result = 0;\n            sign = 1;\n        } else if(c == \')\') {\n            result += num * sign;\n            result = result * stackSign.pop() + stackInt.pop();\n            num = 0;\n            sign = 1;\n        }\n    }\n    result += num * sign;\n    return result; }",
+      "difficulty": "Hard"
+    },
+    "3": {
+      "_id": 3,
+      "title": "counting bits",
+      "question": "Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.",
+      "answer": "class Solution {\npublic:\n    vector<int> countBits(int num) {\n         vector<int>result;result.push_back(0);\n         for (int i=1; i<=num; i++) result.push_back(1+result[(i-1)&i])；\n         return result;\n    }\n}",
+      "difficulty": "Easy"
+    },
+    "4": {
+      "_id": 4,
+      "title": "calculator",
+      "question": "Implement a basic calculator to evaluate a simple expression string.",
+      "answer": "class Solution(object):\n  def compareVersion(self, version1, version2):\n    \"\"\"\n    :type version1: str\n    :type version2: str\n    :rtype: int\n    \"\"\"\n    v1 = version1.split(\'.\')\n    v2 = version2.split(\'.\')\n    l1, l2 = len(v1), len(v2)\n    for i in xrange(max(l1, l2)):\n        ver1 = int(v1[i]) if i < len(v1) else 0\n        ver2 = int(v2[i]) if i < len(v2) else 0\n        if ver1 > ver2:\n            return 1\n        elif ver1 < ver2:\n            return -1\n    return 0",
       "difficulty": "Easy"
     }
   },
@@ -142,12 +156,12 @@ var initialData = {
     "1": {
       "_id": 1,
       "requester": 2,
-      "requestee": 4,
+      "requestee": 4
     },
     "2": {
       "_id": 2,
       "requester": 1,
-      "requestee": 4,
+      "requestee": 4
     }
   },
   "chatSessions": {
