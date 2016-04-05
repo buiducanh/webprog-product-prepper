@@ -2,11 +2,16 @@ import React from 'react';
 import {Link} from 'react-router';
 
 export default class CodeEditor extends React.Component {
+  componentDidMount() {
+    var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/firepads/putInterviewIdHere');
+    var codeMirror = CodeMirror(document.getElementById('firepad'), { lineWrapping: true });
+    var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+        { richTextShortcuts: true, richTextToolbar: true, placeholder : 'Put your code here!' });
+  }
 
   render() {
     var interviewerId = this.props.interviewerId;
     var intervieweeId = this.props.intervieweeId;
-
 
     return(
         <div className="col-md-8">
@@ -32,9 +37,10 @@ export default class CodeEditor extends React.Component {
             </div>
             <div className="panel-body" style={{height: '490px'}}>
             Code Editor<br></br>
-          <textarea rows="22" cols="100">
+          <div id="firepad" style={{ width: '700px',height: '450px',backgroundColor: '#f62'}}>
 
-            </textarea>
+          </div>
+
             </div>
           </div>
         </div>
