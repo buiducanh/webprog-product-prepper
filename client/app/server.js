@@ -105,7 +105,7 @@ export function getOnlineUsers(cb) {
   emulateServerReturn(onlineUsers, cb);
 }
 
-export function getChatSessions(sessionId, cb) {
+function getChatSessionsSync(sessionId) {
   var session = readDocument('chatSessions', sessionId);
   session.initiator = readDocument('users', session.initiator);
   session.memberLists = session.memberLists.map((member) => {
@@ -116,7 +116,11 @@ export function getChatSessions(sessionId, cb) {
     messageObj.owner = readDocument('users', messageObj.owner);
     return messageObj;
   });
-  emulateServerReturn(session, cb);
+  return session;
+}
+
+export function getChatSessions(sessionId, cb) {
+  emulateServerReturn(getChatSessionsSync(sessionId), cb);
 }
 
 export function postInterviewSession(interviewerId, cb) {
@@ -168,4 +172,12 @@ export function searchForUsers(queryText, cb) {
       return user.fullName.toLowerCase().indexOf(queryText) !== -1;
     }), cb
   );
+}
+
+export function deleteChatMember(chatSessionId, userId, cb) {
+  var chatSession = readDocument("chatSessions", chatSessionId);
+  var indexOfUser = chatSession.memberLists.indexOf(userId);
+  chatSession.memberLists.splice(indexOfUser, 1);
+  writeDocument('chatSessions', chatSession);
+  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
 }

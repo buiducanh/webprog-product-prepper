@@ -7,7 +7,7 @@
   list-style-type:none;
   font-size: 19px;
 }
-.history .panel-heading, .panel {
+.history .panel-heading, .history .panel {
   border-radius: 10px;
 }
 .history .keyword {
