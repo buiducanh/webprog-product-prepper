@@ -1,20 +1,40 @@
 import React from 'react';
 import {getAllUserData} from '../server';
+import {searchForUsers} from '../server';
 import {Link} from 'react-router';
 
 export default class PeopleProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {  users: [] };
+    this.searchTerm = this.props.params.searchTerm;
+  }
+  componentWillUpdate() {
+    console.log("update");
+  }
+
+  componentWillReceiveProps() {
+    console.log(" props")
+    this.searchTerm = this.props.params.searchTerm;
+    console.log(this.searchTerm + " " + this.props.params.searchTerm);
+    this.refresh();
   }
 
   refresh() {
-    getAllUserData((userData) => {
-      this.setState({users: userData});
-    });
+    if (this.searchTerm === undefined) {
+      getAllUserData((userData) => {
+        this.setState({users: userData});
+      });
+    }
+    else {
+      searchForUsers(this.searchTerm, (userData) => {
+        this.setState({users: userData});
+      });
+    }
   }
 
   componentDidMount() {
+    console.log("mounted");
     this.refresh();
   }
 
@@ -79,10 +99,6 @@ export default class PeopleProfile extends React.Component {
           </div>
         </div>
       </div>
-
-
-
-
     );
   }
 }
