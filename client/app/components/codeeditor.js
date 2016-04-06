@@ -4,8 +4,9 @@ import {Link} from 'react-router';
 var interviewId = -1;
 export default class CodeEditor extends React.Component {
   componentDidMount() {
-    var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/firepads/'+interviewId);
-    console.log(firepadRef);
+    var firepadLink = 'https://brilliant-torch-7009.firebaseio.com/firepads/'+interviewId;
+    var firepadRef = new Firebase(firepadLink);
+    console.log(firepadLink)
     var codeMirror = CodeMirror(document.getElementById('firepad'), { lineWrapping: true });
     var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
         { richTextShortcuts: true, richTextToolbar: true, placeholder : 'Put your code here!' });
