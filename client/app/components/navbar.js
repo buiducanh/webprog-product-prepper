@@ -33,7 +33,6 @@ handleKeyUp(e) {
   refresh() {
     var callbackFunction = (notificationData) => {
       this.setState({ notifications: notificationData });
-      console.log(notificationData);
     }
     getUserData(this.props.userId, (userData) => {
       this.setState({users: userData});

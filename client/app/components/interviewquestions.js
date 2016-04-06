@@ -4,13 +4,15 @@ import React from 'react';
 
 export default class Questions extends React.Component {
   render() {
+    var data = this.props.interviewquestion;
     return (
           <div className="panel panel-default">
             <div className="panel-heading">
-              Interview Quesions
-              <textarea rows="17" cols="42">
-
-                </textarea>
+              <h4>Interview Quesions</h4>
+                <div>
+                    {data.problem.title};
+                    {data.problem.question};
+                </div>
             </div>
           </div>
       )

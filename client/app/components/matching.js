@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, hashHistory} from 'react-router';
 import {postInterviewSession} from '../server';
 
 export default class Matching extends React.Component {
@@ -9,7 +9,7 @@ export default class Matching extends React.Component {
       this.state = {
         language: "",
         goal: undefined,
-        exp: undefined
+        exp: undefined,
       };
     }
 
@@ -18,15 +18,13 @@ export default class Matching extends React.Component {
       e.preventDefault();
       // Get data from state
       var language = this.state.language;
-      var goal = this.state.goal;
       var exp = this.state.exp;
-      if (language !== "" && goal !== undefined && exp !== undefined) {
+      var idInterview = "";
         // Add new interview session to db
-        postInterviewSession(4, () => {
-          // Database is now updated. Refresh the feed.
-          this.refresh();
+        postInterviewSession(localStorage.getItem('userId'), (interviewSession) => {
+            idInterview = interviewSession._id;
+            hashHistory.push("/interview/" + idInterview);
           });
-      }
     }
 
   render() {
@@ -71,16 +69,7 @@ export default class Matching extends React.Component {
                         </div>
                       </div>
                     </li>
-                    <li className="list-group-item">
-                      <h4> What position are you looking to interview for?</h4>
-                      <div className="row">
-                        <select className="form-control">
-                          <option>Full Time</option>
-                          <option>Internship</option>
-                          <option>Other</option>
-                        </select>
-                      </div>
-                    </li>
+
                     <li className="list-group-item">
                       <h4> How many years of programming experience have you had?</h4>
                       <div className="row">
@@ -88,16 +77,15 @@ export default class Matching extends React.Component {
                               <option>Less than 2 years</option>
                               <option>2-5 years</option>
                               <option>5-7 years</option>
-                              <option>More than 7 years</option>
                         </select>
                       </div>
                     </li>
                   </ul>
-                  <Link to={"/interview/" + localStorage.getItem("userId") + "/" }>
+
                     <button type="button" className="btn btn-default" onClick={(e) => this.handleMatching(e)}>
                       Find me an interview!
                     </button>
-                  </Link>
+
                 </form>
               </div>
             </div>
