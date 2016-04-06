@@ -8,7 +8,6 @@ export default class Matching extends React.Component {
       super(props);
       this.state = {
         language: "",
-        goal: undefined,
         exp: undefined,
       };
     }
@@ -19,11 +18,11 @@ export default class Matching extends React.Component {
       // Get data from state
       var language = this.state.language;
       var exp = this.state.exp;
-      var idInterview = "";
+      var interviewId = "";
         // Add new interview session to db
         postInterviewSession(localStorage.getItem('userId'), (interviewSession) => {
-            idInterview = interviewSession._id;
-            hashHistory.push("/interview/" + idInterview);
+            interviewId = interviewSession._id;
+            hashHistory.push("/interview/" + interviewId);
           });
     }
 

@@ -12,6 +12,25 @@ export default class CodeEditor extends React.Component {
         { richTextShortcuts: true, richTextToolbar: true, placeholder : 'Put your code here!' });
   }
 
+  //handleSubmit(clickEvent) {
+    //
+    // var code = $("#code").val();
+    // var myRole = "";
+    // if (localStorage.getItem("userId") == this.props.params.intervieweeId) myRole = "interviewee";
+    // else {
+    //   myRole = "interviewer";
+    // }
+    //
+    //
+    // if (clickEvent.button === 0) {
+    //   // Callback function for both the like and unlike cases.
+    //   var callbackFunction = (feedbackData) => {
+    //     console.log("submit feedback id: ", feedbackData);
+    //   };
+    //   postAnswers(feedbackData, callbackFunction);
+    // }
+  //}
+
   render() {
     var interviewerId = this.props.interviewerId;
     var intervieweeId = this.props.intervieweeId;
