@@ -1,3 +1,8 @@
+/* Prevent an HTML element from displaying at all. */
+.hidden {
+  display: 'none';
+}
+
 body {
   padding-top: 60px;
 }

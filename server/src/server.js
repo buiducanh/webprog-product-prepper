@@ -10,6 +10,7 @@ var database = require('./database');
 var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
+var readAllCollection = database.readAllCollection;
 
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
@@ -54,6 +55,32 @@ app.post('/resetdb', function(req, res) {
 // You run the server from `server`, so `../client/build` is `server/../client/build`.
 // '..' means "go up one directory", so this translates into `client/build`!
 app.use(express.static('../client/build'));
+
+/**
+ * Searches for feed items with the given text.
+ */
+
+ app.post('/peopleprofile/:searchTerm', function(req, res) {
+   console.log ("req");
+   var queryText = req.params.searchTerm;
+   var fromUser = getUserIdFromToken(req.get('Authorization'));
+   var user = readDocument('users', fromUser);
+
+   console.log ("type is: " );
+   if (typeof(req.body) === 'string') {
+     // trim() removes whitespace before and after the query.
+     // toLowerCase() makes the query lowercase.
+     queryText = queryText.trim().toLowerCase();
+     var userData = readAllCollection('users');
+
+     res.send(userData.filter((user) => {
+       return user.fullName.toLowerCase().indexOf(queryText) !== -1;
+     }));
+   } else {
+     // 400: Bad Request.
+     res.status(400).end();
+   }
+ });
 
 /**
  * Translate JSON Schema Validation failures into error 400s.

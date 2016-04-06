@@ -2,6 +2,7 @@ import React from 'react';
 import {ResetDatabase} from '../database';
 import {getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
+import ErrorBanner from './errorbanner';
 import UserProfile from './userprofile.js'
 
 
@@ -50,6 +51,13 @@ handleKeyUp(e) {
     var peopleProfileUrl = this.state.value ? '/peopleprofile/' + this.state.value : '/peopleprofile';
     return (
       <div className="container">
+
+        <div className="row">
+          <div className="col-md-12">
+            <ErrorBanner />
+          </div>
+        </div>
+
         <div className="navbar-header">
           <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span className="sr-only">Toggle navigation</span>

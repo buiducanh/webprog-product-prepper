@@ -27,9 +27,11 @@ export default class PeopleProfile extends React.Component {
       });
     }
     else {
+      
       searchForUsers(this.searchTerm, (userData) => {
         this.setState({users: userData});
       });
+
     }
   }
 
