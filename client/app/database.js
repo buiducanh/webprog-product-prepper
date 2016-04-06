@@ -251,6 +251,9 @@ export function readAllCollection(collectionName) {
 export function resetDatabase() {
   localStorage.setItem(startupName, JSON.stringify(initialData));
   data = JSONClone(initialData);
+  var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/');
+  //clean database for the code editor
+  firepadRef.remove();
 }
 
 /**

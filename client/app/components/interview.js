@@ -31,7 +31,7 @@ export default class Interview extends React.Component {
                 })
               }
           </div>
-          <CodeEditor interviewerId={this.props.params.interviewerId} intervieweeId={this.props.params.intervieweeId} />
+          <CodeEditor interviewerId={this.props.params.interviewerId} intervieweeId={this.props.params.intervieweeId} interviewId={this.props.params.interviewId} />
         </div>
       </div>
 
