@@ -63,6 +63,10 @@ body {
   color: red;
 }
 
+.online-count {
+  height: 55px;
+}
+
 .online-panel {
   border: 1px solid black;
 }

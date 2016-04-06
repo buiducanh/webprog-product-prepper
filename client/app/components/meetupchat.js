@@ -1,5 +1,5 @@
 import React from 'react';
-import {postChatMessage, getOnlineUsers, getChatSessions} from '../server';
+import {deleteChatMember, postChatMessage, getOnlineUsers, getChatSessions} from '../server';
 import InterviewSession from './interviewsession';
 import _ from 'lodash';
 import ChatHistory from './chathistory';
@@ -11,6 +11,7 @@ export default class MeetupChat extends React.Component {
       onlineUsers: [], 
       chatSessions: {
         chatMessages: [],
+        memberLists: [],
         initiator: {}
       },
       value: ""
@@ -47,13 +48,24 @@ export default class MeetupChat extends React.Component {
     }
   }
 
+  handleEditMemberButton(e, userId) {
+    e.preventDefault();
+    deleteChatMember(this.state.chatSessions._id, userId, (chatSession) => {
+      this.setState({chatSessions: chatSession});
+    });
+  }
+
   componentDidMount() {
     this.refresh();
   }
 
   render() {
+    function currentUserPredicate(member) {
+      return Number(localStorage.getItem('userId')) === member._id;
+    }
+    this.state.chatSessions.memberLists = _.reject(this.state.chatSessions.memberLists, currentUserPredicate);
     var partitionedUsers = _.partition(this.state.chatSessions.memberLists, (user) => { 
-      return _.find(this.state.onlineUsers, (onlUser) => { return user._id == onlUser._id; }) 
+      return _.find(this.state.onlineUsers, (onlUser) => { return user._id == onlUser._id; });
     });
     var onlineUsers = partitionedUsers[0];
     var offlineUsers = partitionedUsers[1];
@@ -62,8 +74,8 @@ export default class MeetupChat extends React.Component {
         <div className="row">
           <div className="col-md-3 online-column">
             <div className="panel online-panel panel-default">
-              <div className="panel-heading">
-                {onlineUsers.length} online user
+              <div className="panel-heading online-count">
+                <h4 className="panel-title pull-left">{onlineUsers.length} online user</h4>
               </div>
               <div className="panel-body online-users">
                 <ul>
@@ -87,8 +99,48 @@ export default class MeetupChat extends React.Component {
           </div>
           <div className="col-md-9 chat-column">
             <div className="panel online-panel panel-default">
-              <div className="panel-heading">
-                Connected
+              <div className="panel-heading clearfix">
+                <div className="btn-group pull-right member-edit" role="group">
+                  <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Edit Members
+                    <span className="caret"></span>
+                  </button>
+                  <ul className="dropdown-menu">
+                    {this.state.chatSessions.memberLists.map((user, i) => {
+                      if (i + 1 === this.state.chatSessions.memberLists.length) {
+                        return (<div key={i}>
+                          <li>
+                            <div className="media">
+                              <div className="media-left">
+                                Pic
+                              </div>
+                              <div className="media-body">
+                                {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                                <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
+                              </div>
+                            </div>
+                          </li>
+                        </div>);
+                      }
+                      return (<div key={i}>
+                        <li>
+                          <div className="media">
+                            <div className="media-left">
+                              Pic
+                            </div>
+                            <div className="media-body">
+                              {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                              <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
+                            </div>
+                          </div>
+                        </li>
+                        <li role="separator" className="divider"></li>
+                      </div>);
+                      })
+                    }
+                  </ul>
+                </div>
+                <h4 className="panel-title pull-left">Connected</h4>
               </div>
               <ChatHistory>
                 <ul className="list-inline">
