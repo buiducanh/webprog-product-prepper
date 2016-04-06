@@ -7,28 +7,21 @@ export default class PeopleProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {  users: [] };
-    this.searchTerm = this.props.params.searchTerm;
-  }
-  componentWillUpdate() {
-    console.log("update");
   }
 
   componentWillReceiveProps() {
-    console.log(" props")
-    this.searchTerm = this.props.params.searchTerm;
-    console.log(this.searchTerm + " " + this.props.params.searchTerm);
     this.refresh();
   }
 
   refresh() {
-    if (this.searchTerm === undefined) {
+    if (this.props.searchTerm === undefined || this.props.searchTerm === "") {
       getAllUserData((userData) => {
         this.setState({users: userData});
       });
     }
     else {
       
-      searchForUsers(this.searchTerm, (userData) => {
+      searchForUsers(this.props.searchTerm, (userData) => {
         this.setState({users: userData});
       });
 
@@ -36,7 +29,6 @@ export default class PeopleProfile extends React.Component {
   }
 
   componentDidMount() {
-    console.log("mounted");
     this.refresh();
   }
 

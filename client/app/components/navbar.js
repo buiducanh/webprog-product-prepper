@@ -2,7 +2,6 @@ import React from 'react';
 import {ResetDatabase} from '../database';
 import {getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
-import ErrorBanner from './errorbanner';
 import UserProfile from './userprofile.js'
 
 
@@ -17,9 +16,9 @@ export default class Navbar extends React.Component {
   }
 
   handleChange(e) {
-  e.preventDefault();
-  this.setState({ value: e.target.value });
-}
+    e.preventDefault();
+    this.setState({ value: e.target.value });
+  }
 
 handleKeyUp(e) {
   e.preventDefault();
@@ -48,16 +47,8 @@ handleKeyUp(e) {
 
   render() {
     var notifications = this.state.notifications;
-    var peopleProfileUrl = this.state.value ? '/peopleprofile/' + this.state.value : '/peopleprofile';
     return (
       <div className="container">
-
-        <div className="row">
-          <div className="col-md-12">
-            <ErrorBanner />
-          </div>
-        </div>
-
         <div className="navbar-header">
           <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span className="sr-only">Toggle navigation</span>
@@ -159,7 +150,7 @@ handleKeyUp(e) {
                   value={this.state.value} onChange={(e) => this.handleChange(e)}
                   onKeyUp={(e) => this.handleKeyUp(e)} ></input>
                 <span className="input-group-btn">
-                  <Link to= {peopleProfileUrl} >
+                  <Link to={{pathname: '/searchpeople', query: {searchTerm: this.state.value}}} >
                     <button type="submit" className="btn btn-default">
                       <span className="glyphicon glyphicon-search"></span>
                     </button>
