@@ -10,9 +10,25 @@ export default class Navbar extends React.Component {
     super(props);
     this.state = {
       notifications: [],
-      users: {languages: [], interview: []}
+      users: {languages: [], interview: []},
+      value: ""
     };
   }
+
+  handleChange(e) {
+  e.preventDefault();
+  this.setState({ value: e.target.value });
+}
+
+handleKeyUp(e) {
+  e.preventDefault();
+  if (e.key === "Enter") {
+    var searchTerm = this.state.value.trim();
+    if (searchTerm !== "") {
+      this.setState({ value: "" });
+    }
+  }
+}
 
   refresh() {
     var callbackFunction = (notificationData) => {
@@ -32,6 +48,7 @@ export default class Navbar extends React.Component {
 
   render() {
     var notifications = this.state.notifications;
+    var peopleProfileUrl = this.state.value ? '/peopleprofile/' + this.state.value : '/peopleprofile';
     return (
       <div className="container">
         <div className="navbar-header">
@@ -131,9 +148,11 @@ export default class Navbar extends React.Component {
             </div>
             <form className="navbar-form navbar-right" role="search">
               <div className="input-group">
-                <input type="text" className="form-control" placeholder="Search candidates"></input>
+                <input type="text" className="form-control" placeholder="Search candidates"
+                  value={this.state.value} onChange={(e) => this.handleChange(e)}
+                  onKeyUp={(e) => this.handleKeyUp(e)} ></input>
                 <span className="input-group-btn">
-                  <Link to="/peopleprofile">
+                  <Link to= {peopleProfileUrl} >
                     <button type="submit" className="btn btn-default">
                       <span className="glyphicon glyphicon-search"></span>
                     </button>

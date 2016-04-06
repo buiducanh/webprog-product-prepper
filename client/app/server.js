@@ -162,7 +162,6 @@ export function searchForUsers(queryText, cb) {
   var userData = readAllCollection('users');
 
   emulateServerReturn(
-
     userData.filter((user) => {
       return user.fullName.toLowerCase().indexOf(queryText) !== -1;
     }), cb
