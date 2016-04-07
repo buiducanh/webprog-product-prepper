@@ -1,7 +1,8 @@
-import {readDocument, writeDocument, addDocument, readAllCollection} from './database.js';
+import {deleteDocument, readDocument, writeDocument, addDocument, readAllCollection} from './database.js';
 import _ from "lodash";
 
 var token = 'eyJpZCI6NH0='; // <-- Put your base64'd JSON token here
+
 /**
  * Properly configure+send an XMLHttpRequest with error handling, authorization token,
  * and other needed properties.
@@ -67,7 +68,6 @@ function sendXHR(verb, resource, body, cb) {
   }
 }
 
-
 /**
  * Emulates how a REST call is *asynchronous* -- it calls your function back
  * some time in the future with data.
@@ -88,7 +88,25 @@ function getInterviewDataSync(interviewId) {
   interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
   interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
   // Resolve feedback
-  interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
+  if (interviewItem.feedback === undefined) {
+    interviewItem.feedback = {
+      "interviewer": "",
+      "interviewee": "",
+      "interviewer_pro": "",
+      "interviewer_con": "",
+      "interviewer_comment": "",
+      "interviewer_rating": "",
+      "interviewee_pro": "",
+      "interviewee_con": "",
+      "interviewee_comment": "",
+      "interviewee_rating": "",
+      "interview_session": "",
+      "timestamp": ""
+    }
+  }
+  else {
+    interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
+  }
   // Resolve problem
   interviewItem.problem = readDocument('problems', interviewItem.problem);
   return interviewItem;
@@ -140,70 +158,8 @@ export function postFeedbackData(feedbackData, cb) {
 }
 
 export function postAnswers(feedbackData, cb) {
-  // dummy = {_id: 1, text: "dummy"}
   var newFeedback = addDocument("feedbacks", feedbackData);
   emulateServerReturn(newFeedback, cb);
-}
-
-export function getNearbyUsers(radius, userId, cb) {
-  var userData = readAllCollection('users');
-  var currentUser = userData[userId - 1];
-  userData.splice(userId - 1, 1);
-  var nearbyUsers = [];
-  for(var i = 0; i < userData.length; i++) {
-    var curLatLng = new google.maps.LatLng(currentUser.position);
-    var otherLatLng = new google.maps.LatLng(userData[i].position);
-    var distance = google.maps.geometry.spherical.computeDistanceBetween(curLatLng, otherLatLng);
-    if (distance <= radius) {
-      nearbyUsers.push(userData[i]);
-    }
-  }
-  emulateServerReturn(nearbyUsers, cb);
-}
-
-export function postNotifications(requester, requestee, cb) {
-  var newNoti = {
-    requester: requester,
-    requestee: requestee
-  }
-  var notiData = addDocument("notifications", newNoti);
-  emulateServerReturn(notiData, cb);
-}
-
-export function getNotifications(userId, cb) {
-  var notifications = readAllCollection('notifications');
-  notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
-  notifications = notifications.map((noti) => {
-    noti.requester = readDocument("users", noti.requester);
-    return noti;
-  });
-  emulateServerReturn(notifications, cb);
-}
-
-export function getOnlineUsers(cb) {
-  var onlineUsers = readDocument('onlineUsers', 1);
-  onlineUsers = onlineUsers.map((user) => {
-    return readDocument("users", user);
-  });
-  emulateServerReturn(onlineUsers, cb);
-}
-
-function getChatSessionsSync(sessionId) {
-  var session = readDocument('chatSessions', sessionId);
-  session.initiator = readDocument('users', session.initiator);
-  session.memberLists = session.memberLists.map((member) => {
-    return readDocument('users', member);
-  });
-  session.chatMessages = session.chatMessages.map((message) => {
-    var messageObj = readDocument('chatMessages', message);
-    messageObj.owner = readDocument('users', messageObj.owner);
-    return messageObj;
-  });
-  return session;
-}
-
-export function getChatSessions(sessionId, cb) {
-  emulateServerReturn(getChatSessionsSync(sessionId), cb);
 }
 
 export function postInterviewSession(interviewerId, cb) {
@@ -223,12 +179,70 @@ export function postInterviewSession(interviewerId, cb) {
     "result": "WIP"
   };
   interviewItem = addDocument('interviewSessions', interviewItem);
+
+  var interviewee = readDocument("users", intervieweeId);
+  var interviewer = readDocument("users", interviewerId);
+  interviewee.interview.push(interviewItem._id);
+  interviewer.interview.push(interviewItem._id);
+  writeDocument("users", interviewee);
+  writeDocument("users", interviewer);
+
   // Resolve participants
   interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
   interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
   // Resolve problem
   interviewItem.problem = readDocument('problems', interviewItem.problem);
   emulateServerReturn(interviewItem, cb);
+}
+
+
+/**
+ * Searches for feed items with the given text.
+ */
+export function searchForUsers(queryText, cb) {
+  var userData = readAllCollection('users');
+  userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
+  emulateServerReturn(userData, cb);
+  // userID is not needed; it's included in the JSON web token.
+  //sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
+  //  cb(JSON.parse(xhr.responseText));
+  //});
+
+}
+
+/**
+ * HONORS FEATURES
+ */
+export function deleteChatMember(chatSessionId, userId, cb) {
+  var chatSession = readDocument("chatSessions", chatSessionId);
+  var indexOfUser = chatSession.memberLists.indexOf(userId);
+  chatSession.memberLists.splice(indexOfUser, 1);
+  writeDocument('chatSessions', chatSession);
+  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
+}
+
+export function addChatMember(chatSessionId, userId, cb) {
+  var chatSession = readDocument("chatSessions", chatSessionId);
+  chatSession.memberLists.push(userId);
+  writeDocument('chatSessions', chatSession);
+  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
+}
+
+export function deleteNotification(notificationId, cb) {
+  var notification = readDocument("notifications", notificationId);
+  deleteDocument("notifications", notificationId);
+  notification.requester = readDocument("users", notification.requester);
+  notification.chatSession = readDocument("chatSessions", notification.chatSession);
+  emulateServerReturn(notification, cb);
+}
+
+export function updateNotificationStatusToOngoing(notificationId, cb) {
+  var notification = readDocument("notifications", notificationId);
+  notification.status = "ongoing";
+  writeDocument("notifications", notification);
+  notification.requester = readDocument("users", notification.requester);
+  notification.chatSession = readDocument("chatSessions", notification.chatSession);
+  emulateServerReturn(notification, cb);
 }
 
 export function postChatMessage(value, chatSessionId, userId, cb) {
@@ -245,24 +259,77 @@ export function postChatMessage(value, chatSessionId, userId, cb) {
   emulateServerReturn(chatMessage, cb);
 }
 
-/**
- * Searches for feed items with the given text.
- */
-export function searchForUsers(queryText, cb) {
+export function getChatSessions(sessionId, cb) {
+  emulateServerReturn(getChatSessionsSync(sessionId), cb);
+}
+
+function getChatSessionsSync(sessionId) {
+  var session = readDocument('chatSessions', sessionId);
+  session.initiator = readDocument('users', session.initiator);
+  session.memberLists = session.memberLists.map((member) => {
+    return readDocument('users', member);
+  });
+  session.chatMessages = session.chatMessages.map((message) => {
+    var messageObj = readDocument('chatMessages', message);
+    messageObj.owner = readDocument('users', messageObj.owner);
+    return messageObj;
+  });
+  return session;
+}
+
+export function postNotifications(requester, requestee, cb) {
+  var chatSession = _.find(readAllCollection("chatSessions"), (chat) => {
+    return chat.initiator === requester;
+  });
+  var newNoti = {
+    requester: requester,
+    requestee: requestee,
+    chatSession: chatSession._id,
+    status: "waiting"
+  }
+  var notiData = addDocument("notifications", newNoti);
+  notiData.requester = readDocument("users", notiData.requester);
+  notiData.chatSession = chatSession;
+  emulateServerReturn(notiData, cb);
+}
+
+export function getOnlineUsers(cb) {
+  var onlineUsers = readDocument('onlineUsers', 1);
+  onlineUsers = onlineUsers.map((user) => {
+    return readDocument("users", user);
+  });
+  emulateServerReturn(onlineUsers, cb);
+}
+
+export function getNearbyUsers(radius, userId, cb) {
   var userData = readAllCollection('users');
-  userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
-  emulateServerReturn(userData, cb);
-  // userID is not needed; it's included in the JSON web token.
-  //sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
-  //  cb(JSON.parse(xhr.responseText));
-  //});
-
+  var currentUser = userData[userId - 1];
+  userData.splice(userId - 1, 1);
+  var nearbyUsers = [];
+  for(var i = 0; i < userData.length; i++) {
+    var curLatLng = new google.maps.LatLng(currentUser.position);
+    var otherLatLng = new google.maps.LatLng(userData[i].position);
+    var distance = google.maps.geometry.spherical.computeDistanceBetween(curLatLng, otherLatLng);
+    if (distance <= radius) {
+      nearbyUsers.push(userData[i]);
+    }
+  }
+  emulateServerReturn(nearbyUsers, cb);
 }
 
-export function deleteChatMember(chatSessionId, userId, cb) {
-  var chatSession = readDocument("chatSessions", chatSessionId);
-  var indexOfUser = chatSession.memberLists.indexOf(userId);
-  chatSession.memberLists.splice(indexOfUser, 1);
-  writeDocument('chatSessions', chatSession);
-  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
+export function getNotifications(userId, cb) {
+  var notifications = readAllCollection('notifications');
+  notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
+  notifications = notifications.map((noti) => {
+    noti.requester = readDocument("users", noti.requester);
+    return noti;
+  });
+  notifications = notifications.map((noti) => {
+    noti.chatSession = readDocument("chatSessions", noti.chatSession);
+    return noti;
+  });
+  emulateServerReturn(notifications, cb);
 }
+/**
+ * HONORS FEATURES
+ */

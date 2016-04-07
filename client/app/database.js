@@ -156,12 +156,16 @@ var initialData = {
     "1": {
       "_id": 1,
       "requester": 2,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 2
     },
     "2": {
       "_id": 2,
       "requester": 1,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 3
     }
   },
   "chatSessions": {
@@ -171,6 +175,20 @@ var initialData = {
       "initiator": 4,
       "memberLists": [1, 3, 4],
       "chatMessages": [1]
+    },
+    "2": {
+      "_id": 2,
+      "active": true,
+      "initiator": 2,
+      "memberLists": [2],
+      "chatMessages": []
+    },
+    "3": {
+      "_id": 3,
+      "active": true,
+      "initiator": 1,
+      "memberLists": [1],
+      "chatMessages": []
     }
   },
   "chatMessages": {
@@ -205,6 +223,14 @@ export function readDocument(collection, id) {
   // Clone the data. We do this to model a database, where you receive a
   // *copy* of an object and not the object itself.
   return JSONClone(data[collection][id]);
+}
+
+export function deleteDocument(collectionName, id) {
+  var collection = data[collectionName];
+  if (!collection[id]) {
+    throw new Error(`Collection ${collectionName} lacks an item with id ${id}!`);
+  }
+  delete collection[id];
 }
 
 /**

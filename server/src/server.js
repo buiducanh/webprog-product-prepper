@@ -46,6 +46,9 @@ function postFeedbackData(feedbackData) {
   // dummy = {_id: 1, text: "dummy"}
   feedbackData.timestamp = new Date().getTime();
   var newFeedback = addDocument("feedbacks", feedbackData);
+  var interviewSession = readDocument("interviewSessions", feedbackData.interview_session);
+  interviewSession.feedback = newFeedback._id;
+  writeDocument("interviewSessions", interviewSession);
   return newFeedback;
 }
 

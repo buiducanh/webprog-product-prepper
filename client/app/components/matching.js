@@ -31,13 +31,18 @@ export default class Matching extends React.Component {
       // Prevent the event from "bubbling" up the DOM tree.
       e.preventDefault();
       var interviewId = "";
+      // NOTE: since we don't have any error message yet, if we don't let them go through without choosing, they will be confused
+      // just initialize to a default value
+      // TODO: we also have not updated this information to the User object
       if (this.state.language !== "" && this.state.exp !== undefined) {
-        // Add new interview session to db
-        postInterviewSession(localStorage.getItem('userId'), (interviewSession) => {
-            interviewId = interviewSession._id;
-            hashHistory.push("/interview/" + interviewId);
-          });
-        }
+        this.state.exp = 1;
+        this.state.language = "Python";
+      }
+      // Add new interview session to db
+      postInterviewSession(localStorage.getItem('userId'), (interviewSession) => {
+          interviewId = interviewSession._id;
+          hashHistory.push("/interview/" + interviewId);
+        });
     }
 
   render() {

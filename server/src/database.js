@@ -150,12 +150,16 @@ var initialData = {
     "1": {
       "_id": 1,
       "requester": 2,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 2
     },
     "2": {
       "_id": 2,
       "requester": 1,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 3
     }
   },
   "chatSessions": {
@@ -165,6 +169,20 @@ var initialData = {
       "initiator": 4,
       "memberLists": [1, 3, 4],
       "chatMessages": [1]
+    },
+    "2": {
+      "_id": 2,
+      "active": true,
+      "initiator": 2,
+      "memberLists": [2],
+      "chatMessages": []
+    },
+    "3": {
+      "_id": 3,
+      "active": true,
+      "initiator": 1,
+      "memberLists": [1],
+      "chatMessages": []
     }
   },
   "chatMessages": {
