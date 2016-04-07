@@ -91,7 +91,7 @@ export function getInterviewData(user, cb) {
 }
 
 export function getInterviewSession(interviewId, cb) {
-  sendXHR('GET', '/interview/'+ interviewId, undefined, (xhr) => {
+  sendXHR('GET', '/user/'+user+'/interview/'+ interviewId, undefined, (xhr) => {
     // Call the callback with the data.
      cb(JSON.parse(xhr.responseText));
    });
