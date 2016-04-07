@@ -82,47 +82,12 @@ function emulateServerReturn(data, cb) {
  * Given a feed item ID, returns a FeedItem object with references resolved.
  * Internal to the server, since it's synchronous.
  */
-function getInterviewDataSync(interviewId) {
-  var interviewItem = readDocument('interviewSessions', interviewId);
-  // Resolve participants
-  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-  // Resolve feedback
-  if (interviewItem.feedback === undefined) {
-    interviewItem.feedback = {
-      "interviewer": "",
-      "interviewee": "",
-      "interviewer_pro": "",
-      "interviewer_con": "",
-      "interviewer_comment": "",
-      "interviewer_rating": "",
-      "interviewee_pro": "",
-      "interviewee_con": "",
-      "interviewee_comment": "",
-      "interviewee_rating": "",
-      "interview_session": "",
-      "timestamp": ""
-    }
-  }
-  else {
-    interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
-  }
-  // Resolve problem
-  interviewItem.problem = readDocument('problems', interviewItem.problem);
-  return interviewItem;
-}
-
-/**
- * Emulates a REST call to get the feed data for a particular user.
- * @param user The ID of the user whose feed we are requesting.
- * @param cb A Function object, which we will invoke when the Feed's data is available.
- */
 export function getInterviewData(user, cb) {
-  // Get the User object with the id "user".
-  var userData = readDocument('users', user);
-  // Get the Feed object for the user.
-  var interviewData = userData.interview.map(getInterviewDataSync);
-  emulateServerReturn(interviewData, cb);
+  // We don't need to send a body, so pass in 'undefined' for the body.
+  sendXHR('GET', '/user/'+user+'/interviews', undefined, (xhr) => {
+    // Call the callback with the data.
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function getInterviewSession(interviewId, cb) {

@@ -292,10 +292,16 @@ module.exports.deleteDocument = deleteDocument;
 /**
  * Returns an entire object collection.
  */
-function getCollection(collectionName) {
-  return JSONClone(data[collectionName]);
+function readAllCollection(collectionName) {
+  var collection = data[collectionName];
+  var length = Object.keys(collection).length;
+  var userData = [];
+  for(var i = 1; i <= length; i++) {
+    userData.push(readDocument(collectionName, i));
+  }
+  return userData;
 }
-module.exports.getCollection = getCollection;
+module.exports.readAllCollection = readAllCollection;
 
 /**
  * Reset the database.
