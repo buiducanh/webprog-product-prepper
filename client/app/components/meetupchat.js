@@ -8,6 +8,9 @@ export default class MeetupChat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUser: {
+        fullName: ""
+      },
       onlineUsers: [], 
       chatSessions: {
         chatMessages: [],
@@ -22,7 +25,13 @@ export default class MeetupChat extends React.Component {
 
   refresh() {
     var onlineUsersCallback = (onlineUsers) => {
-      this.setState({onlineUsers: onlineUsers});
+      var currentUser = _.find(onlineUsers, (user) => {
+        return parseInt(user._id, 10) === parseInt(localStorage.getItem('userId'), 10);
+      });
+      this.setState({
+        onlineUsers: onlineUsers,
+        currentUser: currentUser
+      });
     };
     var chatSessionsCallback = (session) => {
       this.setState({chatSessions: session});
@@ -73,7 +82,6 @@ export default class MeetupChat extends React.Component {
     function currentUserPredicate(member) {
       return Number(localStorage.getItem('userId')) === member._id;
     }
-    var currentUser = _.find(this.state.chatSessions.memberLists, currentUserPredicate);
     this.state.chatSessions.memberLists = _.reject(this.state.chatSessions.memberLists, currentUserPredicate);
     var partitionedUsers = _.partition(this.state.chatSessions.memberLists, (user) => { 
       return _.find(this.state.onlineUsers, (onlUser) => { return user._id == onlUser._id; });
@@ -182,7 +190,7 @@ export default class MeetupChat extends React.Component {
               </ChatHistory>
               <div className="panel-footer chat-box">
                 <div className="input-group">
-                    <span className="input-group-addon" id="basic-addon1">@{currentUser.fullName}</span>
+                    <span className="input-group-addon" id="basic-addon1">@{this.state.currentUser.fullName}</span>
                     <input type="text" className="form-control" placeholder="Chat Message" aria-describedby="basic-addon1" value={this.state.value} onChange={(e) => this.handleChange(e)} onKeyUp={(e) => this.handleKeyUp(e)}></input>
                 </div>
               </div>

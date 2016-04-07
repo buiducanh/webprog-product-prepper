@@ -1,6 +1,6 @@
 import React from 'react';
 import {ResetDatabase} from '../resetdatabase';
-import {deleteNotification, addChatMember, deleteChatMember, updateNotificationStatusToOngoing, getUserData, getNotifications} from '../server';
+import {deleteNotification, addChatMember, deleteChatMember, updateNotificationStatus, getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
 import UserProfile from './userprofile.js'
 import Notification from './notification.js'
@@ -41,7 +41,7 @@ export default class Navbar extends React.Component {
       this.setState(this.state);
       addChatMember(chatSessionId, userId, function(){});
     }
-    updateNotificationStatusToOngoing(notificationId, notiCallback);
+    updateNotificationStatus(notificationId, 'ongoing', notiCallback);
   }
 
   handleKeyUp(e) {

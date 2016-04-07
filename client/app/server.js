@@ -2,6 +2,9 @@ import {deleteDocument, readDocument, writeDocument, addDocument, readAllCollect
 import _ from "lodash";
 
 var token = 'eyJpZCI6NH0='; // <-- Put your base64'd JSON token here
+var authObj = {
+  author: localStorage.getItem('userId')
+};
 
 /**
  * Properly configure+send an XMLHttpRequest with error handling, authorization token,
@@ -91,7 +94,7 @@ export function getInterviewData(user, cb) {
 }
 
 export function getInterviewSession(interviewId, cb) {
-  sendXHR('GET', '/user/'+user+'/interview/'+ interviewId, undefined, (xhr) => {
+  sendXHR('GET', '/interview/'+ interviewId + '?user=' + localStorage.getItem('userId'), undefined, (xhr) => {
     // Call the callback with the data.
      cb(JSON.parse(xhr.responseText));
    });
@@ -125,36 +128,13 @@ export function postAnswers(feedbackData, cb) {
 }
 
 export function postInterviewSession(interviewerId, cb) {
-  // Get the current UNIX time.
-  var time = new Date().getTime();
-  var intervieweeId = 2; // TODO random this number
-  //TODO random role????
-  var interviewItem =
-  {
-    "problem": 1,
-    "feedback": undefined,
-    "interviewer": interviewerId,
-    "interviewee": intervieweeId,
-    "timestamp": time,
-    "duration": "",
-    "code" : "",
-    "result": "WIP"
-  };
-  interviewItem = addDocument('interviewSessions', interviewItem);
-
-  var interviewee = readDocument("users", intervieweeId);
-  var interviewer = readDocument("users", interviewerId);
-  interviewee.interview.push(interviewItem._id);
-  interviewer.interview.push(interviewItem._id);
-  writeDocument("users", interviewee);
-  writeDocument("users", interviewer);
-
-  // Resolve participants
-  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-  // Resolve problem
-  interviewItem.problem = readDocument('problems', interviewItem.problem);
-  emulateServerReturn(interviewItem, cb);
+  var interview =  {
+    interviewer: parseInt(interviewerId, 10)
+  }
+  var url = '/interview';
+  sendXHR('POST', url, interview, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 
@@ -162,7 +142,6 @@ export function postInterviewSession(interviewerId, cb) {
  * Searches for feed items with the given text.
  */
 export function searchForUsers(queryText, cb) {
-
   //userID is not needed; it's included in the JSON web token.
   sendXHR('POST', '/searchpeople?searchTerm=' + queryText, undefined, (xhr) => {
    cb(JSON.parse(xhr.responseText));
@@ -173,53 +152,50 @@ export function searchForUsers(queryText, cb) {
  * HONORS FEATURES
  */
 export function deleteChatMember(chatSessionId, userId, cb) {
-  var chatSession = readDocument("chatSessions", chatSessionId);
-  var indexOfUser = chatSession.memberLists.indexOf(userId);
-  chatSession.memberLists.splice(indexOfUser, 1);
-  writeDocument('chatSessions', chatSession);
-  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
+  var url = '/chatsession/' + chatSessionId + '/memberlists/' + userId + '?user=' + localStorage.getItem('userId');
+  sendXHR('DELETE', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function addChatMember(chatSessionId, userId, cb) {
-  var chatSession = readDocument("chatSessions", chatSessionId);
-  chatSession.memberLists.push(userId);
-  writeDocument('chatSessions', chatSession);
-  emulateServerReturn(getChatSessionsSync(chatSessionId), cb);
+  var url = '/chatsession/' + chatSessionId + '/memberlists/' + userId + '?user=' + localStorage.getItem('userId');
+  sendXHR('PUT', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function deleteNotification(notificationId, cb) {
-  var notification = readDocument("notifications", notificationId);
-  deleteDocument("notifications", notificationId);
-  notification.requester = readDocument("users", notification.requester);
-  notification.chatSession = readDocument("chatSessions", notification.chatSession);
-  emulateServerReturn(notification, cb);
+  var url = '/notification/' + notificationId + '?user=' + localStorage.getItem('userId');  
+  sendXHR('DELETE', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
-export function updateNotificationStatusToOngoing(notificationId, cb) {
-  var notification = readDocument("notifications", notificationId);
-  notification.status = "ongoing";
-  writeDocument("notifications", notification);
-  notification.requester = readDocument("users", notification.requester);
-  notification.chatSession = readDocument("chatSessions", notification.chatSession);
-  emulateServerReturn(notification, cb);
+export function updateNotificationStatus(notificationId, status, cb) {
+  var url = '/notification/' + notificationId + '/status/' + status + '?user=' + localStorage.getItem('userId');  
+  sendXHR('PUT', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function postChatMessage(value, chatSessionId, userId, cb) {
   var chatMessage = {
-    "content": value,
-    "owner": userId,
-    "chatSessionId": chatSessionId
+    "content": value ? value : "",
+    "owner": parseInt(userId, 10),
+    "chatSessionId": parseInt(chatSessionId, 10)
   };
-  chatMessage = addDocument('chatMessages', chatMessage);
-  var chatSession = readDocument('chatSessions', chatSessionId);
-  chatSession.chatMessages.push(chatMessage._id);
-  writeDocument('chatSessions', chatSession);
-  chatMessage.owner = readDocument('users', userId);
-  emulateServerReturn(chatMessage, cb);
+  var url = '/chatmessage';
+  sendXHR('POST', url, chatMessage, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function getChatSessions(sessionId, cb) {
-  emulateServerReturn(getChatSessionsSync(sessionId), cb);
+  var url = '/chatsession/' + sessionId + '?user=' + localStorage.getItem('userId');
+  sendXHR('GET', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 function getChatSessionsSync(sessionId) {
@@ -237,57 +213,35 @@ function getChatSessionsSync(sessionId) {
 }
 
 export function postNotifications(requester, requestee, cb) {
-  var chatSession = _.find(readAllCollection("chatSessions"), (chat) => {
-    return chat.initiator === requester;
-  });
   var newNoti = {
     requester: requester,
     requestee: requestee,
-    chatSession: chatSession._id,
-    status: "waiting"
   }
-  var notiData = addDocument("notifications", newNoti);
-  notiData.requester = readDocument("users", notiData.requester);
-  notiData.chatSession = chatSession;
-  emulateServerReturn(notiData, cb);
+  var url = '/notification';
+  sendXHR('POST', url, newNoti, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function getOnlineUsers(cb) {
-  var onlineUsers = readDocument('onlineUsers', 1);
-  onlineUsers = onlineUsers.map((user) => {
-    return readDocument("users", user);
+  var url = '/user/' + localStorage.getItem('userId') + '/online';
+  sendXHR('GET', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
   });
-  emulateServerReturn(onlineUsers, cb);
 }
 
 export function getNearbyUsers(radius, userId, cb) {
-  var userData = readAllCollection('users');
-  var currentUser = userData[userId - 1];
-  userData.splice(userId - 1, 1);
-  var nearbyUsers = [];
-  for(var i = 0; i < userData.length; i++) {
-    var curLatLng = new google.maps.LatLng(currentUser.position);
-    var otherLatLng = new google.maps.LatLng(userData[i].position);
-    var distance = google.maps.geometry.spherical.computeDistanceBetween(curLatLng, otherLatLng);
-    if (distance <= radius) {
-      nearbyUsers.push(userData[i]);
-    }
-  }
-  emulateServerReturn(nearbyUsers, cb);
+  var url = '/user/' + localStorage.getItem('userId') + '/nearby';
+  sendXHR('GET', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
+  });
 }
 
 export function getNotifications(userId, cb) {
-  var notifications = readAllCollection('notifications');
-  notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
-  notifications = notifications.map((noti) => {
-    noti.requester = readDocument("users", noti.requester);
-    return noti;
+  var url = '/user/' + userId + '/notification';
+  sendXHR('GET', url, {}, (xhr) => {
+    cb(JSON.parse(xhr.responseText));
   });
-  notifications = notifications.map((noti) => {
-    noti.chatSession = readDocument("chatSessions", noti.chatSession);
-    return noti;
-  });
-  emulateServerReturn(notifications, cb);
 }
 /**
  * HONORS FEATURES
