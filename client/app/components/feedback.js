@@ -18,18 +18,30 @@ export default class Feedback extends React.Component {
     var rating = $("#rating").val();
 
     var myRole = "";
-    if (localStorage.getItem("userId") == this.props.params.intervieweeId) myRole = "interviewee";
+    var otherRole = "";
+    var interviewId = this.props.params.interviewId;
+    if (localStorage.getItem("userId") == this.props.params.intervieweeId) {
+      myRole = "interviewee";
+      otherRole = "interviewer";
+    }
     else {
       myRole = "interviewer";
+      otherRole = "interviewee";
     }
-    var feedbackData = {
-      _id: 1,
-      myRole: localStorage.getItem("userId")
-    }
+
+    var feedbackData = {};
+    feedbackData[myRole] = localStorage.getItem('userId');
     feedbackData[myRole + "_pro"] = pro;
     feedbackData[myRole + "_con"] = con;
     feedbackData[myRole + "_comment"] = comment;
     feedbackData[myRole + "_rating"] = rating;
+    feedbackData[otherRole] = "";
+    feedbackData[otherRole + "_pro"] = "";
+    feedbackData[otherRole + "_con"] = "";
+    feedbackData[otherRole + "_comment"] = "";
+    feedbackData[otherRole + "_rating"] = "";
+    feedbackData["interview_session"] = interviewId;
+    feedbackData["author"] = localStorage.getItem('userId');
 
     if (clickEvent.button === 0) {
       // Callback function for both the like and unlike cases.
@@ -47,6 +59,7 @@ export default class Feedback extends React.Component {
     else {
       partnerId = this.props.params.intervieweeId;
     }
+    console.log(partnerId);
     getUserData(partnerId, (userData) => {
       this.setState({user: userData});
     });

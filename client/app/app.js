@@ -41,7 +41,7 @@ ReactDOM.render((
       <Route path="meetup" component={Meetup} />
       <Route path="interview/:interviewId" component={Interview} />
       <Route path="userprofile/:id" component={UserProfile} />
-      <Route path="feedback/:interviewerId/:intervieweeId" component={Feedback} />
+      <Route path="feedback/:interviewId/:interviewerId/:intervieweeId" component={Feedback} />
       <Route path="history/:userId" component={History} />
       <Route path="searchpeople" component={SearchQuery} />
       <Route path="meetupchat/:id" component={MeetupChat} />

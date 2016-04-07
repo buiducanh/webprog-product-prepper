@@ -42,6 +42,36 @@ function getUserIdFromToken(authorizationLine) {
   }
 }
 
+function postFeedbackData(feedbackData) {
+  // dummy = {_id: 1, text: "dummy"}
+  feedbackData.timestamp = new Date().getTime();
+  var newFeedback = addDocument("feedbacks", feedbackData);
+  return newFeedback;
+}
+
+app.post('/feedback', function(req, res) {
+    // If this function runs, `req.body` passed JSON validation!
+  var body = req.body;
+  var feedbackId = parseInt(req.params.feedbackid, 10);
+  var fromUser = getUserIdFromToken(req.get('Authorization'));
+
+  // Check if requester is authorized to post this status update.
+  // (The requester must be the author of the update.)
+  console.log(body.author)
+  console.log(fromUser);
+  if (fromUser === Number(body.author)) {
+    var newUpdate = postFeedbackData(body);
+    // When POST creates a new resource, we should tell the client about it
+    // in the 'Location' header and use status code 201.
+    res.status(201);
+     // Send the update!
+    res.send(newUpdate);
+  } else {
+    // 401: Unauthorized.
+    res.status(401).end();
+  }
+});
+
 // Reset database.
 app.post('/resetdb', function(req, res) {
   console.log("Resetting database...");

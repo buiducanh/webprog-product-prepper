@@ -107,6 +107,16 @@ export function getInterviewData(user, cb) {
   emulateServerReturn(interviewData, cb);
 }
 
+export function getInterviewSession(interviewId, cb) {
+  var interviewItem = readDocument('interviewSessions', interviewId);
+  // Resolve participants
+  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+  // Resolve problem
+  interviewItem.problem = readDocument('problems', interviewItem.problem);
+  emulateServerReturn(interviewItem, cb);
+}
+
 export function getUserData (user, cb) {
   var userData = readDocument('users', user);
   emulateServerReturn(userData, cb);
@@ -118,9 +128,15 @@ export function getAllUserData (cb) {
 }
 
 export function postFeedbackData(feedbackData, cb) {
-  // dummy = {_id: 1, text: "dummy"}
-  var newFeedback = addDocument("feedbacks", feedbackData);
-  emulateServerReturn(newFeedback, cb);
+  // feedbackData.timestamp = new Date().getTime();
+  // var newFeedback = addDocument("feedbacks", feedbackData);
+  // return newFeedback;
+  sendXHR('POST', '/feedback',
+      feedbackData,
+     (xhr) => {
+      // Return the new status update.
+      cb(JSON.parse(xhr.responseText));
+    });
 }
 
 export function postAnswers(feedbackData, cb) {
@@ -195,9 +211,9 @@ export function postInterviewSession(interviewerId, cb) {
   var time = new Date().getTime();
   var intervieweeId = 2; // TODO random this number
   //TODO random role????
-  var newIntvSession =
+  var interviewItem =
   {
-    "problem": "",
+    "problem": 1,
     "feedback": undefined,
     "interviewer": interviewerId,
     "interviewee": intervieweeId,
@@ -206,8 +222,13 @@ export function postInterviewSession(interviewerId, cb) {
     "code" : "",
     "result": "WIP"
   };
-  newIntvSession = addDocument('interviewSessions', newIntvSession);
-  emulateServerReturn(newIntvSession, cb);
+  interviewItem = addDocument('interviewSessions', interviewItem);
+  // Resolve participants
+  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+  // Resolve problem
+  interviewItem.problem = readDocument('problems', interviewItem.problem);
+  emulateServerReturn(interviewItem, cb);
 }
 
 export function postChatMessage(value, chatSessionId, userId, cb) {
