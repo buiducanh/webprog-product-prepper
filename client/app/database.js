@@ -255,18 +255,3 @@ export function resetDatabase() {
   //clean database for the code editor
   firepadRef.remove();
 }
-
-/**
- * Reset database button.
- */
-export class ResetDatabase extends React.Component {
-  render() {
-    return (
-      <button className="navbar-btn btn btn-default" type="button" onClick={() => {
-        resetDatabase();
-        window.alert("Database reset! Refreshing the page now...");
-        document.location.reload(false);
-      }}>Reset Mock DB</button>
-    );
-  }
-}

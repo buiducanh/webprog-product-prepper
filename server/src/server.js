@@ -6,6 +6,8 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var validate = require('express-jsonschema').validate;
+var FeedbackSchema = require('./schemas/feedback.json');
+var InterviewsessionSchema = require('./schemas/interviewsession.json');
 var database = require('./database');
 var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
@@ -49,7 +51,7 @@ function postFeedbackData(feedbackData) {
   return newFeedback;
 }
 
-app.post('/feedback', function(req, res) {
+app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
   var body = req.body;
   //var feedbackId = parseInt(req.params.feedbackid, 10);
