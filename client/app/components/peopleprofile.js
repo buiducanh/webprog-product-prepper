@@ -20,7 +20,7 @@ export default class PeopleProfile extends React.Component {
       });
     }
     else {
-      
+
       searchForUsers(this.props.searchTerm, (userData) => {
         this.setState({users: userData});
       });
@@ -61,35 +61,36 @@ export default class PeopleProfile extends React.Component {
             </div>
 
             <div className="col-md-6">
-            {
-              this.state.users.map((user, i) => {
-                return (
+              {
+                this.state.users.map((user, i) => {
+                  return (
 
-                  <div key={i} className=" main container-fluid well col-md-12">
-                    <div className="row-fluid">
-                      <div className="col-lg-3" >
-                        <img src={user.avatar}
-                          className="img-circle img-responsive"></img>
+                    <div key={i} className=" main container-fluid well col-md-12">
+                      <div className="row-fluid">
+                        <div className="col-lg-3" >
+                          <img src={user.avatar}
+                            className="img-circle img-responsive"></img>
+                        </div>
+
+                        <div className="col-lg-6">
+                          <h2><Link to={"/userprofile/" + user._id } >{user.fullName}</Link></h2>
+                          <h5>Email: {user.email}</h5>
+                          <h5>Experience: {user.experience} year(s) </h5>
+                          <h5>Location: {user.location} </h5>
+                        </div>
+
+                        <div className="col-lg-3">
+
+                        </div>
+
                       </div>
-
-                      <div className="col-lg-6">
-                        <h2><Link to={"/userprofile/" + user._id } >{user.fullName}</Link></h2>
-                        <h5>Email: {user.email}</h5>
-                        <h5>Experience: {user.experience} year(s) </h5>
-                        <h5>Location: {user.location} </h5>
-                      </div>
-
-                      <div className="col-lg-3">
-
-                      </div>
-
                     </div>
-                  </div>
 
-                )
-              })
-            }
+                  )
+                })
+              }
             </div>
+
           </div>
         </div>
       </div>

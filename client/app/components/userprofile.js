@@ -23,7 +23,6 @@ export default class UserProfile extends React.Component {
       <div className="userprofile">
         <div className="container">
           <div className="row">
-
             <div className="col-md-offset-1 col-lg-9">
               <div className="card">
                 <div className="card-image">
@@ -37,17 +36,19 @@ export default class UserProfile extends React.Component {
           </div>
         </div>
 
-      <div classNameName="container">
-        <div className="row">
+        <div className="container">
+          <div className="row">
 
-          <div className="col-md-offset-1 col-lg-9">
-            <div className="profile">
-              <div className="col-sm-12">
-                <div className="col-md-12 info">
-                  <h2>{this.state.users.fullName}</h2>
-                  <p><strong>Email: </strong> {this.state.users.email} </p>
-                  <hr />
-                  <p><strong>Skills: </strong>
+
+            <div className="col-md-offset-1 col-lg-9">
+              <div className="profile">
+
+                <div className="col-sm-12">
+                  <div className="col-md-12 info">
+                    <h2>{this.state.users.fullName}</h2>
+                    <p><strong>Email: </strong> {this.state.users.email} </p>
+                    <hr />
+                    <p><strong>Skills: </strong>
                     {
                       this.state.users.languages.map((language, i) => {
                         return (<span key={i} className="tags">{language}</span>);
@@ -59,28 +60,21 @@ export default class UserProfile extends React.Component {
                 </div>
               </div>
 
-
               <div className="col-xs-12 divider text-center">
-
                 <div className="col-sm-2 emphasis">
-
-
                 </div>
                 <div className="col-xs-12 col-sm-6 emphasis">
                   <h2><strong> {this.state.users.interview.length} </strong></h2>
                   <p><small>Interviews</small></p>
                   <button className="btn btn-default btn-block"><span className="glyphicon glyphicon-list-alt"></span> <Link to={"/history/"+this.props.params.id} >See History</Link> </button>
                 </div>
-
-
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      </div>
-    )
-  }
-
+    </div>
+  )
+}
 }

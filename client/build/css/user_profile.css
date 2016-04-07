@@ -42,6 +42,7 @@
 
     /*margin-top: 0px !important;*/
     min-height: 385px;
+    min-width: 850px;
     display: inline-block;
     background-color: #ECCFBD;
 }
