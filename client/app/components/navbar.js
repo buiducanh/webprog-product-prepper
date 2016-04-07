@@ -1,5 +1,5 @@
 import React from 'react';
-import {ResetDatabase} from '../database';
+import {ResetDatabase} from '../resetdatabase';
 import {deleteNotification, addChatMember, deleteChatMember, updateNotificationStatusToOngoing, getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
 import UserProfile from './userprofile.js'
