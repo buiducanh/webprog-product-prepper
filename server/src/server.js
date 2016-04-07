@@ -17,6 +17,9 @@ var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
 var readAllCollection = database.readAllCollection;
 
+var lodash = require ('lodash');
+var _ = lodash._;
+
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
 // Support receiving JSON in HTTP request bodies
@@ -124,20 +127,20 @@ app.get('/user/:userid/interviews', function(req, res) {
   }
 });
 
-app.get('/interview/:interviewId', function(req, res) {
-   var userid = req.params.userid;
-   var fromUser = getUserIdFromToken(req.get('Authorization'));
-   // userid is a string. We need it to be a number.
-   // Parameters are always strings.
-   var useridNumber = parseInt(userid, 10);
-   if (fromUser === useridNumber) {
-     // Send response.
-     res.send(getInterviewSession(userid));
-   } else {
-     // 401: Unauthorized request.
-     res.status(401).end();
-   }
- });
+// app.get('/interview/:interviewId', function(req, res) {
+//    var userid = req.params.userid;
+//    var fromUser = getUserIdFromToken(req.get('Authorization'));
+//    // userid is a string. We need it to be a number.
+//    // Parameters are always strings.
+//    var useridNumber = parseInt(userid, 10);
+//    if (fromUser === useridNumber) {
+//      // Send response.
+//      res.send(getInterviewSession(userid));
+//    } else {
+//      // 401: Unauthorized request.
+//      res.status(401).end();
+//    }
+//  });
 
 app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
@@ -160,27 +163,7 @@ app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
   }
 });
 
-//route for interview
-app.post('interview/:interviewId', validate({ body: InterviewSchema }), function(req, res) {
-    // If this function runs, `req.body` passed JSON validation!
-  var body = req.body;
-  //var feedbackId = parseInt(req.params.feedbackid, 10);
-  var fromUser = getUserIdFromToken(req.get('Authorization'));
 
-  // Check if requester is authorized to post this status update.
-  // (The requester must be the author of the update.)
-  if (fromUser === Number(body.author)) {
-    var newUpdate = getInterviewData(body);
-    // When POST creates a new resource, we should tell the client about it
-    // in the 'Location' header and use status code 201.
-    res.status(201);
-     // Send the update!
-    res.send(newUpdate);
-  } else {
-    // 401: Unauthorized.
-    res.status(401).end();
-  }
-});
 
 // Reset database.
 app.post('/resetdb', function(req, res) {
@@ -200,26 +183,13 @@ app.use(express.static('../client/build'));
  * Searches for feed items with the given text.
  */
 
- app.post('/peopleprofile/:searchTerm', function(req, res) {
-   console.log ("req");
-   var queryText = req.params.searchTerm;
-   var fromUser = getUserIdFromToken(req.get('Authorization'));
-   var user = readDocument('users', fromUser);
+ app.post('/searchpeople', function(req, res) {
+   var queryText = req.query.searchTerm;
 
-   console.log ("type is: " );
-   if (typeof(req.body) === 'string') {
-     // trim() removes whitespace before and after the query.
-     // toLowerCase() makes the query lowercase.
-     queryText = queryText.trim().toLowerCase();
-     var userData = readAllCollection('users');
+    var userData = readAllCollection('users');
+    userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
 
-     res.send(userData.filter((user) => {
-       return user.fullName.toLowerCase().indexOf(queryText) !== -1;
-     }));
-   } else {
-     // 400: Bad Request.
-     res.status(400).end();
-   }
+     res.send(userData);
  });
 
 /**

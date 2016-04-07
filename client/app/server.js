@@ -91,7 +91,7 @@ export function getInterviewData(user, cb) {
 }
 
 export function getInterviewSession(interviewId, cb) {
-  sendXHR('GET', '/interview/'+ interviewId, undefined, (xhr) => {
+  sendXHR('GET', '/user/'+user+'/interview/'+ interviewId, undefined, (xhr) => {
     // Call the callback with the data.
      cb(JSON.parse(xhr.responseText));
    });
@@ -162,14 +162,11 @@ export function postInterviewSession(interviewerId, cb) {
  * Searches for feed items with the given text.
  */
 export function searchForUsers(queryText, cb) {
-  var userData = readAllCollection('users');
-  userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
-  emulateServerReturn(userData, cb);
-  // userID is not needed; it's included in the JSON web token.
-  //sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
-  //  cb(JSON.parse(xhr.responseText));
-  //});
 
+  //userID is not needed; it's included in the JSON web token.
+  sendXHR('POST', '/searchpeople?searchTerm=' + queryText, undefined, (xhr) => {
+   cb(JSON.parse(xhr.responseText));
+  });
 }
 
 /**
