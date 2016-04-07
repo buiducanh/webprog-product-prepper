@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "content": {
+      "id": "http://jsonschema.net/content",
+      "type": "string"
+    },
+    "owner": {
+      "id": "http://jsonschema.net/owner",
+      "type": "integer"
+    },
+    "chatSessionId": {
+      "id": "http://jsonschema.net/chatSessionId",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "content",
+    "owner",
+    "chatSessionId"
+  ]
+}
