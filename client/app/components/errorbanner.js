@@ -2,6 +2,10 @@ import React from 'react';
 import {hideElement} from '../util';
 
 /**
+  *From Facebook workshop
+  */
+
+/**
  * A yellow error banner that uses Bootstrap's "warning" alert. Used to display HTTP request failures.
  */
 export default class ErrorBanner extends React.Component {
