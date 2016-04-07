@@ -91,13 +91,10 @@ export function getInterviewData(user, cb) {
 }
 
 export function getInterviewSession(interviewId, cb) {
-  var interviewItem = readDocument('interviewSessions', interviewId);
-  // Resolve participants
-  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-  // Resolve problem
-  interviewItem.problem = readDocument('problems', interviewItem.problem);
-  emulateServerReturn(interviewItem, cb);
+  sendXHR('GET', '/interview/'+ interviewId, undefined, (xhr) => {
+    // Call the callback with the data.
+     cb(JSON.parse(xhr.responseText));
+   });
 }
 
 export function getUserData (user, cb) {
