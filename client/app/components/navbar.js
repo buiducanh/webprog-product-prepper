@@ -1,8 +1,9 @@
 import React from 'react';
 import {ResetDatabase} from '../database';
-import {getUserData, getNotifications} from '../server';
+import {deleteNotification, addChatMember, deleteChatMember, updateNotificationStatusToOngoing, getUserData, getNotifications} from '../server';
 import {Link} from 'react-router';
 import UserProfile from './userprofile.js'
+import Notification from './notification.js'
 
 
 export default class Navbar extends React.Component {
@@ -20,15 +21,38 @@ export default class Navbar extends React.Component {
     this.setState({ value: e.target.value });
   }
 
-handleKeyUp(e) {
-  e.preventDefault();
-  if (e.key === "Enter") {
-    var searchTerm = this.state.value.trim();
-    if (searchTerm !== "") {
-      this.setState({ value: "" });
+  onNoClick(e, notificationId, userId) {
+    e.preventDefault();
+    var notiCallback = (notification) => {
+      var chatSessionId = notification.chatSession._id;
+      deleteChatMember(chatSessionId, userId, function(){});
+    }
+    var notifications = _.reject(this.state.notifications, (noti) => { return Number(noti._id) === notificationId });
+    deleteNotification(notificationId, notiCallback);
+    this.setState({notifications: notifications});
+  }
+
+  onOkClick(e, notificationId, userId) {
+    e.preventDefault();
+    var notiCallback = (notification) => {
+      var chatSessionId = notification.chatSession._id;
+      var indexOfNoti = _.findIndex(this.state.notifications, (noti) => { return Number(noti._id) === notificationId; });
+      this.state.notifications[indexOfNoti] = notification;
+      this.setState(this.state);
+      addChatMember(chatSessionId, userId, function(){});
+    }
+    updateNotificationStatusToOngoing(notificationId, notiCallback);
+  }
+
+  handleKeyUp(e) {
+    e.preventDefault();
+    if (e.key === "Enter") {
+      var searchTerm = this.state.value.trim();
+      if (searchTerm !== "") {
+        this.setState({ value: "" });
+      }
     }
   }
-}
 
   refresh() {
     var callbackFunction = (notificationData) => {
@@ -84,34 +108,12 @@ handleKeyUp(e) {
                 {this.state.notifications.map((noti, i) => {
                   var requester = noti.requester;
                   if (i + 1 === this.state.notifications.length) {
-                    return (<div key={i}>
-                      <li>
-                        <div className="media">
-                          <div className="media-left">
-                            Pic
-                          </div>
-                          <div className="media-body">
-                            Request from {requester.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-        <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                          </div>
-                        </div>
-                      </li>
-                    </div>);
+                    return (<Notification key={i} chatSession={noti.chatSession} status={noti.status} i={noti._id} requester={requester} onNoClick={this.onNoClick.bind(this)} onOkClick={this.onOkClick.bind(this)}/>);
                   }
-                  return (<div key={i}>
-                    <li>
-                      <div className="media">
-                        <div className="media-left">
-                          Pic
-                        </div>
-                        <div className="media-body">
-                          Request from {requester.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-      <button className="pull-right btn btn-xs btn-success glyphicon glyphicon-ok"></button> <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right"></button>
-                        </div>
-                      </div>
-                    </li>
-                    <li role="separator" className="divider"></li>
-                  </div>);
+                  return (
+                    <Notification key={i} i={noti._id} chatSession={noti.chatSession} status={noti.status} requester={requester} onNoClick={this.onNoClick.bind(this)} onOkClick={this.onOkClick.bind(this)}>
+                      <li role="separator" className="divider"></li>
+                    </Notification>);
                   })
                 }
               </ul>

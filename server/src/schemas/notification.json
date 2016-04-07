@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "requester": {
+      "id": "http://jsonschema.net/requester",
+      "type": "integer"
+    },
+    "requestee": {
+      "id": "http://jsonschema.net/requestee",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "requester",
+    "requestee"
+  ]
+}

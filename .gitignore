@@ -1,2 +1,8 @@
 /**/node_modules/
 notes.md
+<<<<<<< Updated upstream
+.DS_Store
+*.log
+=======
+npm-debug.log
+>>>>>>> Stashed changes

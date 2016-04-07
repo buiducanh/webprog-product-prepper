@@ -128,7 +128,7 @@ export default class Meetup extends React.Component {
                   }
                   googleMapElement={
                     <GoogleMap
-                      ref={(map) => (this._googleMapComponent = map) && console.log(map)}
+                      ref={(map) => (this._googleMapComponent = map)}
                       defaultZoom={13}
                       defaultCenter={{lat: 42.373222, lng: -72.519854}}
                     >

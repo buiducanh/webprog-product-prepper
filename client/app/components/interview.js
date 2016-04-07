@@ -2,17 +2,27 @@ import React from 'react';
 import VoiceChat from "./voicechat";
 import Questions from "./interviewquestions";
 import CodeEditor from "./codeeditor";
-import {getInterviewData} from '../server';
+import {getInterviewSession} from '../server';
 
 
 
 export default class Interview extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {interview: []};
+    this.state = {interview: {
+      problem: {
+        title: ""
+      },
+      interviewer: {
+        _id: ""
+      },
+      interviewee: {
+        _id: ""
+      }
+    }};
   }
   refresh() {
-    getInterviewData(this.props.params.interviewId, (interviewData) => {
+    getInterviewSession(this.props.params.interviewId, (interviewData) => {
       this.setState({interview: interviewData});
     });
   }
@@ -27,13 +37,9 @@ export default class Interview extends React.Component {
         <div className="row">
           <div className="col-md-4">
             <VoiceChat />
-              {
-                this.state.interview.map((interview, i) => {
-                 return (<Questions key={i} interviewquestion={interview}/>);
-                })
-              }
+            <Questions interviewquestion={this.state.interview}/>
           </div>
-          <CodeEditor interviewerId={this.props.params.interviewerId} intervieweeId={this.props.params.intervieweeId} interviewId={this.props.params.interviewId} />
+          <CodeEditor interviewerId={this.state.interview.interviewer._id} intervieweeId={this.state.interview.interviewee._id} interviewId={this.props.params.interviewId} />
         </div>
       </div>
 

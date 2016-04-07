@@ -6,6 +6,10 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var validate = require('express-jsonschema').validate;
+var FeedbackSchema = require('./schemas/feedback.json');
+var InterviewSessionSchema = require('./schemas/interviewsession.json');
+var ChatMessageSchema = require('./schemas/chatmessage.json');
+var NotificationSchema = require('./schemas/notification.json');
 var database = require('./database');
 var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
@@ -41,6 +45,37 @@ function getUserIdFromToken(authorizationLine) {
     return -1;
   }
 }
+
+function postFeedbackData(feedbackData) {
+  // dummy = {_id: 1, text: "dummy"}
+  feedbackData.timestamp = new Date().getTime();
+  var newFeedback = addDocument("feedbacks", feedbackData);
+  var interviewSession = readDocument("interviewSessions", feedbackData.interview_session);
+  interviewSession.feedback = newFeedback._id;
+  writeDocument("interviewSessions", interviewSession);
+  return newFeedback;
+}
+
+app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
+    // If this function runs, `req.body` passed JSON validation!
+  var body = req.body;
+  //var feedbackId = parseInt(req.params.feedbackid, 10);
+  var fromUser = getUserIdFromToken(req.get('Authorization'));
+
+  // Check if requester is authorized to post this status update.
+  // (The requester must be the author of the update.)
+  if (fromUser === Number(body.author)) {
+    var newUpdate = postFeedbackData(body);
+    // When POST creates a new resource, we should tell the client about it
+    // in the 'Location' header and use status code 201.
+    res.status(201);
+     // Send the update!
+    res.send(newUpdate);
+  } else {
+    // 401: Unauthorized.
+    res.status(401).end();
+  }
+});
 
 // Reset database.
 app.post('/resetdb', function(req, res) {

@@ -50,7 +50,7 @@ export default class CodeEditor extends React.Component {
                   </p>
                 </button>
 
-                <Link to={"/feedback/" + interviewerId + "/" + intervieweeId}>
+                <Link to={"/feedback/" + interviewId + "/" + interviewerId + "/" + intervieweeId}ß>
                   <button  type="button" className="btn btn-default">
                     <span className="glyphicon glyphicon-ban-circle"></span>  End Interview
                   </button>

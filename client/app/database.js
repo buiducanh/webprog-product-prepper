@@ -125,28 +125,28 @@ var initialData = {
   "problems": {
     "1": {
       "_id": 1,
-      "title": "simple binary tree",
-      "question": "print a binary tree inorder",
+      "title": "Simple Binary Tree",
+      "question": "Print a binary tree inorder.",
       "answer": "List<Integer> list =new ArrayList();\n    Stack<TreeNode> stack=new Stack();\n    if(root==null) return list;\n    while(root!=null){\n        stack.push(root);\n        root=root.left;\n        while(root==null){\n            if(stack.empty()) return list;\n            root=stack.pop();\n            list.add(root.val);\n            root=root.right;\n        }\n    }\n    return list;",
       "difficulty": "Medium"
     },
     "2": {
       "_id": 2,
-      "title": "calculator",
+      "title": "Calculator",
       "question": "Implement a basic calculator to evaluate a simple expression string.",
       "answer": "public int calculate(String s) {\n    Stack<Integer> stackInt = new Stack<>(), stackSign = new Stack<>();\n    int result = 0, sign = 1, num = 0;\n    for(int i=0; i<s.length(); i++) {\n        char c = s.charAt(i);\n        if(c >= \'0\' && c <= \'9\') {\n            int digit = Character.getNumericValue(c);\n            if((Integer.MAX_VALUE-digit)\/10<num) num = Integer.MAX_VALUE;\n            else num = 10 * num + digit;\n        } else if(c == \'+\' || c == \'-\') {\n            result += num * sign;\n            num = 0;\n            sign = c == \'+\' ? 1 : -1;\n        } else if(c == \'(\') {\n            stackInt.push(result);\n            stackSign.push(sign);\n            result = 0;\n            sign = 1;\n        } else if(c == \')\') {\n            result += num * sign;\n            result = result * stackSign.pop() + stackInt.pop();\n            num = 0;\n            sign = 1;\n        }\n    }\n    result += num * sign;\n    return result; }",
       "difficulty": "Hard"
     },
     "3": {
       "_id": 3,
-      "title": "counting bits",
+      "title": "Counting Bits",
       "question": "Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1's in their binary representation and return them as an array.",
       "answer": "class Solution {\npublic:\n    vector<int> countBits(int num) {\n         vector<int>result;result.push_back(0);\n         for (int i=1; i<=num; i++) result.push_back(1+result[(i-1)&i])；\n         return result;\n    }\n}",
       "difficulty": "Easy"
     },
     "4": {
       "_id": 4,
-      "title": "compare version numbers",
+      "title": "Compare Version Numbers",
       "question": "Compare two version numbers version1 and version2. If version1 > version2 return 1, if version1 < version2 return -1, otherwise return 0.",
       "answer": "class Solution(object):\n  def compareVersion(self, version1, version2):\n    \"\"\"\n    :type version1: str\n    :type version2: str\n    :rtype: int\n    \"\"\"\n    v1 = version1.split(\'.\')\n    v2 = version2.split(\'.\')\n    l1, l2 = len(v1), len(v2)\n    for i in xrange(max(l1, l2)):\n        ver1 = int(v1[i]) if i < len(v1) else 0\n        ver2 = int(v2[i]) if i < len(v2) else 0\n        if ver1 > ver2:\n            return 1\n        elif ver1 < ver2:\n            return -1\n    return 0",
       "difficulty": "Easy"
@@ -156,12 +156,16 @@ var initialData = {
     "1": {
       "_id": 1,
       "requester": 2,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 2
     },
     "2": {
       "_id": 2,
       "requester": 1,
-      "requestee": 4
+      "requestee": 4,
+      "status": "waiting",
+      "chatSession": 3
     }
   },
   "chatSessions": {
@@ -171,6 +175,20 @@ var initialData = {
       "initiator": 4,
       "memberLists": [1, 3, 4],
       "chatMessages": [1]
+    },
+    "2": {
+      "_id": 2,
+      "active": true,
+      "initiator": 2,
+      "memberLists": [2],
+      "chatMessages": []
+    },
+    "3": {
+      "_id": 3,
+      "active": true,
+      "initiator": 1,
+      "memberLists": [1],
+      "chatMessages": []
     }
   },
   "chatMessages": {
@@ -205,6 +223,14 @@ export function readDocument(collection, id) {
   // Clone the data. We do this to model a database, where you receive a
   // *copy* of an object and not the object itself.
   return JSONClone(data[collection][id]);
+}
+
+export function deleteDocument(collectionName, id) {
+  var collection = data[collectionName];
+  if (!collection[id]) {
+    throw new Error(`Collection ${collectionName} lacks an item with id ${id}!`);
+  }
+  delete collection[id];
 }
 
 /**
@@ -254,19 +280,4 @@ export function resetDatabase() {
   var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/');
   //clean database for the code editor
   firepadRef.remove();
-}
-
-/**
- * Reset database button.
- */
-export class ResetDatabase extends React.Component {
-  render() {
-    return (
-      <button className="navbar-btn btn btn-default" type="button" onClick={() => {
-        resetDatabase();
-        window.alert("Database reset! Refreshing the page now...");
-        document.location.reload(false);
-      }}>Reset Mock DB</button>
-    );
-  }
 }

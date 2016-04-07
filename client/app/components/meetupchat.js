@@ -12,7 +12,9 @@ export default class MeetupChat extends React.Component {
       chatSessions: {
         chatMessages: [],
         memberLists: [],
-        initiator: {}
+        initiator: {
+          _id: ""
+        }
       },
       value: ""
     };
@@ -60,15 +62,80 @@ export default class MeetupChat extends React.Component {
   }
 
   render() {
+    var stateChatId = parseInt(this.state.chatSessions._id, 10);
+    var propsChatId = parseInt(this.props.params.id, 10);
+    if (stateChatId !== propsChatId) {
+      this.refresh();
+      return (
+        <div></div>
+      )
+    }
     function currentUserPredicate(member) {
       return Number(localStorage.getItem('userId')) === member._id;
     }
+    var currentUser = _.find(this.state.chatSessions.memberLists, currentUserPredicate);
     this.state.chatSessions.memberLists = _.reject(this.state.chatSessions.memberLists, currentUserPredicate);
     var partitionedUsers = _.partition(this.state.chatSessions.memberLists, (user) => { 
       return _.find(this.state.onlineUsers, (onlUser) => { return user._id == onlUser._id; });
     });
     var onlineUsers = partitionedUsers[0];
     var offlineUsers = partitionedUsers[1];
+    var currentUserId = parseInt(localStorage.getItem('userId'), 10);
+    var initiatorId = parseInt(this.state.chatSessions.initiator._id, 10);
+    if (currentUserId == initiatorId) {
+      var editMember = (
+        <div className="btn-group pull-right member-edit" role="group">
+          <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Edit Members
+            <span className="caret"></span>
+          </button>
+          <ul className="dropdown-menu">
+            {this.state.chatSessions.memberLists.map((user, i) => {
+              if (i + 1 === this.state.chatSessions.memberLists.length) {
+                return (<div key={i}>
+                  <li>
+                    <div className="media">
+                      <div className="media-left">
+                        Pic
+                      </div>
+                      <div className="media-body">
+                        {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                        <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
+                      </div>
+                    </div>
+                  </li>
+                </div>);
+              }
+              return (<div key={i}>
+                <li>
+                  <div className="media">
+                    <div className="media-left">
+                      Pic
+                    </div>
+                    <div className="media-body">
+                      {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                      <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
+                    </div>
+                  </div>
+                </li>
+                <li role="separator" className="divider"></li>
+              </div>);
+              })
+            }
+          </ul>
+        </div>
+      )
+    }
+    else {
+      var editMember = (
+        <div className="btn-group pull-right member-edit" role="group">
+          <button type="button" disabled="disabled" className="btn btn-default">
+            Edit Members
+            <span className="caret"></span>
+          </button>
+        </div>
+      )
+    }
     return (
       <div className="container">
         <div className="row">
@@ -100,46 +167,7 @@ export default class MeetupChat extends React.Component {
           <div className="col-md-9 chat-column">
             <div className="panel online-panel panel-default">
               <div className="panel-heading clearfix">
-                <div className="btn-group pull-right member-edit" role="group">
-                  <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    Edit Members
-                    <span className="caret"></span>
-                  </button>
-                  <ul className="dropdown-menu">
-                    {this.state.chatSessions.memberLists.map((user, i) => {
-                      if (i + 1 === this.state.chatSessions.memberLists.length) {
-                        return (<div key={i}>
-                          <li>
-                            <div className="media">
-                              <div className="media-left">
-                                Pic
-                              </div>
-                              <div className="media-body">
-                                {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-                                <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
-                              </div>
-                            </div>
-                          </li>
-                        </div>);
-                      }
-                      return (<div key={i}>
-                        <li>
-                          <div className="media">
-                            <div className="media-left">
-                              Pic
-                            </div>
-                            <div className="media-body">
-                              {user.fullName}<span className="pull-right">&nbsp;&nbsp;&nbsp;</span>
-                              <button className="btn btn-xs btn-danger glyphicon glyphicon-remove pull-right" onClick={(e) => this.handleEditMemberButton(e, user._id)}></button>
-                            </div>
-                          </div>
-                        </li>
-                        <li role="separator" className="divider"></li>
-                      </div>);
-                      })
-                    }
-                  </ul>
-                </div>
+                {editMember}
                 <h4 className="panel-title pull-left">Connected</h4>
               </div>
               <ChatHistory>
@@ -154,7 +182,7 @@ export default class MeetupChat extends React.Component {
               </ChatHistory>
               <div className="panel-footer chat-box">
                 <div className="input-group">
-                    <span className="input-group-addon" id="basic-addon1">@{this.state.chatSessions.initiator.fullName}</span>
+                    <span className="input-group-addon" id="basic-addon1">@{currentUser.fullName}</span>
                     <input type="text" className="form-control" placeholder="Chat Message" aria-describedby="basic-addon1" value={this.state.value} onChange={(e) => this.handleChange(e)} onKeyUp={(e) => this.handleKeyUp(e)}></input>
                 </div>
               </div>
