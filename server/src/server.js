@@ -163,8 +163,6 @@ app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
   }
 });
 
-
-
 // Reset database.
 app.post('/resetdb', function(req, res) {
   console.log("Resetting database...");
