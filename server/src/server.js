@@ -15,7 +15,7 @@ var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
 var readAllCollection = database.readAllCollection;
-
+  
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
 // Support receiving JSON in HTTP request bodies
@@ -55,6 +55,63 @@ function postFeedbackData(feedbackData) {
   writeDocument("interviewSessions", interviewSession);
   return newFeedback;
 }
+function getInterviewDataSync(interviewId) {
+  var interviewItem = readDocument('interviewSessions', interviewId);
+  // Resolve participants
+  interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+  interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+  // Resolve feedback
+  if (interviewItem.feedback === undefined) {
+    interviewItem.feedback = {
+      "interviewer": "",
+      "interviewee": "",
+      "interviewer_pro": "",
+      "interviewer_con": "",
+      "interviewer_comment": "",
+      "interviewer_rating": "",
+      "interviewee_pro": "",
+      "interviewee_con": "",
+      "interviewee_comment": "",
+      "interviewee_rating": "",
+      "interview_session": "",
+      "timestamp": ""
+    }
+  }
+  else {
+    interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
+  }
+  // Resolve problem
+  interviewItem.problem = readDocument('problems', interviewItem.problem);
+  return interviewItem;
+}
+
+/**
+ * Emulates a REST call to get the feed data for a particular user.
+ * @param user The ID of the user whose feed we are requesting.
+ * @param cb A Function object, which we will invoke when the Feed's data is available.
+ */
+function getInterviewData(user) {
+  // Get the User object with the id "user".
+  var userData = readDocument('users', user);
+  // Get the Feed object for the user.
+  var interviewData = userData.interview.map(getInterviewDataSync);
+  return interviewData;
+}
+
+app.get('/user/:userid/interviews', function(req, res) {
+  var userid = req.params.userid;
+  var fromUser = getUserIdFromToken(req.get('Authorization'));
+  // userid is a string. We need it to be a number.
+  // Parameters are always strings.
+  var useridNumber = parseInt(userid, 10);
+  if (fromUser === useridNumber) {
+    // Send response.
+    res.send(getInterviewData(userid));
+  } else {
+    // 401: Unauthorized request.
+    res.status(401).end();
+  }
+});
 
 app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
