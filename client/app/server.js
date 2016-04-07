@@ -162,12 +162,11 @@ export function postInterviewSession(interviewerId, cb) {
  * Searches for feed items with the given text.
  */
 export function searchForUsers(queryText, cb) {
-  //emulateServerReturn(userData, cb);
+
   //userID is not needed; it's included in the JSON web token.
-  sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
+  sendXHR('POST', '/searchpeople?searchTerm=' + queryText, undefined, (xhr) => {
    cb(JSON.parse(xhr.responseText));
   });
-
 }
 
 /**

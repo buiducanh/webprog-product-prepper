@@ -19,6 +19,7 @@ var readAllCollection = database.readAllCollection;
 
 var lodash = require ('lodash');
 var _ = lodash._;
+
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
 // Support receiving JSON in HTTP request bodies
@@ -202,28 +203,13 @@ app.use(express.static('../client/build'));
  * Searches for feed items with the given text.
  */
 
- app.post('/searchpeople/:searchTerm', function(req, res) {
-   console.log ("req");
-   var queryText = req.params.searchTerm;
-   var fromUser = getUserIdFromToken(req.get('Authorization'));
-   var user = readDocument('users', fromUser);
-
-   console.log ("type is: " );
-   if (typeof(req.body) === 'string') {
-     // trim() removes whitespace before and after the query.
-     // toLowerCase() makes the query lowercase.
-    //  queryText = queryText.trim().toLowerCase();
-    //  var userData = readAllCollection('users');
+ app.post('/searchpeople', function(req, res) {
+   var queryText = req.query.searchTerm;
 
     var userData = readAllCollection('users');
     userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
 
      res.send(userData);
-
-   } else {
-     // 400: Bad Request.
-     res.status(400).end();
-   }
  });
 
 /**
