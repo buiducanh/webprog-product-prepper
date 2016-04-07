@@ -195,6 +195,8 @@ var initialData = {
   }
 };
 
+
+
 var data;
 // If 'true', the in-memory object representing the database has changed,
 // and we should flush it to disk.
@@ -309,6 +311,9 @@ module.exports.readAllCollection = readAllCollection;
 function resetDatabase() {
   data = JSONClone(initialData);
   updated = true;
+  var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/');
+  //clean database for the code editor
+  firepadRef.remove();
 }
 module.exports.resetDatabase = resetDatabase;
 
