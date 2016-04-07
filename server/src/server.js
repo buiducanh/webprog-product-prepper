@@ -16,7 +16,7 @@ var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
 var readAllCollection = database.readAllCollection;
-  
+
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
 // Support receiving JSON in HTTP request bodies
@@ -123,6 +123,21 @@ app.get('/user/:userid/interviews', function(req, res) {
     res.status(401).end();
   }
 });
+
+app.get('/interview/:interviewId', function(req, res) {
+   var userid = req.params.userid;
+   var fromUser = getUserIdFromToken(req.get('Authorization'));
+   // userid is a string. We need it to be a number.
+   // Parameters are always strings.
+   var useridNumber = parseInt(userid, 10);
+   if (fromUser === useridNumber) {
+     // Send response.
+     res.send(getInterviewSession(userid));
+   } else {
+     // 401: Unauthorized request.
+     res.status(401).end();
+   }
+ });
 
 app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
