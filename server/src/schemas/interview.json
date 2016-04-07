@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "id": "http://jsonschema.net/_id",
+      "type": "integer"
+    },
+    "email": {
+      "id": "http://jsonschema.net/email",
+      "type": "string"
+    },
+    "fullName": {
+      "id": "http://jsonschema.net/fullName",
+      "type": "string"
+    },
+    "interview": {
+      "id": "http://jsonschema.net/interview",
+      "type": "array",
+      "items": {
+        "id": "http://jsonschema.net/interview/0",
+        "type": "integer"
+      }
+    },
+    "languages": {
+      "id": "http://jsonschema.net/languages",
+      "type": "array",
+      "items": {
+        "id": "http://jsonschema.net/languages/0",
+        "type": "string"
+      }
+    },
+    "experience": {
+      "id": "http://jsonschema.net/experience",
+      "type": "integer"
+    },
+    "cover": {
+      "id": "http://jsonschema.net/cover",
+      "type": "string"
+    },
+    "avatar": {
+      "id": "http://jsonschema.net/avatar",
+      "type": "string"
+    },
+    "location": {
+      "id": "http://jsonschema.net/location",
+      "type": "string"
+    },
+    "position": {
+      "id": "http://jsonschema.net/position",
+      "type": "object",
+      "properties": {
+        "lat": {
+          "id": "http://jsonschema.net/position/lat",
+          "type": "number"
+        },
+        "lng": {
+          "id": "http://jsonschema.net/position/lng",
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "_id",
+    "email",
+    "fullName",
+    "interview",
+    "languages",
+    "experience",
+    "cover",
+    "avatar",
+    "location",
+    "position"
+  ]
+}
