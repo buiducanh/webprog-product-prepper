@@ -200,13 +200,11 @@ export function postInterviewSession(interviewerId, cb) {
  * Searches for feed items with the given text.
  */
 export function searchForUsers(queryText, cb) {
-  var userData = readAllCollection('users');
-  userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
-  emulateServerReturn(userData, cb);
-  // userID is not needed; it's included in the JSON web token.
-  //sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
-  //  cb(JSON.parse(xhr.responseText));
-  //});
+  //emulateServerReturn(userData, cb);
+  //userID is not needed; it's included in the JSON web token.
+  sendXHR('POST', '/searchpeople/' + queryText, undefined, (xhr) => {
+   cb(JSON.parse(xhr.responseText));
+  });
 
 }
 

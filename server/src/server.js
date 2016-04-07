@@ -15,6 +15,8 @@ var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
 var readAllCollection = database.readAllCollection;
+var lodash = require ('lodash');
+var _ = lodash._;
 
 // Support receiving text in HTTP request bodies
 app.use(bodyParser.text());
@@ -95,7 +97,7 @@ app.use(express.static('../client/build'));
  * Searches for feed items with the given text.
  */
 
- app.post('/peopleprofile/:searchTerm', function(req, res) {
+ app.post('/searchpeople/:searchTerm', function(req, res) {
    console.log ("req");
    var queryText = req.params.searchTerm;
    var fromUser = getUserIdFromToken(req.get('Authorization'));
@@ -105,12 +107,14 @@ app.use(express.static('../client/build'));
    if (typeof(req.body) === 'string') {
      // trim() removes whitespace before and after the query.
      // toLowerCase() makes the query lowercase.
-     queryText = queryText.trim().toLowerCase();
-     var userData = readAllCollection('users');
+    //  queryText = queryText.trim().toLowerCase();
+    //  var userData = readAllCollection('users');
 
-     res.send(userData.filter((user) => {
-       return user.fullName.toLowerCase().indexOf(queryText) !== -1;
-     }));
+    var userData = readAllCollection('users');
+    userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
+
+     res.send(userData);
+
    } else {
      // 400: Bad Request.
      res.status(400).end();
