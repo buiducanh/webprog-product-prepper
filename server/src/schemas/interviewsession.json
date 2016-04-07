@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "problem": {
+      "id": "http://jsonschema.net/problem",
+      "type": "integer"
+    },
+    "feedback": {
+      "id": "http://jsonschema.net/feedback",
+      "type": "integer"
+    },
+    "interviewer": {
+      "id": "http://jsonschema.net/interviewer",
+      "type": "integer"
+    },
+    "interviewee": {
+      "id": "http://jsonschema.net/interviewee",
+      "type": "integer"
+    },
+    "timestamp": {
+      "id": "http://jsonschema.net/timestamp",
+      "type": "integer"
+    },
+    "duration": {
+      "id": "http://jsonschema.net/duration",
+      "type": "string"
+    },
+    "code": {
+      "id": "http://jsonschema.net/code",
+      "type": "string"
+    },
+    "result": {
+      "id": "http://jsonschema.net/result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "problem",
+    "feedback",
+    "interviewer",
+    "interviewee",
+    "timestamp",
+    "duration",
+    "code",
+    "result"
+  ]
+}

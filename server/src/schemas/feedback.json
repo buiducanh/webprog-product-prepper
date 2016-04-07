@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "id": "http://jsonschema.net/_id",
+      "type": "integer"
+    },
+    "interviewer": {
+      "id": "http://jsonschema.net/interviewer",
+      "type": "integer"
+    },
+    "interviewee": {
+      "id": "http://jsonschema.net/interviewee",
+      "type": "integer"
+    },
+    "interviewer_pro": {
+      "id": "http://jsonschema.net/interviewer_pro",
+      "type": "string"
+    },
+    "interviewer_con": {
+      "id": "http://jsonschema.net/interviewer_con",
+      "type": "string"
+    },
+    "interviewer_comment": {
+      "id": "http://jsonschema.net/interviewer_comment",
+      "type": "string"
+    },
+    "interviewer_rating": {
+      "id": "http://jsonschema.net/interviewer_rating",
+      "type": "integer"
+    },
+    "interviewee_pro": {
+      "id": "http://jsonschema.net/interviewee_pro",
+      "type": "string"
+    },
+    "interviewee_con": {
+      "id": "http://jsonschema.net/interviewee_con",
+      "type": "string"
+    },
+    "interviewee_comment": {
+      "id": "http://jsonschema.net/interviewee_comment",
+      "type": "string"
+    },
+    "interviewee_rating": {
+      "id": "http://jsonschema.net/interviewee_rating",
+      "type": "integer"
+    },
+    "interview_session": {
+      "id": "http://jsonschema.net/interview_session",
+      "type": "integer"
+    },
+    "timestamp": {
+      "id": "http://jsonschema.net/timestamp",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "_id",
+    "interviewer",
+    "interviewee",
+    "interviewer_pro",
+    "interviewer_con",
+    "interviewer_comment",
+    "interviewer_rating",
+    "interviewee_pro",
+    "interviewee_con",
+    "interviewee_comment",
+    "interviewee_rating",
+    "interview_session",
+    "timestamp"
+  ]
+}
