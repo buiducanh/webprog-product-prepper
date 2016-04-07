@@ -101,13 +101,17 @@ export function getInterviewSession(interviewId, cb) {
 }
 
 export function getUserData (user, cb) {
-  var userData = readDocument('users', user);
-  emulateServerReturn(userData, cb);
+  sendXHR('GET', '/user/' + user, undefined, (xhr) => {
+    // Call the callback with the data.
+     cb(JSON.parse(xhr.responseText));
+   });
 }
 
 export function getAllUserData (cb) {
-  var userData = readAllCollection('users');
-  emulateServerReturn(userData, cb);
+  sendXHR('GET', '/user', undefined, (xhr) => {
+    // Call the callback with the data.
+     cb(JSON.parse(xhr.responseText));
+   });
 }
 
 export function postFeedbackData(feedbackData, cb) {
@@ -122,10 +126,6 @@ export function postFeedbackData(feedbackData, cb) {
     });
 }
 
-export function postAnswers(feedbackData, cb) {
-  var newFeedback = addDocument("feedbacks", feedbackData);
-  emulateServerReturn(newFeedback, cb);
-}
 
 export function postInterviewSession(interviewerId, cb) {
   var interview =  {

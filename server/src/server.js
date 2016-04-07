@@ -49,6 +49,35 @@ function getUserIdFromToken(authorizationLine) {
   }
 }
 
+function getUserData (user) {
+  var userData = readDocument('users', user);
+  return userData;
+}
+
+app.get('/user/:userid', function(req, res) {
+  var userid = req.params.userid;
+  var fromUser = getUserIdFromToken(req.get('Authorization'));
+  // userid is a string. We need it to be a number.
+  // Parameters are always strings.
+  var useridNumber = parseInt(userid, 10);
+  if (fromUser === useridNumber) {
+    // Send response.
+    res.send(getUserData(useridNumber));
+  } else {
+    // 401: Unauthorized request.
+    res.status(401).end();
+  }
+});
+
+function getAllUserData () {
+  var userData = readAllCollection('users');
+  return userData;
+}
+
+app.get('/user', function(req, res) {
+  res.send(getAllUserData());
+});
+
 function getInterviewSession(interviewId){
   var interviewItem = readDocument('interviewSessions', interviewId);
   // Resolve participants
