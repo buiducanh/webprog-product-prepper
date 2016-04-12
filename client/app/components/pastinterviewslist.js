@@ -45,11 +45,11 @@ export default class PastInterviewsList extends React.Component {
                     // i is comment's index in comments array
                     if (interview._id==this.state.selected._id)
                       return (
-                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li style={selectedStyle} className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
+                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li style={selectedStyle} className="mock-list-element"> {unixTimeToString(interview.timestamp)} </li> </a>
                       );
                     else
                       return (
-                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li className="mock-list-element"> {unixTimeToString(interview.feedback.timestamp)} </li> </a>
+                        <a key = {i} href="#" onClick={(e) => this.handleInterviewClick(e,interview)}><li className="mock-list-element"> {unixTimeToString(interview.timestamp)} </li> </a>
                       );
                   })
                 }
