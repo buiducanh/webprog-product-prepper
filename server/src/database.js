@@ -311,6 +311,7 @@ module.exports.readAllCollection = readAllCollection;
 function resetDatabase() {
   data = JSONClone(initialData);
   updated = true;
+  var Firebase = require('firebase');
   var firepadRef = new Firebase('https://brilliant-torch-7009.firebaseio.com/');
   //clean database for the code editor
   firepadRef.remove();
