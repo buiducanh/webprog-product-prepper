@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "duration": {
+      "id": "duration",
+      "type": "integer"
+    },
+    "code": {
+      "id": "code",
+      "type": "string"
+    },
+    "interviewer_id": {
+      "id": "interviewer_id",
+      "type": "integer"
+    },
+    "interviewee_id": {
+      "id": "interviewee_id",
+      "type": "integer"
+    },
+    "interviewId": {
+      "id": "interviewId",
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "duration",
+    "code",
+    "interviewer_id",
+    "interviewee_id",
+    "interviewId"
+  ]
+}

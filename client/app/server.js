@@ -147,7 +147,17 @@ export function searchForUsers(queryText, cb) {
    cb(JSON.parse(xhr.responseText));
   });
 }
-
+export function endInterview(duration, code, interviewer_id, interviewee_id, interviewId, cb) {
+  sendXHR('POST', '/endinterview', {
+    "duration": duration,
+    "code": code,
+    "interviewer_id": interviewer_id,
+    "interviewee_id" : interviewee_id,
+    "interviewId" : interviewId
+    },  (xhr) => {
+    cb();
+  });
+}
 /**
  * HONORS FEATURES
  */
@@ -166,14 +176,14 @@ export function addChatMember(chatSessionId, userId, cb) {
 }
 
 export function deleteNotification(notificationId, cb) {
-  var url = '/notification/' + notificationId + '?user=' + localStorage.getItem('userId');  
+  var url = '/notification/' + notificationId + '?user=' + localStorage.getItem('userId');
   sendXHR('DELETE', url, {}, (xhr) => {
     cb(JSON.parse(xhr.responseText));
   });
 }
 
 export function updateNotificationStatus(notificationId, status, cb) {
-  var url = '/notification/' + notificationId + '/status/' + status + '?user=' + localStorage.getItem('userId');  
+  var url = '/notification/' + notificationId + '/status/' + status + '?user=' + localStorage.getItem('userId');
   sendXHR('PUT', url, {}, (xhr) => {
     cb(JSON.parse(xhr.responseText));
   });
@@ -243,6 +253,7 @@ export function getNotifications(userId, cb) {
     cb(JSON.parse(xhr.responseText));
   });
 }
+
 /**
  * HONORS FEATURES
  */

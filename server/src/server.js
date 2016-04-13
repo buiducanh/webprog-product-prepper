@@ -12,6 +12,7 @@ var InterviewSessionSchema = require('./schemas/interviewsession.json');
 var InterviewSchema = require('./schemas/interview.json');
 var ChatMessageSchema = require('./schemas/chatmessage.json');
 var NotificationSchema = require('./schemas/notification.json');
+var EndInterviewSchema = require('./schemas/endinterview.json');
 var database = require('./database');
 var readDocument = database.readDocument;
 var writeDocument = database.writeDocument;
@@ -150,6 +151,14 @@ function postFeedbackData(feedbackData) {
   writeDocument("interviewSessions", interviewSession);
   return newFeedback;
 }
+function postAfterInterviewData(interviewData) {
+  // dummy = {_id: 1, text: "dummy"}
+  var interviewSession = readDocument("interviewSessions", interviewData.interviewId);
+  interviewSession.code = interviewData.code;
+  interviewSession.duration = interviewData.duration;
+  writeDocument("interviewSessions", interviewSession);
+  return;
+}
 function getInterviewDataSync(interviewId) {
   var interviewItem = readDocument('interviewSessions', interviewId);
   // Resolve participants
@@ -243,7 +252,19 @@ app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
     res.status(401).end();
   }
 });
-
+app.post('/endinterview', validate({ body: EndInterviewSchema }), function(req, res) {
+    // If this function runs, `req.body` passed JSON validation!
+  var body = req.body;
+  var fromUser = getUserIdFromToken(req.get('Authorization'));
+  if (fromUser === Number(body.interviewer_id) || fromUser === Number(body.interviewee_id)) {
+    postAfterInterviewData(body);
+    res.status(201);
+    res.send();
+  } else {
+    // 401: Unauthorized.
+    res.status(401).end();
+  }
+});
 // Reset database.
 app.post('/resetdb', function(req, res) {
   console.log("Resetting database...");

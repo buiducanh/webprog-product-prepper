@@ -59,7 +59,6 @@ export default class Feedback extends React.Component {
     else {
       partnerId = this.props.params.intervieweeId;
     }
-    console.log(partnerId);
     getUserData(partnerId, (userData) => {
       this.setState({user: userData});
     });
