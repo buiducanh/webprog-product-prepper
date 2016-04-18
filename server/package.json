@@ -10,7 +10,9 @@
     "express": "^4.13.4",
     "express-jsonschema": "^1.1.0",
     "firebase": "^2.4.2",
-    "geolib": "^2.0.20"
+    "geolib": "^2.0.20",
+    "mongo-express": "^0.30.48",
+    "mongodb": "^2.1.16"
   },
   "devDependencies": {
     "eslint": "^2.4.0",
