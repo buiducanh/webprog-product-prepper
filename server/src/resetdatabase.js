@@ -8,7 +8,7 @@ function generateObjectID(number) {
 }
 
 // Put your startup's name here (only letters and numbers -- no spaces, apostrophes, or special characters!)
-var databaseName = null;
+var databaseName = "prepper";
 // Put the initial mock objects here.
 var initialData = {
   "onlineUsers": {
