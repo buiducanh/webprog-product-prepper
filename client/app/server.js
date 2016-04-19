@@ -1,7 +1,6 @@
-import {deleteDocument, readDocument, writeDocument, addDocument, readAllCollection} from './database.js';
 import _ from "lodash";
 
-var token = 'eyJpZCI6NH0='; // <-- Put your base64'd JSON token here
+var token = 'eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNCJ9'; // <-- Put your base64'd JSON token here
 var authObj = {
   author: localStorage.getItem('userId')
 };

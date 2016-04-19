@@ -31,7 +31,7 @@ class App extends React.Component {
   }
 }
 
-localStorage.setItem("userId", 4);
+localStorage.setItem("userId", "000000000000000000000004");
 
 ReactDOM.render((
   <Router history={hashHistory}>
