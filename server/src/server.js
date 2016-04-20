@@ -120,7 +120,7 @@ MongoClient.connect(url, function(err, db) {
     return interviewItem;
 }
 
-  // Ngan || Thanh || Tri
+  // Ngan || Thanh || Tri  (WIP)
   function postInterviewSession(interviewerId) {
     // // Get the current UNIX time.
     // var time = new Date().getTime();
@@ -169,34 +169,36 @@ MongoClient.connect(url, function(err, db) {
       if (err) {
         return callback(err);
       }
+      // var interviewee = readDocument("users", intervieweeId);
       db.collection('users').findOne({ _id: intervieweeId }, function(err, interviewee) {
         if (err) {
           return callback(err);
         }
+        //interviewee.interview.push(interviewItem._id);
+        db.collection('users').updateOne({ _id: interviewee.interview },
+        {
+          $push: {
+            interview: {
+              $each: [interviewItem._id],
+              $position: 0
+            }
+          }
+        },
+        function(err) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, interviewee);
+        });
+       });
+
+        // var interviewer = readDocument("users", interviewerId);
         db.collection('users').findOne({ _id: interviewerId }, function(err, interviewer) {
           if (err) {
             return callback(err);
           }
-
-          //interviewee.interview.push(interviewItem._id);
-          db.collection('users').updateOne({ interview: interviewee.interview },
-          {
-            $push: {
-              interview: {
-                $each: [interviewItem._id],
-                $position: 0
-              }
-            }
-          },
-          function(err) {
-            if (err) {
-              return callback(err);
-            }
-            callback(null, interviewItem);
-          });
-
           //interviewer.interview.push(interviewItem._id);
-          db.collection('users').updateOne({ interview: interviewer.interview },
+          db.collection('users').updateOne({ _id: interviewer.interview },
           {
             $push: {
               interview: {
@@ -209,9 +211,8 @@ MongoClient.connect(url, function(err, db) {
             if (err) {
               return callback(err);
             }
-            callback(null, interviewItem);
+            callback(null, interviewer);
           });
-        });
       });
     });
 
