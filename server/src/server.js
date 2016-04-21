@@ -597,7 +597,7 @@ MongoClient.connect(url, function(err, db) {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true } , chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId}, [], updateAction, { "new": true } , chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -622,7 +622,12 @@ MongoClient.connect(url, function(err, db) {
         return callback(err);
       }
       chatSession.memberLists = members;
-      db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+      if (!_.isEmpty(chatSession.chatMessages)) {
+        db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+      }
+      else {
+        callback(err, chatSession);
+      }
     }
 
     function messagesCallback( err, messages) {
@@ -685,13 +690,13 @@ MongoClient.connect(url, function(err, db) {
     }
   });
 
-  function addChatMember(chatSessionId, userId, authId, callback) {
+  function addChatMember(chatSessionId, userId, callback) {
     var updateAction = {
       $addToSet: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true }, chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -709,11 +714,11 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      addChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
-          return sendDatabaseError(err);
+          res.status(500).send("Database error: " + err);
         } else if (data === null) {
           res.status(400).send("Could not add member to chat session for user " + userId);
         } else {
