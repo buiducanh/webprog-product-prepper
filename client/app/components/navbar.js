@@ -27,7 +27,7 @@ export default class Navbar extends React.Component {
       var chatSessionId = notification.chatSession._id;
       deleteChatMember(chatSessionId, userId, function(){});
     }
-    var notifications = _.reject(this.state.notifications, (noti) => { return Number(noti._id) === notificationId });
+    var notifications = _.reject(this.state.notifications, (noti) => { return noti._id === notificationId });
     deleteNotification(notificationId, notiCallback);
     this.setState({notifications: notifications});
   }
@@ -36,7 +36,7 @@ export default class Navbar extends React.Component {
     e.preventDefault();
     var notiCallback = (notification) => {
       var chatSessionId = notification.chatSession._id;
-      var indexOfNoti = _.findIndex(this.state.notifications, (noti) => { return Number(noti._id) === notificationId; });
+      var indexOfNoti = _.findIndex(this.state.notifications, (noti) => { return noti._id.toString() === notificationId; });
       this.state.notifications[indexOfNoti] = notification;
       this.setState(this.state);
       addChatMember(chatSessionId, userId, function(){});

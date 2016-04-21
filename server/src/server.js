@@ -102,15 +102,22 @@ MongoClient.connect(url, function(err, db) {
 
   // Tien
   app.get('/user/:userid', function(req, res) {
-    var userid = req.params.userid;
 
+    // Send response.
+    //   res.send(getUserData(useridNumber));
+    // } else {
+    //   // 401: Unauthorized request.
+    //   res.status(401).end();
+    // }
+
+    var userid = req.params.userid;
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
     var useridNumber = userid;
 
       getUserData(new ObjectID (useridNumber), function (err, user) {
         if (err) {
-          res.status (500).send ("Database erro: " + err);
+          res.status (500).send ("Database error: " + err);
         } else if (user === null) {
           res.status(400).send ("Could not look up data for user " + userid);
         } else {
@@ -120,12 +127,6 @@ MongoClient.connect(url, function(err, db) {
 
   });
 
-      // Send response.
-    //   res.send(getUserData(useridNumber));
-    // } else {
-    //   // 401: Unauthorized request.
-    //   res.status(401).end();
-    // }
 
   // Tien
   function getAllUserData (callback) {
@@ -133,7 +134,6 @@ MongoClient.connect(url, function(err, db) {
     // return userData;
 
         var query = { };
-
         db.collection('users').find(query).toArray(function(err, users) {
           if (err) {
             return callback(err);
@@ -598,7 +598,7 @@ MongoClient.connect(url, function(err, db) {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true } , chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId}, [], updateAction, { "new": true } , chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -623,7 +623,12 @@ MongoClient.connect(url, function(err, db) {
         return callback(err);
       }
       chatSession.memberLists = members;
-      db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+      if (!_.isEmpty(chatSession.chatMessages)) {
+        db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+      }
+      else {
+        callback(err, chatSession);
+      }
     }
 
     function messagesCallback( err, messages) {
@@ -686,13 +691,13 @@ MongoClient.connect(url, function(err, db) {
     }
   });
 
-  function addChatMember(chatSessionId, userId, authId, callback) {
+  function addChatMember(chatSessionId, userId, callback) {
     var updateAction = {
       $addToSet: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true }, chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -710,11 +715,11 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      addChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
-          return sendDatabaseError(err);
+          res.status(500).send("Database error: " + err);
         } else if (data === null) {
           res.status(400).send("Could not add member to chat session for user " + userId);
         } else {
@@ -813,10 +818,10 @@ MongoClient.connect(url, function(err, db) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
     var notificationId = req.params.notificationid;
-    var status = req.params.userid;
+    var status = req.params.status;
     var authId = req.query.user;
     if (fromUser === authId) {
-      updateNotificationStatus(new ObjectID(notificationId), body.status, function(err, data) {
+      updateNotificationStatus(new ObjectID(notificationId), status, function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
