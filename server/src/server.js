@@ -118,14 +118,42 @@ MongoClient.connect(url, function(err, db) {
     // Resolve problem
     interviewItem.problem = readDocument('problems', interviewItem.problem);
     return interviewItem;
-  }
+}
 
-  // Ngan || Thanh || Tri
+  // Ngan || Thanh || Tri  (WIP)
   function postInterviewSession(interviewerId) {
-    // Get the current UNIX time.
+    // // Get the current UNIX time.
+    // var time = new Date().getTime();
+    // var intervieweeId = 2; // TODO random this number
+    // //TODO random role????
+    // var interviewItem =
+    // {
+    //   "problem": 1,
+    //   "feedback": undefined,
+    //   "interviewer": interviewerId,
+    //   "interviewee": intervieweeId,
+    //   "timestamp": time,
+    //   "duration": "",
+    //   "code" : "",
+    //   "result": "WIP"
+    // };
+    // interviewItem = addDocument('interviewSessions', interviewItem);
+    //
+    // var interviewee = readDocument("users", intervieweeId);
+    // var interviewer = readDocument("users", interviewerId);
+    // interviewee.interview.push(interviewItem._id);
+    // interviewer.interview.push(interviewItem._id);
+    // writeDocument("users", interviewee);
+    // writeDocument("users", interviewer);
+    //
+    // // Resolve participants
+    // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+    // interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+    // // Resolve problem
+    // interviewItem.problem = readDocument('problems', interviewItem.problem);
+    // return interviewItem;
     var time = new Date().getTime();
     var intervieweeId = 2; // TODO random this number
-    //TODO random role????
     var interviewItem =
     {
       "problem": 1,
@@ -137,42 +165,94 @@ MongoClient.connect(url, function(err, db) {
       "code" : "",
       "result": "WIP"
     };
-    interviewItem = addDocument('interviewSessions', interviewItem);
+    db.collection('interviewSessions').insertOne(interviewItem, function(err, result) {
+      if (err) {
+        return callback(err);
+      }
+      // var interviewee = readDocument("users", intervieweeId);
+      db.collection('users').findOne({ _id: intervieweeId }, function(err, interviewee) {
+        if (err) {
+          return callback(err);
+        }
+        //interviewee.interview.push(interviewItem._id);
+        db.collection('users').updateOne({ _id: interviewee.interview },
+        {
+          $push: {
+            interview: {
+              $each: [interviewItem._id],
+              $position: 0
+            }
+          }
+        },
+        function(err) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, interviewee);
+        });
+       });
 
-    var interviewee = readDocument("users", intervieweeId);
-    var interviewer = readDocument("users", interviewerId);
-    interviewee.interview.push(interviewItem._id);
-    interviewer.interview.push(interviewItem._id);
-    writeDocument("users", interviewee);
-    writeDocument("users", interviewer);
+        // var interviewer = readDocument("users", interviewerId);
+        db.collection('users').findOne({ _id: interviewerId }, function(err, interviewer) {
+          if (err) {
+            return callback(err);
+          }
+          //interviewer.interview.push(interviewItem._id);
+          db.collection('users').updateOne({ _id: interviewer.interview },
+          {
+            $push: {
+              interview: {
+                $each: [interviewItem._id],
+                $position: 0
+              }
+            }
+          },
+          function(err) {
+            if (err) {
+              return callback(err);
+            }
+            callback(null, interviewer);
+          });
+      });
+    });
 
-    // Resolve participants
-    interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-    interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-    // Resolve problem
-    interviewItem.problem = readDocument('problems', interviewItem.problem);
-    return interviewItem;
-  }
+}
 
-  // Ngan || Thanh || Tri
+  // Ngan || Thanh || Tri  (FIXED)
   app.post('/interview', validate({body: InterviewSessionSchema}), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
-    var body = req.body;
-    var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var interviewerId = parseInt(body.interviewer, 10);
-    // Check if requester is authorized to post this status update.
-    // (The requester must be the author of the update.)
-    if (fromUser === interviewerId) {
-      var newUpdate = postInterviewSession(interviewerId);
-      // When POST creates a new resource, we should tell the client about it
-      // in the 'Location' header and use status code 201.
-      res.status(201);
-       // Send the update!
-      res.send(newUpdate);
-      } else {
-        // 401: Unauthorized.
-        res.status(401).end();
-      }
+    // var body = req.body;
+    // var fromUser = getUserIdFromToken(req.get('Authorization'));
+    // var interviewerId = parseInt(body.interviewer, 10);
+    // // Check if requester is authorized to post this status update.
+    // // (The requester must be the author of the update.)
+    // if (fromUser === interviewerId) {
+    //   var newUpdate = postInterviewSession(interviewerId);
+    //   // When POST creates a new resource, we should tell the client about it
+    //   // in the 'Location' header and use status code 201.
+    //   res.status(201);
+    //    // Send the update!
+    //   res.send(newUpdate);
+    //   } else {
+    //     // 401: Unauthorized.
+    //     res.status(401).end();
+    //   }
+       var body = req.body;
+       var fromUser = getUserIdFromToken(req.get('Authorization'));
+       var interviewerId = new ObjectID(body.interviewer);
+       if (fromUser === interviewerId) {
+         postInterviewSession(interviewerId, function(err, newUpdate) {
+           if (err) {
+              res.status(500).send("A database error occurred: " + err);
+           } else {
+             res.status(201);
+             res.send(newUpdate);
+           }
+         });
+       } else {
+          // 401: Unauthorized.
+          res.status(401).end();
+        }
   });
 
   // Rebecca
