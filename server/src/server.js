@@ -109,16 +109,43 @@ MongoClient.connect(url, function(err, db) {
     res.send(getAllUserData());
   });
 
-  // Ngan || Thanh || Tri
-  function getInterviewSession(interviewId){
-    var interviewItem = readDocument('interviewSessions', interviewId);
-    // Resolve participants
-    interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-    interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-    // Resolve problem
-    interviewItem.problem = readDocument('problems', interviewItem.problem);
-    return interviewItem;
-}
+  // Ngan || Thanh || Tri (WIP)
+  function getInterviewSession(interviewId) {
+    // var interviewItem = readDocument('interviewSessions', interviewId);
+    // // Resolve participants
+    // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+    // interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+    // // Resolve problem
+    // interviewItem.problem = readDocument('problems', interviewItem.problem);
+    // return interviewItem;
+    db.collection('interviewSessions').findOne({ _id: interviewId }, function(err, interviewItem) {
+        if (err) {
+          return sendDatabaseError(err);
+        }
+        // Resolve interviewer
+        resolveUserObjects(interviewItem.interviewer, function(err, interviewer) {
+          if (err) {
+            return sendDatabaseError(res, err);
+          }
+          interviewItem.interviewer = interviewer[0];
+          // Resolve interviewee
+          resolveUserObjects(interviewItem.interviewee, function (err, interviewee) {
+            if (err) {
+              return sendDatabaseError(res, err);
+            }
+          interviewItem.interviewee = interviewee[0];
+          // Resolve problem
+          db.collection('problems').findOne({ _id: interviewItem.problem }, function(err, problemObj) {
+            if (err) {
+              return sendDatabaseError(res, err);
+            }
+            interviewItem.problem = problemObj;
+            res.send(interviewItem);
+            });
+          });
+        });
+      });
+    }
 
   // Ngan || Thanh || Tri  (WIP)
   function postInterviewSession(interviewerId) {
@@ -287,10 +314,10 @@ MongoClient.connect(url, function(err, db) {
         interview = interviews[i];
         db.collection('users').findOne({ _id: interview.interviewer}, function(err, userObj) {
           if (err) {
-            return callback(err); 
+            return callback(err);
           }
           else {
-            interview.interviewer = userObj;  
+            interview.interviewer = userObj;
             resolved.push(interview);
             resolveInterviewee(i);
           }
@@ -300,10 +327,10 @@ MongoClient.connect(url, function(err, db) {
     function resolveInterviewee(i) {
       db.collection('users').findOne({ _id: interview.interviewee}, function(err, userObj) {
         if (err) {
-          return callback(err); 
+          return callback(err);
         }
         else {
-          interview.interviewee = userObj;  
+          interview.interviewee = userObj;
           resolveProblem(i);
         }
       });
@@ -311,10 +338,10 @@ MongoClient.connect(url, function(err, db) {
     function resolveProblem(i) {
       db.collection('problems').findOne({ _id: interview.problem}, function(err, problemObj) {
         if (err) {
-          return callback(err); 
+          return callback(err);
         }
         else {
-          interview.problem = problemObj;  
+          interview.problem = problemObj;
           resolveFeedback(i);
         }
       });
@@ -340,10 +367,10 @@ MongoClient.connect(url, function(err, db) {
       else {
         db.collection('feedbacks').findOne({ _id: interview.feedback}, function(err, feedbackObj) {
           if (err) {
-            return callback(err); 
+            return callback(err);
           }
           else {
-            interview.feedback = feedbackObj;  
+            interview.feedback = feedbackObj;
             resolveInterviewer(i + 1);
           }
         });
