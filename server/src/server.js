@@ -547,13 +547,13 @@ MongoClient.connect(url, function(err, db) {
   /**
    * HONORS FEATURES
    */
-  function deleteChatMember(chatSessionId, userId, callback) {
+  function deleteChatMember(chatSessionId, userId, authId, callback) {
     var updateAction = {
       $pull: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true } , chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true } , chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -623,7 +623,7 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
@@ -641,13 +641,13 @@ MongoClient.connect(url, function(err, db) {
     }
   });
 
-  function addChatMember(chatSessionId, userId, callback) {
+  function addChatMember(chatSessionId, userId, authId, callback) {
     var updateAction = {
       $addToSet: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true }, chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -665,7 +665,7 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
@@ -1009,8 +1009,8 @@ MongoClient.connect(url, function(err, db) {
           nearbyUsers.push(onlineUsersObj[i]);
         }
       }
+      callback(err, nearbyUsers);
     }
-    callback(err, nearbyUsers);
   }
 
   app.get('/user/:userid/nearby', function(req, res) {
