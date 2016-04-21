@@ -13,15 +13,15 @@
     },
     "interviewer_id": {
       "id": "interviewer_id",
-      "type": "integer"
+      "type": "string"
     },
     "interviewee_id": {
       "id": "interviewee_id",
-      "type": "integer"
+      "type": "string"
     },
     "interviewId": {
       "id": "interviewId",
-      "type": "integer"
+      "type": "string"
     }
   },
   "additionalProperties": false,

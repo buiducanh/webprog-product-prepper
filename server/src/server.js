@@ -55,6 +55,13 @@ MongoClient.connect(url, function(err, db) {
   /**
    * Get the user ID from a token. Returns -1 (an invalid ID) if it fails.
    */
+  function generateObjectID(number) {
+    var result = number.toString();
+    while (result.length < 24) {
+      result = "0".concat(result);
+    }
+    return new ObjectID(result);
+  }
   function getUserIdFromToken(authorizationLine) {
     try {
       // Cut off "Bearer " from the header value.
@@ -103,18 +110,39 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // Tien
-  function getAllUserData () {
-    var userData = readAllCollection('users');
-    return userData;
+  function getAllUserData (callback) {
+    // var userData = readAllCollection('users');
+    // return userData;
+
+        var query = { };
+
+        db.collection('users').find(query).toArray(function(err, users) {
+          if (err) {
+            return callback(err);
+          }
+          var userMap = {};
+          users.forEach((user) => {
+            userMap[user._id] = user;
+          });
+          callback(null, userMap);
+        });
   }
 
   // Tien
   app.get('/user', function(req, res) {
-    res.send(getAllUserData());
+    //res.send(getAllUserData());
+
+    getAllUserData (function(err, users) {
+      if (err) {
+        res.status(500).send("Database error: " + err);
+      } else {
+        res.send (users);
+      }
+    });
   });
 
   // Ngan || Thanh || Tri (done, not tested)
-  function getInterviewSession(interviewId, callback) {
+  function getInterviewSession(interviewId) {
     // var interviewItem = readDocument('interviewSessions', interviewId);
     // // Resolve participants
     // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
@@ -129,9 +157,9 @@ MongoClient.connect(url, function(err, db) {
         var interviews = [interviewItem];
         resolveInterviews(interviews, function(err, resolved) {
             if (err) {
-              return callback(err);
+              return sendDatabaseError(err);
             }
-            return callback(null, resolved[0]);
+            return resolved[0];
         });
       });
     }
@@ -169,7 +197,7 @@ MongoClient.connect(url, function(err, db) {
     var intervieweeId = new ObjectID("000000000000000000000002"); // TODO random this number
     var interviewItem =
     {
-      "problem": new ObjectID("000000000000000000000001"),
+      "problem": generateObjectID(1),
       "feedback": undefined,
       "interviewer": interviewerId,
       "interviewee": intervieweeId,
@@ -182,6 +210,21 @@ MongoClient.connect(url, function(err, db) {
       if (err) {
         return callback(err);
       }
+      var interviewItemId = resultObj.insertedId;
+      interviewItem._id = interviewItemId;
+      // Update interviewer's interview array
+      db.collection('users').updateOne({ _id: interviewerId },
+      {
+        $push: {
+          interview: {
+            interviewItemId
+          }
+        }
+      },
+      function(err) {
+        if (err) {
+          return sendDatabaseError(err);
+        }
         // Include with the document's inserted id
         var interviewItemId = resultObj.insertedId;
         interviewItem._id = interviewItemId;
@@ -213,40 +256,23 @@ MongoClient.connect(url, function(err, db) {
               if (err) {
                 return callback(err);
               }
-              console.log(resolved[0]);
               return callback(null, resolved[0]);
             });
           });
         });
       });
-    }
+    });  
+  }
 
   // Ngan || Thanh || Tri  (FIXED)
   app.post('/interview', validate({body: InterviewSessionSchema}), function(req, res) {
-    // If this function runs, `req.body` passed JSON validation!
-    // var body = req.body;
-    // var fromUser = getUserIdFromToken(req.get('Authorization'));
-    // var interviewerId = parseInt(body.interviewer, 10);
-    // // Check if requester is authorized to post this status update.
-    // // (The requester must be the author of the update.)
-    // if (fromUser === interviewerId) {
-    //   var newUpdate = postInterviewSession(interviewerId);
-    //   // When POST creates a new resource, we should tell the client about it
-    //   // in the 'Location' header and use status code 201.
-    //   res.status(201);
-    //    // Send the update!
-    //   res.send(newUpdate);
-    //   } else {
-    //     // 401: Unauthorized.
-    //     res.status(401).end();
-    //   }
        var body = req.body;
        var fromUser = getUserIdFromToken(req.get('Authorization'));
        var interviewerId = body.interviewer;
        if (fromUser === interviewerId) {
          postInterviewSession(new ObjectID(interviewerId), function(err, newUpdate) {
            if (err) {
-              res.status(500).send("A database error occurred: " + err);
+              return sendDatabaseError(err);
            } else {
              res.status(201);
              res.send(newUpdate);
@@ -258,16 +284,8 @@ MongoClient.connect(url, function(err, db) {
         }
   });
 
-  // Rebecca
-  function postFeedbackData(feedbackData) {
-    // dummy = {_id: 1, text: "dummy"}
-    feedbackData.timestamp = new Date().getTime();
-    var newFeedback = addDocument("feedbacks", feedbackData);
-    var interviewSession = readDocument("interviewSessions", feedbackData.interview_session);
-    interviewSession.feedback = newFeedback._id;
-    writeDocument("interviewSessions", interviewSession);
-    return newFeedback;
-  }
+
+
 
   // Thanh || Tri
   function postAfterInterviewData(interviewData) {
@@ -364,7 +382,6 @@ MongoClient.connect(url, function(err, db) {
   function getInterviewData(user, callback) {
     // Get the User object with the id "user".
     var interviewData = [];
-
     db.collection('users').findOne({ _id: new ObjectID(user) }, getUserCallback);
 
     function getUserCallback(err, userObj) {
@@ -396,7 +413,7 @@ MongoClient.connect(url, function(err, db) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
-          res.status(500).send("Database error: " + err);
+          return sendDatabaseError(err);
         } else if (data === null) {
           res.status(400).send("Could not look up interviews for user " + userid);
         } else {
@@ -412,14 +429,14 @@ MongoClient.connect(url, function(err, db) {
 
   // Thanh || Tri
   app.get('/interview/:interviewid', function(req, res) {
-    var intId = parseInt(req.params.interviewid, 10);
+    var intId = req.params.interviewid;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
-    var userId = parseInt(req.query.user, 10);
+    var userId = req.query.user;
     if (fromUser === userId) {
       // Send response.
-      res.send(getInterviewSession(intId));
+      res.send(getInterviewSession(generateObjectID(intId)));
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
@@ -427,23 +444,64 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // Rebecca
+  function postFeedbackData(feedbackData, callback) {
+    feedbackData.timestamp = new Date().getTime();
+
+    // Add the feedback to the database.
+    db.collection('feedbacks').insertOne(feedbackData, feedbackCallback);
+
+    function feedbackCallback(err, newFeedback) {
+      if (err) {
+        return callback(err);
+      }
+      db.collection('interviewSessions').updateOne({ _id: newFeedback.interview_session }, {
+        $set: { feedback: newFeedback._id
+        }
+      }, interviewSessionCallback)
+
+      function interviewSessionCallback(err) {
+        callback(err, newFeedback);
+      }
+    }
+  }
+
+  // Rebecca
   app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
       // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
-    //var feedbackId = parseInt(req.params.feedbackid, 10);
     var fromUser = getUserIdFromToken(req.get('Authorization'));
+    var feedbackData = {
+      "interviewer": new ObjectID(body.interviewer),
+      "interviewee": new ObjectID(body.interviewee),
+      "interviewer_pro": body.interviewer_pro,
+      "interviewer_con": body.interviewer_con,
+      "interviewer_comment": body.interviewer_comment,
+      "interviewer_rating": body.interviewer_rating,
+      "interviewee_pro": body.interviewee_pro,
+      "interviewee_con": body.interviewee_con,
+      "interviewee_comment": body.interviewee_comment,
+      "interviewee_rating": body.interviewee_rating,
+      "interview_session": new ObjectID(body.interview_session)
+    }
 
     // Check if requester is authorized to post this status update.
     // (The requester must be the author of the update.)
-    if (fromUser === Number(body.author)) {
-      var newUpdate = postFeedbackData(body);
-      // When POST creates a new resource, we should tell the client about it
-      // in the 'Location' header and use status code 201.
-      res.status(201);
-       // Send the update!
-      res.send(newUpdate);
+    if (fromUser === body.author) {
+      postFeedbackData(feedbackData, function(err, newUpdate) {
+        if (err) {
+          // A database error happened.
+          // 500: Internal error.
+          res.status(500).send("A database error occurred: " + err);
+        } else {
+          // When POST creates a new resource, we should tell the client about it
+          // in the 'Location' header and use status code 201.
+          res.status(201);
+          // Update succeeded! Return the resolved feed item.
+          res.send(newUpdate);
+        }
+      });
     } else {
-      // 401: Unauthorized.
+      // Unauthorized.
       res.status(401).end();
     }
   });
@@ -452,8 +510,9 @@ MongoClient.connect(url, function(err, db) {
   app.post('/endinterview', validate({ body: EndInterviewSchema }), function(req, res) {
       // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
+    console.log("OK");
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    if (fromUser === Number(body.interviewer_id) || fromUser === Number(body.interviewee_id)) {
+    if (fromUser === body.interviewer_id || fromUser === body.interviewee_id) {
       postAfterInterviewData(body);
       res.status(201);
       res.send();
@@ -568,7 +627,7 @@ MongoClient.connect(url, function(err, db) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
-          res.status(500).send("Database error: " + err);
+          return sendDatabaseError(err);
         } else if (data === null) {
           res.status(400).send("Could not delete add member chat session for user " + userId);
         } else {
@@ -610,7 +669,7 @@ MongoClient.connect(url, function(err, db) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
-          res.status(500).send("Database error: " + err);
+          return sendDatabaseError(err);
         } else if (data === null) {
           res.status(400).send("Could not add member to chat session for user " + userId);
         } else {

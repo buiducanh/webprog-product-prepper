@@ -9,11 +9,11 @@
     },
     "owner": {
       "id": "http://jsonschema.net/owner",
-      "type": "integer"
+      "type": "string"
     },
     "chatSessionId": {
       "id": "http://jsonschema.net/chatSessionId",
-      "type": "integer"
+      "type": "string"
     }
   },
   "required": [
