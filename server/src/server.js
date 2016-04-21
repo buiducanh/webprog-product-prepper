@@ -55,6 +55,13 @@ MongoClient.connect(url, function(err, db) {
   /**
    * Get the user ID from a token. Returns -1 (an invalid ID) if it fails.
    */
+  function generateObjectID(number) {
+    var result = number.toString();
+    while (result.length < 24) {
+      result = "0".concat(result);
+    }
+    return new ObjectID(result);
+  }
   function getUserIdFromToken(authorizationLine) {
     try {
       // Cut off "Bearer " from the header value.
@@ -77,6 +84,9 @@ MongoClient.connect(url, function(err, db) {
     }
   }
 
+  function sendDatabaseError(res, err) {
+    res.status(500).send("A database error occurred: " + err);
+  }
   // Tien
   function getUserData (user) {
     var userData = readDocument('users', user);
@@ -110,22 +120,31 @@ MongoClient.connect(url, function(err, db) {
     res.send(getAllUserData());
   });
 
-  // Ngan || Thanh || Tri
-  function getInterviewSession(interviewId){
-    var interviewItem = readDocument('interviewSessions', interviewId);
-    // Resolve participants
-    interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-    interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-    // Resolve problem
-    interviewItem.problem = readDocument('problems', interviewItem.problem);
-    return interviewItem;
-}
+  // Ngan || Thanh || Tri (done, not tested)
+  function getInterviewSession(interviewId) {
+    // var interviewItem = readDocument('interviewSessions', interviewId);
+    // // Resolve participants
+    // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+    // interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+    // // Resolve problem
+    // interviewItem.problem = readDocument('problems', interviewItem.problem);
+    // return interviewItem;
+    db.collection('interviewSessions').findOne({ _id: interviewId }, function(err, interviewItem) {
+        if (err) {
+          return callback(err);
+        }
+        var interviews = [interviewItem];
+        resolveInterviews(interviews, function(err, resolved) {
+            if (err) {
+              return sendDatabaseError(err);
+            }
+            return resolved[0];
+        });
+      });
+    }
 
   // Ngan || Thanh || Tri  (WIP)
-  function postInterviewSession(interviewerId) {
-    // // Get the current UNIX time.
-    // var time = new Date().getTime();
-    // var intervieweeId = 2; // TODO random this number
+  function postInterviewSession(interviewerId, callback) {
     // //TODO random role????
     // var interviewItem =
     // {
@@ -154,10 +173,10 @@ MongoClient.connect(url, function(err, db) {
     // interviewItem.problem = readDocument('problems', interviewItem.problem);
     // return interviewItem;
     var time = new Date().getTime();
-    var intervieweeId = 2; // TODO random this number
+    var intervieweeId = new ObjectID("000000000000000000000002"); // TODO random this number
     var interviewItem =
     {
-      "problem": 1,
+      "problem": generateObjectID(1),
       "feedback": undefined,
       "interviewer": interviewerId,
       "interviewee": intervieweeId,
@@ -166,85 +185,73 @@ MongoClient.connect(url, function(err, db) {
       "code" : "",
       "result": "WIP"
     };
-    db.collection('interviewSessions').insertOne(interviewItem, function(err, result) {
+    db.collection('interviewSessions').insertOne(interviewItem, function(err, resultObj) {
       if (err) {
         return callback(err);
       }
-      // var interviewee = readDocument("users", intervieweeId);
-      db.collection('users').findOne({ _id: intervieweeId }, function(err, interviewee) {
-        if (err) {
-          return callback(err);
+      var interviewItemId = resultObj.insertedId;
+      interviewItem._id = interviewItemId;
+      // Update interviewer's interview array
+      db.collection('users').updateOne({ _id: interviewerId },
+      {
+        $push: {
+          interview: {
+            interviewItemId
+          }
         }
-        //interviewee.interview.push(interviewItem._id);
-        db.collection('users').updateOne({ _id: interviewee.interview },
+      },
+      function(err) {
+        if (err) {
+          return sendDatabaseError(err);
+        }
+        // Include with the document's inserted id
+        var interviewItemId = resultObj.insertedId;
+        interviewItem._id = interviewItemId;
+        // Update interviewer's interview array
+        db.collection('users').updateOne({ _id: interviewerId },
         {
           $push: {
-            interview: {
-              $each: [interviewItem._id],
-              $position: 0
-            }
+            interview: interviewItemId
           }
         },
         function(err) {
           if (err) {
             return callback(err);
           }
-          callback(null, interviewee);
-        });
-       });
-
-        // var interviewer = readDocument("users", interviewerId);
-        db.collection('users').findOne({ _id: interviewerId }, function(err, interviewer) {
-          if (err) {
-            return callback(err);
-          }
-          //interviewer.interview.push(interviewItem._id);
-          db.collection('users').updateOne({ _id: interviewer.interview },
+          // Update interviewee's interview array
+          db.collection('users').updateOne({ _id: intervieweeId },
           {
             $push: {
-              interview: {
-                $each: [interviewItem._id],
-                $position: 0
-              }
+              interview: interviewItemId
             }
           },
           function(err) {
             if (err) {
               return callback(err);
             }
-            callback(null, interviewer);
+            // Resolve interview item and return
+            var interviews = [interviewItem];
+            resolveInterviews(interviews, function(err, resolved) {
+              if (err) {
+                return callback(err);
+              }
+              return callback(null, resolved[0]);
+            });
           });
+        });
       });
-    });
-
-}
+    });  
+  }
 
   // Ngan || Thanh || Tri  (FIXED)
   app.post('/interview', validate({body: InterviewSessionSchema}), function(req, res) {
-    // If this function runs, `req.body` passed JSON validation!
-    // var body = req.body;
-    // var fromUser = getUserIdFromToken(req.get('Authorization'));
-    // var interviewerId = parseInt(body.interviewer, 10);
-    // // Check if requester is authorized to post this status update.
-    // // (The requester must be the author of the update.)
-    // if (fromUser === interviewerId) {
-    //   var newUpdate = postInterviewSession(interviewerId);
-    //   // When POST creates a new resource, we should tell the client about it
-    //   // in the 'Location' header and use status code 201.
-    //   res.status(201);
-    //    // Send the update!
-    //   res.send(newUpdate);
-    //   } else {
-    //     // 401: Unauthorized.
-    //     res.status(401).end();
-    //   }
        var body = req.body;
        var fromUser = getUserIdFromToken(req.get('Authorization'));
-       var interviewerId = new ObjectID(body.interviewer);
+       var interviewerId = body.interviewer;
        if (fromUser === interviewerId) {
-         postInterviewSession(interviewerId, function(err, newUpdate) {
+         postInterviewSession(new ObjectID(interviewerId), function(err, newUpdate) {
            if (err) {
-              res.status(500).send("A database error occurred: " + err);
+              return sendDatabaseError(err);
            } else {
              res.status(201);
              res.send(newUpdate);
@@ -269,35 +276,80 @@ MongoClient.connect(url, function(err, db) {
     return;
   }
 
-  // Anh
-  function getInterviewDataSync(interviewId) {
-    var interviewItem = readDocument('interviewSessions', interviewId);
-    // Resolve participants
-    interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-    interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-    // Resolve feedback
-    if (interviewItem.feedback === undefined) {
-      interviewItem.feedback = {
-        "interviewer": "",
-        "interviewee": "",
-        "interviewer_pro": "",
-        "interviewer_con": "",
-        "interviewer_comment": "",
-        "interviewer_rating": "",
-        "interviewee_pro": "",
-        "interviewee_con": "",
-        "interviewee_comment": "",
-        "interviewee_rating": "",
-        "interview_session": "",
-        "timestamp": ""
+  function resolveInterviews(interviews, callback) {
+    var resolved = [];
+    var interview = {};
+    function resolveInterviewer(i) {
+      if (i === interviews.length) {
+        return callback(null, resolved);
+      }
+      else {
+        interview = interviews[i];
+        db.collection('users').findOne({ _id: interview.interviewer}, function(err, userObj) {
+          if (err) {
+            return callback(err);
+          }
+          else {
+            interview.interviewer = userObj;
+            resolved.push(interview);
+            resolveInterviewee(i);
+          }
+        });
       }
     }
-    else {
-      interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
+    function resolveInterviewee(i) {
+      db.collection('users').findOne({ _id: interview.interviewee}, function(err, userObj) {
+        if (err) {
+          return callback(err);
+        }
+        else {
+          interview.interviewee = userObj;
+          resolveProblem(i);
+        }
+      });
     }
-    // Resolve problem
-    interviewItem.problem = readDocument('problems', interviewItem.problem);
-    return interviewItem;
+    function resolveProblem(i) {
+      db.collection('problems').findOne({ _id: interview.problem}, function(err, problemObj) {
+        if (err) {
+          return callback(err);
+        }
+        else {
+          interview.problem = problemObj;
+          resolveFeedback(i);
+        }
+      });
+    }
+    function resolveFeedback(i) {
+      if (interview.feedback == null) {
+        interview.feedback = {
+          "interviewer": "",
+          "interviewee": "",
+          "interviewer_pro": "",
+          "interviewer_con": "",
+          "interviewer_comment": "",
+          "interviewer_rating": "",
+          "interviewee_pro": "",
+          "interviewee_con": "",
+          "interviewee_comment": "",
+          "interviewee_rating": "",
+          "interview_session": "",
+          "timestamp": ""
+        };
+        resolveInterviewer(i + 1);
+      }
+      else {
+        db.collection('feedbacks').findOne({ _id: interview.feedback}, function(err, feedbackObj) {
+          if (err) {
+            return callback(err);
+          }
+          else {
+            interview.feedback = feedbackObj;
+            resolveInterviewer(i + 1);
+          }
+        });
+      }
+    }
+    return resolveInterviewer(0);
   }
 
   /**
@@ -306,12 +358,26 @@ MongoClient.connect(url, function(err, db) {
    * @param cb A Function object, which we will invoke when the Feed's data is available.
    */
   // Anh
-  function getInterviewData(user) {
+  function getInterviewData(user, callback) {
     // Get the User object with the id "user".
-    var userData = readDocument('users', user);
-    // Get the Feed object for the user.
-    var interviewData = userData.interview.map(getInterviewDataSync);
-    return interviewData;
+    var interviewData = [];
+    db.collection('users').findOne({ _id: new ObjectID(user) }, getUserCallback);
+
+    function getUserCallback(err, userObj) {
+      if (err) {
+        return callback(err);
+      }
+      var interviewQuery = { $or: userObj.interview.map((id) => { return { _id: id}; })};
+      // Get the Interview object for the user.
+      db.collection('interviewSessions').find(interviewQuery).toArray(getInterviewsCallback);
+    }
+
+    function getInterviewsCallback(err, interviews) {
+      if (err) {
+        return callback(err);
+      }
+      return resolveInterviews(interviews, callback);
+    }
   }
 
   // Anh
@@ -320,10 +386,20 @@ MongoClient.connect(url, function(err, db) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
-    var useridNumber = parseInt(userid, 10);
-    if (fromUser === useridNumber) {
+    if (fromUser === userid) {
       // Send response.
-      res.send(getInterviewData(userid));
+      getInterviewData(new ObjectID(userid), function(err, data){
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          return sendDatabaseError(err);
+        } else if (data === null) {
+          res.status(400).send("Could not look up interviews for user " + userid);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
@@ -332,14 +408,14 @@ MongoClient.connect(url, function(err, db) {
 
   // Thanh || Tri
   app.get('/interview/:interviewid', function(req, res) {
-    var intId = parseInt(req.params.interviewid, 10);
+    var intId = req.params.interviewid;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
-    var userId = parseInt(req.query.user, 10);
+    var userId = req.query.user;
     if (fromUser === userId) {
       // Send response.
-      res.send(getInterviewSession(intId));
+      res.send(getInterviewSession(generateObjectID(intId)));
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
@@ -413,8 +489,9 @@ MongoClient.connect(url, function(err, db) {
   app.post('/endinterview', validate({ body: EndInterviewSchema }), function(req, res) {
       // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
+    console.log("OK");
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    if (fromUser === Number(body.interviewer_id) || fromUser === Number(body.interviewee_id)) {
+    if (fromUser === body.interviewer_id || fromUser === body.interviewee_id) {
       postAfterInterviewData(body);
       res.status(201);
       res.send();
@@ -449,47 +526,136 @@ MongoClient.connect(url, function(err, db) {
   /**
    * HONORS FEATURES
    */
-  function deleteChatMember(chatSessionId, userId) {
-    var chatSession = readDocument("chatSessions", chatSessionId);
-    var indexOfUser = chatSession.memberLists.indexOf(userId);
-    chatSession.memberLists.splice(indexOfUser, 1);
-    writeDocument('chatSessions', chatSession);
-    return getChatSessionsSync(chatSessionId);
+  function deleteChatMember(chatSessionId, userId, callback) {
+    var updateAction = {
+      $pull: {
+        memberLists: userId
+      }
+    };
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true } , chatSessionCallback);
+
+    function chatSessionCallback(err, chatSession) {
+      if (err) {
+        return callback(err);
+      }
+      resolveChatSession(chatSession.value, callback);
+    }
+  }
+
+  function resolveChatSession(chatSession, callback) {
+    db.collection('users').findOne({ _id: chatSession.initiator }, userCallback);
+    function userCallback(err, userObj) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.initiator = userObj;
+      db.collection('users').find({ $or: chatSession.memberLists.map((member) => { return { _id: member } } )}).toArray(membersCallback);
+    }
+
+    function membersCallback( err, members) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.memberLists = members;
+      db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+    }
+
+    function messagesCallback( err, messages) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.chatMessages = messages;
+      resolveChatMessages(chatSession.chatMessages, function( err, chatMessages) {
+        if (err) {
+          return callback(err);
+        }
+        chatSession.chatMessages = chatMessages;
+        callback(err, chatSession);
+      });
+    }
+  }
+
+  function resolveChatMessages(chatMessages, callback) {
+    var resolved = [];
+    function resolveOwner(i) {
+      if (i === chatMessages.length) {
+        return callback(null, resolved);
+      }
+      else {
+        db.collection('users').findOne({ _id: chatMessages[i].owner }, function( err, owner) {
+          if (err) {
+            callback(err);
+          }
+          chatMessages[i].owner = owner;
+          resolved.push(chatMessages[i]);
+          resolveOwner(i + 1);
+        });
+      }
+    }
+    return resolveOwner(0);
   }
 
   app.delete('/chatsession/:chatid/memberlists/:userid', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    // Convert params from string to number.
-    var chatId = parseInt(req.params.chatid, 10);
-    var userId = parseInt(req.params.userid, 10);
-    var authId = parseInt(req.query.user, 10);
+    var chatId = req.params.chatid;
+    var userId = req.params.userid;
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var chatSession = deleteChatMember(chatId, userId);
-      res.send(chatSession);
+      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          return sendDatabaseError(err);
+        } else if (data === null) {
+          res.status(400).send("Could not delete add member chat session for user " + userId);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
     }
   });
 
-  function addChatMember(chatSessionId, userId) {
-    var chatSession = readDocument("chatSessions", chatSessionId);
-    chatSession.memberLists.push(userId);
-    writeDocument('chatSessions', chatSession);
-    return getChatSessionsSync(chatSessionId);
+  function addChatMember(chatSessionId, userId, callback) {
+    var updateAction = {
+      $addToSet: {
+        memberLists: userId
+      }
+    };
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
+
+    function chatSessionCallback(err, chatSession) {
+      if (err) {
+        return callback(err);
+      }
+      resolveChatSession(chatSession.value, callback);
+    }
   }
 
   app.put('/chatsession/:chatid/memberlists/:userid', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
-    var chatId = parseInt(req.params.chatid, 10);
-    var userId = parseInt(req.params.userid, 10);
-    var authId = parseInt(req.query.user, 10);
+    var chatId = req.params.chatid;
+    var userId = req.params.userid;
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var chatSession = addChatMember(chatId, userId);
-      res.send(chatSession);
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          return sendDatabaseError(err);
+        } else if (data === null) {
+          res.status(400).send("Could not add member to chat session for user " + userId);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
@@ -595,20 +761,6 @@ MongoClient.connect(url, function(err, db) {
       res.status(401).end();
     }
   });
-
-  function getChatSessionsSync(sessionId) {
-    var session = readDocument('chatSessions', sessionId);
-    session.initiator = readDocument('users', session.initiator);
-    session.memberLists = session.memberLists.map((member) => {
-      return readDocument('users', member);
-    });
-    session.chatMessages = session.chatMessages.map((message) => {
-      var messageObj = readDocument('chatMessages', message);
-      messageObj.owner = readDocument('users', messageObj.owner);
-      return messageObj;
-    });
-    return session;
-  }
 
   function postNotifications(requester, requestee) {
     var chatSession = _.find(readAllCollection("chatSessions"), (chat) => {

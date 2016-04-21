@@ -145,7 +145,7 @@ export default class MeetupChat extends React.Component {
       )
     }
     return (
-      <div className="container">
+      <div className="component-container">
         <div className="row">
           <div className="col-md-3 online-column">
             <div className="panel online-panel panel-default">

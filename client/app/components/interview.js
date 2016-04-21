@@ -33,7 +33,7 @@ export default class Interview extends React.Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="component-container">
         <div className="row">
           <div className="col-md-4">
             <VoiceChat />

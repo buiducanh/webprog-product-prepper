@@ -10,6 +10,7 @@ import UserProfile from './components/userprofile.js';
 import Meetup from './components/meetup';
 import MeetupChat from './components/meetupchat.js';
 import SearchQuery from './components/searchquery.js';
+import ErrorBanner from './components/errorbanner';
 
 import { IndexRoute, Router, Route, hashHistory } from 'react-router';
 
@@ -25,7 +26,14 @@ class App extends React.Component {
         <nav id="navbar-container" className="navbar navbar-fixed-top navbar-default">
           <Navbar userId={localStorage.getItem("userId")}/>
         </nav>
-        {this.props.children}
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <ErrorBanner />
+            </div>
+          </div>
+          {this.props.children}
+        </div>
       </div>
     );
   }

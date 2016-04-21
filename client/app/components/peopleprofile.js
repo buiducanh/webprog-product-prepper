@@ -35,7 +35,7 @@ export default class PeopleProfile extends React.Component {
   render() {
     return (
       <div className="peopleprofile">
-        <div className="container">
+        <div className="component-container">
           <div className="row">
             <div className="col-md-3">
             </div>
@@ -65,7 +65,7 @@ export default class PeopleProfile extends React.Component {
                 this.state.users.map((user, i) => {
                   return (
 
-                    <div key={i} className=" main container-fluid well col-md-12">
+                    <div key={i} className=" main component-container-fluid well col-md-12">
                       <div className="row-fluid">
                         <div className="col-lg-3" >
                           <img src={user.avatar}

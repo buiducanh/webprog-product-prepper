@@ -21,7 +21,7 @@ export default class UserProfile extends React.Component {
   render () {
     return (
       <div className="userprofile">
-        <div className="container">
+        <div className="component-container">
           <div className="row">
             <div className="col-md-offset-1 col-lg-9">
               <div className="card">
@@ -36,7 +36,7 @@ export default class UserProfile extends React.Component {
           </div>
         </div>
 
-        <div className="container">
+        <div className="component-container">
           <div className="row">
 
 

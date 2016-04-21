@@ -68,7 +68,7 @@ export default class Feedback extends React.Component {
     var otherUserName = this.state.user.fullName;
     return (
       <div>
-        <div className="container">
+        <div className="component-container">
           <div className="row">
             <div className="col-md-3">
             </div>

@@ -105,20 +105,20 @@ export default class Meetup extends React.Component {
   render() {
     if (!this.ready) {
       return (
-        <div className="container">
+        <div className="component-container">
           <div className="row">
           </div>
         </div>
       );
     }
     return (
-      <div className="container">
+      <div className="component-container">
         <div className="row">
           <div className="embed-responsive embed-responsive-16by9">
             <div className="embed-responsive-item">
               <section style={{height: "100%"}}>
                 <GoogleMapLoader
-                  containerElement={
+                  component-containerElement={
                     <div
                       {...this.props}
                       style={{
