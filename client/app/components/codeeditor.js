@@ -19,7 +19,7 @@ export default class CodeEditor extends React.Component {
     var code = this.firepad.getText();
     var interviewer_id = this.props.interviewerId;
     var interviewee_id = this.props.intervieweeId;
-    var interviewId = Number(this.props.interviewId);
+    var interviewId = this.props.interviewId;
     endInterview(duration, code, interviewer_id, interviewee_id, interviewId,function(){
     });
   }

@@ -157,7 +157,7 @@ MongoClient.connect(url, function(err, db) {
 
 
   // Ngan || Thanh || Tri (done, not tested)
-  function getInterviewSession(interviewId) {
+  function getInterviewSession(interviewId, cb) {
     // var interviewItem = readDocument('interviewSessions', interviewId);
     // // Resolve participants
     // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
@@ -174,7 +174,7 @@ MongoClient.connect(url, function(err, db) {
             if (err) {
               return sendDatabaseError(err);
             }
-            return resolved[0];
+            cb(resolved[0]);
         });
       });
     }
@@ -307,7 +307,7 @@ MongoClient.connect(url, function(err, db) {
     // interviewSession.duration = interviewData.duration;
     // writeDocument("interviewSessions", interviewSession);
     // return;
-    db.collection('interviewSessions').findOne({ _id: interviewData.interviewId }, function(err, interviewSession) {
+    db.collection('interviewSessions').findOne({ _id: new ObjectID(interviewData.interviewId) }, function(err, interviewSession) {
       if (err) {
         return callback(err);
       }
@@ -466,7 +466,9 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.query.user;
     if (fromUser === userId) {
       // Send response.
-      res.send(getInterviewSession(generateObjectID(intId)));
+      getInterviewSession(new ObjectID(intId),function(data){
+        res.send(data);
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
@@ -540,7 +542,6 @@ MongoClient.connect(url, function(err, db) {
   app.post('/endinterview', validate({ body: EndInterviewSchema }), function(req, res) {
       // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
-    console.log("OK");
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     if (fromUser === body.interviewer_id || fromUser === body.interviewee_id) {
       postAfterInterviewData(body);
