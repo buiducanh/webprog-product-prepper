@@ -77,6 +77,9 @@ MongoClient.connect(url, function(err, db) {
     }
   }
 
+  function sendDatabaseError(res, err) {
+    res.status(500).send("A database error occurred: " + err);
+  }
   // Tien
   function getUserData (user) {
     var userData = readDocument('users', user);
