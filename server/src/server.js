@@ -103,7 +103,7 @@ MongoClient.connect(url, function(err, db) {
   // Tien
   app.get('/user/:userid', function(req, res) {
     var userid = req.params.userid;
-    
+
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
     var useridNumber = userid;
@@ -298,9 +298,6 @@ MongoClient.connect(url, function(err, db) {
           res.status(401).end();
         }
   });
-
-
-
 
   // Thanh || Tri
   function postAfterInterviewData(interviewData) {
@@ -573,10 +570,24 @@ MongoClient.connect(url, function(err, db) {
   app.post('/searchpeople', function(req, res) {
     var queryText = req.query.searchTerm;
 
-    var userData = readAllCollection('users');
-    userData = _.filter(userData, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
+    //var userData = readAllCollection('users');
+    var query = { };
 
-    res.send(userData);
+    db.collection('users').find(query).toArray(function(err, users) {
+      if (err) {
+        return sendDatabaseError(res, err);
+      } else if (users === null) {
+        // Users not found.
+        // 400: Bad request.
+        res.status(400).end();
+      }
+      else {
+        var userData = _.filter(users, (user) => { return _.includes(_.lowerCase(user.fullName), _.lowerCase(queryText)); });
+        res.send(userData);
+      }
+    });
+
+
   });
 
   /**
