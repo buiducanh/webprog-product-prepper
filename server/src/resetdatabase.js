@@ -12,7 +12,10 @@ var databaseName = "prepper";
 // Put the initial mock objects here.
 var initialData = {
   "onlineUsers": {
-    "1": [generateObjectID(1), generateObjectID(4)]
+    "1": {
+      _id: generateObjectID(1),
+      ids: [generateObjectID(1), generateObjectID(4)]
+    }
   },
   // The "user" collection. Contains all of the users in our Prepper system.
   "users": {

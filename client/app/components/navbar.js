@@ -133,7 +133,7 @@ export default class Navbar extends React.Component {
                 </button>
                 <ul className="dropdown-menu">
                   <li>
-                    <Link to={"/meetupchat/" + 1}>
+                    <Link to={"/meetupchat/" + "000000000000000000000001"}>
                       <a href="#">Meetup chat</a>
                     </Link>
                   </li>

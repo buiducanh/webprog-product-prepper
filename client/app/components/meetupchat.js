@@ -26,7 +26,7 @@ export default class MeetupChat extends React.Component {
   refresh() {
     var onlineUsersCallback = (onlineUsers) => {
       var currentUser = _.find(onlineUsers, (user) => {
-        return parseInt(user._id, 10) === parseInt(localStorage.getItem('userId'), 10);
+        return user._id === localStorage.getItem('userId');
       });
       this.setState({
         onlineUsers: onlineUsers,
@@ -71,8 +71,8 @@ export default class MeetupChat extends React.Component {
   }
 
   render() {
-    var stateChatId = parseInt(this.state.chatSessions._id, 10);
-    var propsChatId = parseInt(this.props.params.id, 10);
+    var stateChatId = this.state.chatSessions._id;
+    var propsChatId = this.props.params.id;
     if (stateChatId !== propsChatId) {
       this.refresh();
       return (
@@ -80,7 +80,7 @@ export default class MeetupChat extends React.Component {
       )
     }
     function currentUserPredicate(member) {
-      return Number(localStorage.getItem('userId')) === member._id;
+      return localStorage.getItem('userId') === member._id;
     }
     this.state.chatSessions.memberLists = _.reject(this.state.chatSessions.memberLists, currentUserPredicate);
     var partitionedUsers = _.partition(this.state.chatSessions.memberLists, (user) => { 
@@ -88,8 +88,8 @@ export default class MeetupChat extends React.Component {
     });
     var onlineUsers = partitionedUsers[0];
     var offlineUsers = partitionedUsers[1];
-    var currentUserId = parseInt(localStorage.getItem('userId'), 10);
-    var initiatorId = parseInt(this.state.chatSessions.initiator._id, 10);
+    var currentUserId = localStorage.getItem('userId');
+    var initiatorId = this.state.chatSessions.initiator._id;
     if (currentUserId == initiatorId) {
       var editMember = (
         <div className="btn-group pull-right member-edit" role="group">
