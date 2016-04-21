@@ -102,15 +102,22 @@ MongoClient.connect(url, function(err, db) {
 
   // Tien
   app.get('/user/:userid', function(req, res) {
-    var userid = req.params.userid;
 
+    // Send response.
+    //   res.send(getUserData(useridNumber));
+    // } else {
+    //   // 401: Unauthorized request.
+    //   res.status(401).end();
+    // }
+
+    var userid = req.params.userid;
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
     var useridNumber = userid;
 
       getUserData(new ObjectID (useridNumber), function (err, user) {
         if (err) {
-          res.status (500).send ("Database erro: " + err);
+          res.status (500).send ("Database error: " + err);
         } else if (user === null) {
           res.status(400).send ("Could not look up data for user " + userid);
         } else {
@@ -120,12 +127,6 @@ MongoClient.connect(url, function(err, db) {
 
   });
 
-      // Send response.
-    //   res.send(getUserData(useridNumber));
-    // } else {
-    //   // 401: Unauthorized request.
-    //   res.status(401).end();
-    // }
 
   // Tien
   function getAllUserData (callback) {
@@ -133,7 +134,6 @@ MongoClient.connect(url, function(err, db) {
     // return userData;
 
         var query = { };
-
         db.collection('users').find(query).toArray(function(err, users) {
           if (err) {
             return callback(err);
