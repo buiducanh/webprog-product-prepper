@@ -306,25 +306,18 @@ MongoClient.connect(url, function(err, db) {
     // interviewSession.code = interviewData.code;
     // interviewSession.duration = interviewData.duration;
     // writeDocument("interviewSessions", interviewSession);
-    // return;
-    db.collection('interviewSessions').findOne({ _id: new ObjectID(interviewData.interviewId) }, function(err, interviewSession) {
+    // return;      
+    db.collection('interviewSessions').updateOne({ _id: new ObjectID(interviewData.interviewId) },
+    {
+      $set: {
+        code: interviewData.code,
+        duration: interviewData.duration
+      }
+    },
+    function(err) {
       if (err) {
         return callback(err);
       }
-      interviewSession.code = interviewData.code;
-      interviewSession.duration = interviewData.duration;
-
-      db.collection('interviewSessions').updateOne({ _id: interviewSession.interviewId },
-      {
-        $set: {
-          code: interviewSession._id
-        }
-      },
-      function(err) {
-        if (err) {
-          return callback(err);
-        }
-      });
     });
   }
 
