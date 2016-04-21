@@ -103,14 +103,35 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // Tien
-  function getAllUserData () {
-    var userData = readAllCollection('users');
-    return userData;
+  function getAllUserData (callback) {
+    // var userData = readAllCollection('users');
+    // return userData;
+
+        var query = { };
+
+        db.collection('users').find(query).toArray(function(err, users) {
+          if (err) {
+            return callback(err);
+          }
+          var userMap = {};
+          users.forEach((user) => {
+            userMap[user._id] = user;
+          });
+          callback(null, userMap);
+        });
   }
 
   // Tien
   app.get('/user', function(req, res) {
-    res.send(getAllUserData());
+    //res.send(getAllUserData());
+
+    getAllUserData (function(err, users) {
+      if (err) {
+        res.status(500).send("Database error: " + err);
+      } else {
+        res.send (users);
+      }
+    });
   });
 
   // Ngan || Thanh || Tri (done, not tested)
