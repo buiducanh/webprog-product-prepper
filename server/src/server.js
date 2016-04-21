@@ -103,7 +103,7 @@ MongoClient.connect(url, function(err, db) {
   // Tien
   app.get('/user/:userid', function(req, res) {
     var userid = req.params.userid;
-    
+
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
     var useridNumber = userid;
@@ -317,12 +317,10 @@ MongoClient.connect(url, function(err, db) {
       interviewSession.code = interviewData.code;
       interviewSession.duration = interviewData.duration;
 
-      db.collection('users').updateOne({ _id: interviewData.interviewId },
+      db.collection('interviewSessions').updateOne({ _id: interviewSession.interviewId },
       {
-        $push: {
-          interviewSessions: {
-            interviewId
-          }
+        $set: {
+          code: interviewSession._id
         }
       },
       function(err) {
