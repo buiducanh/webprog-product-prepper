@@ -3,17 +3,13 @@
   "id": "http://jsonschema.net",
   "type": "object",
   "properties": {
-    "_id": {
-      "id": "http://jsonschema.net/_id",
-      "type": "integer"
-    },
     "interviewer": {
       "id": "http://jsonschema.net/interviewer",
-      "type": "integer"
+      "type": "string"
     },
     "interviewee": {
       "id": "http://jsonschema.net/interviewee",
-      "type": "integer"
+      "type": "string"
     },
     "interviewer_pro": {
       "id": "http://jsonschema.net/interviewer_pro",
@@ -49,15 +45,18 @@
     },
     "interview_session": {
       "id": "http://jsonschema.net/interview_session",
-      "type": "integer"
+      "type": "string"
     },
     "timestamp": {
       "id": "http://jsonschema.net/timestamp",
       "type": "integer"
+    },
+    "author": {
+      "id": "http://jsonschema.net/author",
+      "type": "string"
     }
   },
   "required": [
-    "_id",
     "interviewer",
     "interviewee",
     "interviewer_pro",
@@ -69,6 +68,7 @@
     "interviewee_comment",
     "interviewee_rating",
     "interview_session",
-    "timestamp"
+    "timestamp",
+    "author"
   ]
 }
