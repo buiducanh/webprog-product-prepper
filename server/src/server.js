@@ -51,6 +51,7 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // ROUTES
+  app.use('/mongo_express', mongo_express(mongo_express_config));
   /**
    * Get the user ID from a token. Returns -1 (an invalid ID) if it fails.
    */
@@ -255,16 +256,8 @@ MongoClient.connect(url, function(err, db) {
         }
   });
 
-  // Rebecca
-  function postFeedbackData(feedbackData) {
-    // dummy = {_id: 1, text: "dummy"}
-    feedbackData.timestamp = new Date().getTime();
-    var newFeedback = addDocument("feedbacks", feedbackData);
-    var interviewSession = readDocument("interviewSessions", feedbackData.interview_session);
-    interviewSession.feedback = newFeedback._id;
-    writeDocument("interviewSessions", interviewSession);
-    return newFeedback;
-  }
+
+
 
   // Thanh || Tri
   function postAfterInterviewData(interviewData) {
@@ -354,23 +347,64 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // Rebecca
+  function postFeedbackData(feedbackData, callback) {
+    feedbackData.timestamp = new Date().getTime();
+
+    // Add the feedback to the database.
+    db.collection('feedbacks').insertOne(feedbackData, feedbackCallback);
+
+    function feedbackCallback(err, newFeedback) {
+      if (err) {
+        return callback(err);
+      }
+      db.collection('interviewSessions').updateOne({ _id: newFeedback.interview_session }, {
+        $set: { feedback: newFeedback._id
+        }
+      }, interviewSessionCallback)
+
+      function interviewSessionCallback(err) {
+        callback(err, newFeedback);
+      }
+    }
+  }
+
+  // Rebecca
   app.post('/feedback', validate({ body: FeedbackSchema }), function(req, res) {
       // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
-    //var feedbackId = parseInt(req.params.feedbackid, 10);
     var fromUser = getUserIdFromToken(req.get('Authorization'));
+    var feedbackData = {
+      "interviewer": new ObjectID(body.interviewer),
+      "interviewee": new ObjectID(body.interviewee),
+      "interviewer_pro": body.interviewer_pro,
+      "interviewer_con": body.interviewer_con,
+      "interviewer_comment": body.interviewer_comment,
+      "interviewer_rating": body.interviewer_rating,
+      "interviewee_pro": body.interviewee_pro,
+      "interviewee_con": body.interviewee_con,
+      "interviewee_comment": body.interviewee_comment,
+      "interviewee_rating": body.interviewee_rating,
+      "interview_session": new ObjectID(body.interview_session)
+    }
 
     // Check if requester is authorized to post this status update.
     // (The requester must be the author of the update.)
-    if (fromUser === Number(body.author)) {
-      var newUpdate = postFeedbackData(body);
-      // When POST creates a new resource, we should tell the client about it
-      // in the 'Location' header and use status code 201.
-      res.status(201);
-       // Send the update!
-      res.send(newUpdate);
+    if (fromUser === body.author) {
+      postFeedbackData(feedbackData, function(err, newUpdate) {
+        if (err) {
+          // A database error happened.
+          // 500: Internal error.
+          res.status(500).send("A database error occurred: " + err);
+        } else {
+          // When POST creates a new resource, we should tell the client about it
+          // in the 'Location' header and use status code 201.
+          res.status(201);
+          // Update succeeded! Return the resolved feed item.
+          res.send(newUpdate);
+        }
+      });
     } else {
-      // 401: Unauthorized.
+      // Unauthorized.
       res.status(401).end();
     }
   });
