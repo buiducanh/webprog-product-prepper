@@ -196,35 +196,80 @@ MongoClient.connect(url, function(err, db) {
     return;
   }
 
-  // Anh 
-  function getInterviewDataSync(interviewId) {
-    var interviewItem = readDocument('interviewSessions', interviewId);
-    // Resolve participants
-    interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
-    interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
-    // Resolve feedback
-    if (interviewItem.feedback === undefined) {
-      interviewItem.feedback = {
-        "interviewer": "",
-        "interviewee": "",
-        "interviewer_pro": "",
-        "interviewer_con": "",
-        "interviewer_comment": "",
-        "interviewer_rating": "",
-        "interviewee_pro": "",
-        "interviewee_con": "",
-        "interviewee_comment": "",
-        "interviewee_rating": "",
-        "interview_session": "",
-        "timestamp": ""
+  function resolveInterviews(interviews, callback) {
+    var resolved = [];
+    var interview = {};
+    function resolveInterviewer(i) {
+      if (i === interviews.length) {
+        return callback(null, resolved);
+      }
+      else {
+        interview = interviews[i];
+        db.collection('users').findOne({ _id: interview.interviewer}, function(err, userObj) {
+          if (err) {
+            return callback(err); 
+          }
+          else {
+            interview.interviewer = userObj;  
+            resolved.push(interview);
+            resolveInterviewee(i);
+          }
+        });
+      };
+    }
+    function resolveInterviewee(i) {
+      db.collection('users').findOne({ _id: interview.interviewee}, function(err, userObj) {
+        if (err) {
+          return callback(err); 
+        }
+        else {
+          interview.interviewee = userObj;  
+          resolveProblem(i);
+        }
+      });
+    }
+    function resolveProblem(i) {
+      db.collection('problems').findOne({ _id: interview.problem}, function(err, problemObj) {
+        if (err) {
+          return callback(err); 
+        }
+        else {
+          interview.problem = problemObj;  
+          resolveFeedback(i);
+        }
+      });
+    }
+    function resolveFeedback(i) {
+      if (interview.feedback == null) {
+        interview.feedback = {
+          "interviewer": "",
+          "interviewee": "",
+          "interviewer_pro": "",
+          "interviewer_con": "",
+          "interviewer_comment": "",
+          "interviewer_rating": "",
+          "interviewee_pro": "",
+          "interviewee_con": "",
+          "interviewee_comment": "",
+          "interviewee_rating": "",
+          "interview_session": "",
+          "timestamp": ""
+        };
+        resolveInterviewer(i + 1);
+      }
+      else {
+        db.collection('feedbacks').findOne({ _id: interview.feedback}, function(err, feedbackObj) {
+          if (err) {
+            return callback(err); 
+          }
+          else {
+            interview.feedback = feedbackObj;  
+            resolveInterviewer(i + 1);
+          }
+        });
       }
     }
-    else {
-      interviewItem.feedback = readDocument('feedbacks', interviewItem.feedback);
-    }
-    // Resolve problem
-    interviewItem.problem = readDocument('problems', interviewItem.problem);
-    return interviewItem;
+    return resolveInterviewer(0);
   }
 
   /**
@@ -233,12 +278,27 @@ MongoClient.connect(url, function(err, db) {
    * @param cb A Function object, which we will invoke when the Feed's data is available.
    */
   // Anh
-  function getInterviewData(user) {
+  function getInterviewData(user, callback) {
     // Get the User object with the id "user".
-    var userData = readDocument('users', user);
-    // Get the Feed object for the user.
-    var interviewData = userData.interview.map(getInterviewDataSync);
-    return interviewData;
+    var interviewData = [];
+
+    db.collection('users').findOne({ _id: new ObjectID(user) }, getUserCallback);
+
+    function getUserCallback(err, userObj) {
+      if (err) {
+        return callback(err);
+      }
+      var interviewQuery = { $or: userObj.interview.map((id) => { return { _id: id}; })};
+      // Get the Interview object for the user.
+      db.collection('interviewSessions').find(interviewQuery).toArray(getInterviewsCallback);
+    }
+
+    function getInterviewsCallback(err, interviews) {
+      if (err) {
+        return callback(err);
+      }
+      return resolveInterviews(interviews, callback);
+    }
   }
 
   // Anh
@@ -247,10 +307,20 @@ MongoClient.connect(url, function(err, db) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
-    var useridNumber = parseInt(userid, 10);
-    if (fromUser === useridNumber) {
+    if (fromUser === userid) {
       // Send response.
-      res.send(getInterviewData(userid));
+      getInterviewData(new ObjectID(userid), function(err, data){
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not look up interviews for user " + userid);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();

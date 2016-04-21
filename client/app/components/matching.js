@@ -47,7 +47,7 @@ export default class Matching extends React.Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="component-container">
         <div className="col-md-6 col-md-offset-3">
           <div className="row">
             <div className="panel panel-default">
