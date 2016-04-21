@@ -315,7 +315,7 @@ MongoClient.connect(url, function(err, db) {
           return callback(err);
         }
       });
-
+    });
   }
 
   function resolveInterviews(interviews, callback) {
@@ -447,7 +447,6 @@ MongoClient.connect(url, function(err, db) {
       res.status(401).end();
     }
   });
-
   // Thanh || Tri
   app.get('/interview/:interviewid', function(req, res) {
     var intId = req.params.interviewid;
