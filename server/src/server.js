@@ -817,10 +817,10 @@ MongoClient.connect(url, function(err, db) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
     var notificationId = req.params.notificationid;
-    var status = req.params.userid;
+    var status = req.params.status;
     var authId = req.query.user;
     if (fromUser === authId) {
-      updateNotificationStatus(new ObjectID(notificationId), body.status, function(err, data) {
+      updateNotificationStatus(new ObjectID(notificationId), status, function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
