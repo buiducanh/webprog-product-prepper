@@ -128,7 +128,7 @@ export function postFeedbackData(feedbackData, cb) {
 
 export function postInterviewSession(interviewerId, cb) {
   var interview =  {
-    interviewer: parseInt(interviewerId, 10)
+    interviewer: interviewerId
   }
   var url = '/interview';
   sendXHR('POST', url, interview, (xhr) => {
