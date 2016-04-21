@@ -48,7 +48,7 @@ export default class Meetup extends React.Component {
     this.handleMarkerClose(marker);
     if (clickEvent.button === 0) {
       var callbackFunction = (notiData) => {this.forceUpdate()};
-      postNotifications(Number(localStorage.getItem("userId")), marker.userData._id, callbackFunction);
+      postNotifications(localStorage.getItem("userId"), marker.userData._id, callbackFunction);
     }
   }
 
@@ -118,7 +118,7 @@ export default class Meetup extends React.Component {
             <div className="embed-responsive-item">
               <section style={{height: "100%"}}>
                 <GoogleMapLoader
-                  component-containerElement={
+                  containerElement={
                     <div
                       {...this.props}
                       style={{

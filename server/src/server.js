@@ -314,12 +314,10 @@ MongoClient.connect(url, function(err, db) {
       interviewSession.code = interviewData.code;
       interviewSession.duration = interviewData.duration;
 
-      db.collection('users').updateOne({ _id: interviewData.interviewId },
+      db.collection('interviewSessions').updateOne({ _id: interviewSession.interviewId },
       {
-        $push: {
-          interviewSessions: {
-            interviewId
-          }
+        $set: {
+          code: interviewSession._id
         }
       },
       function(err) {
@@ -991,8 +989,9 @@ MongoClient.connect(url, function(err, db) {
     db.collection('onlineUsers').findOne({ _id: new ObjectID('000000000000000000000001') }, onlineUsersCallback);
     function onlineUsersCallback(err, onlineUsersObj) {
       var resolved = [];
+      onlineUsersObj = onlineUsersObj.ids;
       function resolveUser(i) {
-        if (i === resolved.length) {
+        if (i === onlineUsersObj.length) {
           return callback(null, resolved);
         }
         db.collection('users').findOne({ _id: onlineUsersObj[i]}, userCallback);
@@ -1038,8 +1037,8 @@ MongoClient.connect(url, function(err, db) {
         return callback(err);
       }
       var currentUser = _.remove(onlineUsersObj, function(val) {
-        return val._id === userId;
-      });
+        return val._id.toString() === userId.toString();
+      })[0];
       var nearbyUsers = [];
       for(var i = 0; i < onlineUsersObj.length; i++) {
         var curLatLng = {
@@ -1092,7 +1091,7 @@ MongoClient.connect(url, function(err, db) {
       var resolved = [];
       var noti = {};
       function resolveRequester(i) {
-        if (i === resolved.length) {
+        if (i === notificationsObj.length) {
           return callback(err, resolved);
         }
         noti = notificationsObj[i];
