@@ -240,7 +240,7 @@ MongoClient.connect(url, function(err, db) {
           });
         });
       });
-    });  
+    });
   }
 
   // Ngan || Thanh || Tri  (FIXED)
@@ -277,11 +277,32 @@ MongoClient.connect(url, function(err, db) {
   // Thanh || Tri
   function postAfterInterviewData(interviewData) {
     // dummy = {_id: 1, text: "dummy"}
-    var interviewSession = readDocument("interviewSessions", interviewData.interviewId);
-    interviewSession.code = interviewData.code;
-    interviewSession.duration = interviewData.duration;
-    writeDocument("interviewSessions", interviewSession);
-    return;
+    // var interviewSession = readDocument("interviewSessions", interviewData.interviewId);
+    // interviewSession.code = interviewData.code;
+    // interviewSession.duration = interviewData.duration;
+    // writeDocument("interviewSessions", interviewSession);
+    // return;
+    db.collection('interviewSessions').findOne({ _id: interviewData.interviewId }, function(err, interviewSession) {
+      if (err) {
+        return callback(err);
+      }
+      interviewSession.code = interviewData.code;
+      interviewSession.duration = interviewData.duration;
+
+      db.collection('users').updateOne({ _id: interviewData.interviewId },
+      {
+        $push: {
+          interviewSessions: {
+            interviewId
+          }
+        }
+      },
+      function(err) {
+        if (err) {
+          return callback(err);
+        }
+      });
+
   }
 
   function resolveInterviews(interviews, callback) {
