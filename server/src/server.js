@@ -51,6 +51,7 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // ROUTES
+  app.use('/mongo_express', mongo_express(mongo_express_config));
   /**
    * Get the user ID from a token. Returns -1 (an invalid ID) if it fails.
    */
@@ -485,47 +486,136 @@ MongoClient.connect(url, function(err, db) {
   /**
    * HONORS FEATURES
    */
-  function deleteChatMember(chatSessionId, userId) {
-    var chatSession = readDocument("chatSessions", chatSessionId);
-    var indexOfUser = chatSession.memberLists.indexOf(userId);
-    chatSession.memberLists.splice(indexOfUser, 1);
-    writeDocument('chatSessions', chatSession);
-    return getChatSessionsSync(chatSessionId);
+  function deleteChatMember(chatSessionId, userId, callback) {
+    var updateAction = {
+      $pull: {
+        memberLists: userId
+      }
+    };
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true } , chatSessionCallback);
+
+    function chatSessionCallback(err, chatSession) {
+      if (err) {
+        return callback(err);
+      }
+      resolveChatSession(chatSession.value, callback);
+    }
+  }
+
+  function resolveChatSession(chatSession, callback) {
+    db.collection('users').findOne({ _id: chatSession.initiator }, userCallback);
+    function userCallback(err, userObj) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.initiator = userObj;
+      db.collection('users').find({ $or: chatSession.memberLists.map((member) => { return { _id: member } } )}).toArray(membersCallback);
+    }
+
+    function membersCallback( err, members) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.memberLists = members;
+      db.collection('chatMessages').find({ $or: chatSession.chatMessages.map((message) => { return { _id: message } } )}).toArray(messagesCallback);
+    }
+
+    function messagesCallback( err, messages) {
+      if (err) {
+        return callback(err);
+      }
+      chatSession.chatMessages = messages;
+      resolveChatMessages(chatSession.chatMessages, function( err, chatMessages) {
+        if (err) {
+          return callback(err);
+        }
+        chatSession.chatMessages = chatMessages;
+        callback(err, chatSession);
+      });
+    }
+  }
+
+  function resolveChatMessages(chatMessages, callback) {
+    var resolved = [];
+    function resolveOwner(i) {
+      if (i === chatMessages.length) {
+        return callback(null, resolved);
+      }
+      else {
+        db.collection('users').findOne({ _id: chatMessages[i].owner }, function( err, owner) {
+          if (err) {
+            callback(err);
+          }
+          chatMessages[i].owner = owner;
+          resolved.push(chatMessages[i]);
+          resolveOwner(i + 1);
+        });
+      }
+    }
+    return resolveOwner(0);
   }
 
   app.delete('/chatsession/:chatid/memberlists/:userid', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    // Convert params from string to number.
-    var chatId = parseInt(req.params.chatid, 10);
-    var userId = parseInt(req.params.userid, 10);
-    var authId = parseInt(req.query.user, 10);
+    var chatId = req.params.chatid;
+    var userId = req.params.userid;
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var chatSession = deleteChatMember(chatId, userId);
-      res.send(chatSession);
+      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not delete add member chat session for user " + userId);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
     }
   });
 
-  function addChatMember(chatSessionId, userId) {
-    var chatSession = readDocument("chatSessions", chatSessionId);
-    chatSession.memberLists.push(userId);
-    writeDocument('chatSessions', chatSession);
-    return getChatSessionsSync(chatSessionId);
+  function addChatMember(chatSessionId, userId, callback) {
+    var updateAction = {
+      $addToSet: {
+        memberLists: userId
+      }
+    };
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
+
+    function chatSessionCallback(err, chatSession) {
+      if (err) {
+        return callback(err);
+      }
+      resolveChatSession(chatSession.value, callback);
+    }
   }
 
   app.put('/chatsession/:chatid/memberlists/:userid', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
-    var chatId = parseInt(req.params.chatid, 10);
-    var userId = parseInt(req.params.userid, 10);
-    var authId = parseInt(req.query.user, 10);
+    var chatId = req.params.chatid;
+    var userId = req.params.userid;
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var chatSession = addChatMember(chatId, userId);
-      res.send(chatSession);
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not add member to chat session for user " + userId);
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
@@ -631,20 +721,6 @@ MongoClient.connect(url, function(err, db) {
       res.status(401).end();
     }
   });
-
-  function getChatSessionsSync(sessionId) {
-    var session = readDocument('chatSessions', sessionId);
-    session.initiator = readDocument('users', session.initiator);
-    session.memberLists = session.memberLists.map((member) => {
-      return readDocument('users', member);
-    });
-    session.chatMessages = session.chatMessages.map((message) => {
-      var messageObj = readDocument('chatMessages', message);
-      messageObj.owner = readDocument('users', messageObj.owner);
-      return messageObj;
-    });
-    return session;
-  }
 
   function postNotifications(requester, requestee) {
     var chatSession = _.find(readAllCollection("chatSessions"), (chat) => {
