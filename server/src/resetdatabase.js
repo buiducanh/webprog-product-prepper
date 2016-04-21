@@ -207,8 +207,15 @@ var initialData = {
 };
 
 /**
- * Resets a collection.
- */
+* Adds any desired indexes to the database.
+*/
+function addIndexes(db, cb) {
+  db.collection('feedItems').createIndex({ "contents.contents": "text" }, null, cb);
+}
+
+/**
+* Resets a collection.
+*/
 function resetCollection(db, name, cb) {
   // Drop / delete the entire object collection.
   db.collection(name).drop(function() {
@@ -223,15 +230,15 @@ function resetCollection(db, name, cb) {
 }
 
 /**
- * Reset the MongoDB database.
- * @param db The database connection.
- */
+* Reset the MongoDB database.
+* @param db The database connection.
+*/
 function resetDatabase(db, cb) {
   // The code below is a bit complex, but it basically emulates a
   // "for" loop over asynchronous operations.
   var collections = Object.keys(initialData);
   var i = 0;
-  
+
   // Processes the next collection in the collections array.
   // If we have finished processing all of the collections,
   // it triggers the callback.
@@ -242,10 +249,10 @@ function resetDatabase(db, cb) {
       // Use myself as a callback.
       resetCollection(db, collection, processNextCollection);
     } else {
-      cb();
+      addIndexes(db, cb);
     }
   }
-  
+
   // Start processing the first collection!
   processNextCollection();
 }

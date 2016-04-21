@@ -88,26 +88,44 @@ MongoClient.connect(url, function(err, db) {
     res.status(500).send("A database error occurred: " + err);
   }
   // Tien
-  function getUserData (user) {
-    var userData = readDocument('users', user);
-    return userData;
+  function getUserData (user, callback) {
+    // var userData = readDocument('users', user);
+    // return userData;
+
+    db.collection ('users').findOne ({ _id: user }, function (err, user) {
+      if (err) {
+        return callback (err);
+      }
+      callback (null, user);
+    });
   }
 
   // Tien
   app.get('/user/:userid', function(req, res) {
     var userid = req.params.userid;
-    var fromUser = getUserIdFromToken(req.get('Authorization'));
+    
     // userid is a string. We need it to be a number.
     // Parameters are always strings.
-    var useridNumber = parseInt(userid, 10);
-    if (fromUser === useridNumber) {
-      // Send response.
-      res.send(getUserData(useridNumber));
-    } else {
-      // 401: Unauthorized request.
-      res.status(401).end();
-    }
+    var useridNumber = userid;
+
+      getUserData(new ObjectID (useridNumber), function (err, user) {
+        if (err) {
+          res.status (500).send ("Database erro: " + err);
+        } else if (user === null) {
+          res.status(400).send ("Could not look up data for user " + userid);
+        } else {
+          res.send(user);
+        }
+      });
+
   });
+
+      // Send response.
+    //   res.send(getUserData(useridNumber));
+    // } else {
+    //   // 401: Unauthorized request.
+    //   res.status(401).end();
+    // }
 
   // Tien
   function getAllUserData (callback) {
@@ -120,11 +138,7 @@ MongoClient.connect(url, function(err, db) {
           if (err) {
             return callback(err);
           }
-          var userMap = {};
-          users.forEach((user) => {
-            userMap[user._id] = user;
-          });
-          callback(null, userMap);
+          callback(null, users);
         });
   }
 
@@ -140,6 +154,7 @@ MongoClient.connect(url, function(err, db) {
       }
     });
   });
+
 
   // Ngan || Thanh || Tri (done, not tested)
   function getInterviewSession(interviewId) {
@@ -261,7 +276,7 @@ MongoClient.connect(url, function(err, db) {
           });
         });
       });
-    });  
+    });
   }
 
   // Ngan || Thanh || Tri  (FIXED)
