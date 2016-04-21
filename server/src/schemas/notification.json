@@ -5,11 +5,11 @@
   "properties": {
     "requester": {
       "id": "http://jsonschema.net/requester",
-      "type": "integer"
+      "type": "string"
     },
     "requestee": {
       "id": "http://jsonschema.net/requestee",
-      "type": "integer"
+      "type": "string"
     }
   },
   "required": [
