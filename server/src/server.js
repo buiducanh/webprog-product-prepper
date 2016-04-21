@@ -305,11 +305,32 @@ MongoClient.connect(url, function(err, db) {
   // Thanh || Tri
   function postAfterInterviewData(interviewData) {
     // dummy = {_id: 1, text: "dummy"}
-    var interviewSession = readDocument("interviewSessions", interviewData.interviewId);
-    interviewSession.code = interviewData.code;
-    interviewSession.duration = interviewData.duration;
-    writeDocument("interviewSessions", interviewSession);
-    return;
+    // var interviewSession = readDocument("interviewSessions", interviewData.interviewId);
+    // interviewSession.code = interviewData.code;
+    // interviewSession.duration = interviewData.duration;
+    // writeDocument("interviewSessions", interviewSession);
+    // return;
+    db.collection('interviewSessions').findOne({ _id: interviewData.interviewId }, function(err, interviewSession) {
+      if (err) {
+        return callback(err);
+      }
+      interviewSession.code = interviewData.code;
+      interviewSession.duration = interviewData.duration;
+
+      db.collection('users').updateOne({ _id: interviewData.interviewId },
+      {
+        $push: {
+          interviewSessions: {
+            interviewId
+          }
+        }
+      },
+      function(err) {
+        if (err) {
+          return callback(err);
+        }
+      });
+    });
   }
 
   function resolveInterviews(interviews, callback) {
@@ -441,7 +462,6 @@ MongoClient.connect(url, function(err, db) {
       res.status(401).end();
     }
   });
-
   // Thanh || Tri
   app.get('/interview/:interviewid', function(req, res) {
     var intId = req.params.interviewid;
@@ -562,13 +582,13 @@ MongoClient.connect(url, function(err, db) {
   /**
    * HONORS FEATURES
    */
-  function deleteChatMember(chatSessionId, userId, callback) {
+  function deleteChatMember(chatSessionId, userId, authId, callback) {
     var updateAction = {
       $pull: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true } , chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true } , chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -638,7 +658,7 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+      deleteChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
@@ -656,13 +676,13 @@ MongoClient.connect(url, function(err, db) {
     }
   });
 
-  function addChatMember(chatSessionId, userId, callback) {
+  function addChatMember(chatSessionId, userId, authId, callback) {
     var updateAction = {
       $addToSet: {
         memberLists: userId
       }
     };
-    db.collection('chatSessions').findAndModify({ _id: chatSessionId }, [], updateAction, { "new": true }, chatSessionCallback);
+    db.collection('chatSessions').findAndModify({ _id: chatSessionId, initiator: authId }, [], updateAction, { "new": true }, chatSessionCallback);
 
     function chatSessionCallback(err, chatSession) {
       if (err) {
@@ -680,7 +700,7 @@ MongoClient.connect(url, function(err, db) {
     var userId = req.params.userid;
     var authId = req.query.user;
     if (fromUser === authId) {
-      addChatMember(new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+      addChatMember(new ObjectID(chatId), new ObjectID(userId), new ObjectID(fromUser), function(err, data) {
         if (err) {
           // A database error happened.
           // Internal Error: 500.
@@ -698,133 +718,250 @@ MongoClient.connect(url, function(err, db) {
     }
   });
 
-  function deleteNotification(notificationId) {
-    var notification = readDocument("notifications", notificationId);
-    deleteDocument("notifications", notificationId);
-    notification.requester = readDocument("users", notification.requester);
-    notification.chatSession = readDocument("chatSessions", notification.chatSession);
-    return notification;
+  function deleteNotification(notificationId, callback) {
+    db.collection('notifications').findAndModify({ _id: notificationId }, [], {}, { remove: true }, notificationCallback);
+    function notificationCallback(err, notificationObj) {
+      if (err) {
+        return callback(err);
+      }
+      notificationObj = notificationObj.value;
+      db.collection('users').findOne({ _id: notificationObj.requester }, userCallback);
+      function userCallback(err, userObj) {
+        if (err) {
+          return callback(err);
+        }
+        notificationObj.requester = userObj;
+        db.collection('chatSessions').findOne({ _id: notificationObj.chatSession }, chatSessionCallback);
+        function chatSessionCallback(err, chatSessionObj) {
+          if (err) {
+            return callback(err);
+          }
+          notificationObj.chatSession = chatSessionObj;
+          return callback(err, notificationObj);
+        }
+      }
+    }
   }
 
   app.delete('/notification/:notificationid', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
-    var notificationId = parseInt(req.params.notificationid, 10);
-    var authId = parseInt(req.query.user, 10);
+    var notificationId = req.params.notificationid;
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var notification = deleteNotification(notificationId);
-      res.send(notification);
+      deleteNotification(new ObjectID(notificationId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not delete notification");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
     }
   });
 
-  function updateNotificationStatus(notificationId, status) {
-    var notification = readDocument("notifications", notificationId);
-    notification.status = status;
-    writeDocument("notifications", notification);
-    notification.requester = readDocument("users", notification.requester);
-    notification.chatSession = readDocument("chatSessions", notification.chatSession);
-    return notification;
+  function updateNotificationStatus(notificationId, status, callback) {
+    var updateAction = {
+      $set: {
+        status: status
+      }
+    };
+    db.collection('notifications').findAndModify({ _id: notificationId}, [], updateAction, {"new": true}, notificationCallback);
+    function notificationCallback(err, notificationObj) {
+      if (err) {
+        return callback(err);
+      }
+      notificationObj = notificationObj.value;
+      db.collection('users').findOne({ _id: notificationObj.requester }, userCallback);
+      function userCallback(err, userObj) {
+        if (err) {
+          return callback(err);
+        }
+        notificationObj.requester = userObj;
+        db.collection('chatSessions').findOne({ _id: notificationObj.chatSession }, chatSessionCallback);
+        function chatSessionCallback(err, chatSessionObj) {
+          if (err) {
+            return callback(err);
+          }
+          notificationObj.chatSession = chatSessionObj;
+          return callback(err, notificationObj);
+        }
+      }
+    }
   }
 
   app.put('/notification/:notificationid/status/:status', function(req, res) {
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
     // Convert params from string to number.
-    var notificationId = parseInt(req.params.notificationid, 10);
+    var notificationId = req.params.notificationid;
     var status = req.params.userid;
-    var authId = parseInt(req.query.user, 10);
+    var authId = req.query.user;
     if (fromUser === authId) {
-      var notification = updateNotificationStatus(notificationId, body.status);
-      res.send(notification);
+      updateNotificationStatus(new ObjectID(notificationId), body.status, function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not update notification status");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
     }
   });
 
-  function postChatMessage(value, chatSessionId, userId) {
+  function postChatMessage(value, chatSessionId, userId, callback) {
     var chatMessage = {
       "content": value,
       "owner": userId,
       "chatSessionId": chatSessionId
     };
-    chatMessage = addDocument('chatMessages', chatMessage);
-    var chatSession = readDocument('chatSessions', chatSessionId);
-    chatSession.chatMessages.push(chatMessage._id);
-    writeDocument('chatSessions', chatSession);
-    chatMessage.owner = readDocument('users', userId);
-    return chatMessage;
+    db.collection('chatMessages').insertOne(chatMessage, chatMessageCallback);
+    function chatMessageCallback(err, chatMessageObj) {
+      if (err) {
+        return callback(err);
+      }
+      db.collection('chatSession').updateOne({ _id: chatSessionId }, {
+        $push: {
+          chatMessages: chatMessageObj._id
+        }
+      }, chatSessionCallback);
+      function chatSessionCallback(err) {
+        if (err) {
+          return callback(err);
+        }
+        db.collection('users').findOne({ _id: userId }, userCallback);
+        function userCallback(err, userObj) {
+          if (err) {
+            return callback(err);
+          }
+          chatMessageObj.owner = userObj;
+          return callback(err, chatMessageObj);
+        }
+      }
+    }
   }
 
   app.post('/chatmessage', validate({ body: ChatMessageSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var userId = parseInt(body.owner, 10);
-    var chatId = parseInt(body.chatSessionId, 10);
+    var userId = body.owner;
+    var chatId = body.chatSessionId;
     // Check if requester is authorized to post this status update.
     // (The requester must be the author of the update.)
     if (fromUser === userId) {
-      var newUpdate = postChatMessage(body.content, chatId, userId);
-      // When POST creates a new resource, we should tell the client about it
-      // in the 'Location' header and use status code 201.
-      res.status(201);
-       // Send the update!
-      res.send(newUpdate);
+      postChatMessage(body.content, new ObjectID(chatId), new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not post chat message");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
     }
   });
 
-  function getChatSessions(sessionId) {
-    return getChatSessionsSync(sessionId);
+  function getChatSessions(sessionId, callback) {
+    db.collection('chatSessions').findOne({ _id: sessionId }, function(err, chatSessionObj) {
+      if (err) {
+        return callback(err);
+      }
+      return resolveChatSession(chatSessionObj, callback);
+    });
   }
 
   app.get('/chatsession/:chatid', function(req, res) {
-    var chatId = parseInt(req.params.chatid, 10);
+    var chatId = req.params.chatid;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var userId = parseInt(req.query.user, 10);
+    var userId = req.query.user;
     if (fromUser === userId) {
       // Send response.
-      res.send(getChatSessions(chatId));
+      getChatSessions(new ObjectID(chatId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not get chat session");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
     }
   });
 
-  function postNotifications(requester, requestee) {
-    var chatSession = _.find(readAllCollection("chatSessions"), (chat) => {
-      return chat.initiator === requester;
-    });
-    var newNoti = {
-      requester: requester,
-      requestee: requestee,
-      chatSession: chatSession._id,
-      status: "waiting"
+  function postNotifications(requester, requestee, callback) {
+    db.collection('chatSessions').findOne({ initiator: requester }, chatSessionCallback);
+    function chatSessionCallback(err, chatSessionObj) {
+      var newNoti = {
+        requester: requester,
+        requestee: requestee,
+        chatSession: chatSessionObj._id,
+        status: "waiting"
+      }
+      db.collection('notifications').insertOne(newNoti, notificationCallback);
+      function notificationCallback(err, notificationObj) {
+        if (err) {
+          return callback(err);
+        }
+        db.collection('users').findOne({ _id: notificationObj.requester }, userCallback);
+        function userCallback(err, userObj) {
+          if (err) {
+            return callback(err);
+          }
+          notificationObj.requester = userObj;
+          notificationObj.chatSession = chatSessionObj;
+          return callback(err, notificationObj);
+        }
+      }
     }
-    var notiData = addDocument("notifications", newNoti);
-    notiData.requester = readDocument("users", notiData.requester);
-    notiData.chatSession = chatSession;
-    return notiData;
   }
 
   app.post('/notification', validate({ body: NotificationSchema }), function(req, res) {
     // If this function runs, `req.body` passed JSON validation!
     var body = req.body;
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var requesterId = parseInt(body.requester, 10);
-    var requesteeId = parseInt(body.requestee, 10);
+    var requesterId = body.requester;
+    var requesteeId = body.requestee;
     if (fromUser === requesterId) {
-      var newUpdate = postNotifications(requesterId, requesteeId);
-      res.status(201);
-       // Send the update!
-      res.send(newUpdate);
+      postNotifications(new ObjectID(requesterId), new ObjectID(requesteeId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not post notifications");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized.
       res.status(401).end();
@@ -839,76 +976,156 @@ MongoClient.connect(url, function(err, db) {
     return onlineUsers;
   }
 
-  app.get('/user/:userid/online', function(req, res) {
+  function getOnlineUsers(callback) {
+    db.collection('onlineUsers').findOne({ _id: new ObjectID('000000000000000000000001') }, onlineUsersCallback);
+    function onlineUsersCallback(err, onlineUsersObj) {
+      var resolved = [];
+      function resolveUser(i) {
+        if (i === resolved.length) {
+          return callback(null, resolved);
+        }
+        db.collection('users').findOne({ _id: onlineUsersObj[i]}, userCallback);
+        function userCallback(err, userObj) {
+          if (err) {
+            return callback(err);
+          }
+          resolved.push(userObj);
+          resolveUser(i + 1);
+        }
+      }
+      return resolveUser(0);
+    }
+  }
+
+  app.get('/onlineusers', function(req, res) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var userId = parseInt(req.params.userid, 10);
+    var userId = req.query.user;
     if (fromUser === userId) {
       // Send response.
-      res.send(getOnlineUsers());
+      getOnlineUsers(function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not get online users");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
     }
   });
 
-  function getNearbyUsers(radius, userId) {
-    var userData = readAllCollection('users');
-    var currentUser = userData[userId - 1];
-    userData.splice(userId - 1, 1);
-    var nearbyUsers = [];
-    for(var i = 0; i < userData.length; i++) {
-      var curLatLng = {
-        latitude: currentUser.position.lat,
-        longitude: currentUser.position.lng,
-      };
-      var otherLatLng = {
-        latitude: userData[i].position.lat,
-        longitude: userData[i].position.lng,
-      };
-      var distance = geolib.getDistance(curLatLng, otherLatLng);
-      if (distance <= radius) {
-        nearbyUsers.push(userData[i]);
+  function getNearbyUsers(radius, userId, callback) {
+    getOnlineUsers(onlineUsersCallback);
+    function onlineUsersCallback(err, onlineUsersObj) {
+      if (err) {
+        return callback(err);
       }
+      var currentUser = _.remove(onlineUsersObj, function(val) {
+        return val._id === userId;
+      });
+      var nearbyUsers = [];
+      for(var i = 0; i < onlineUsersObj.length; i++) {
+        var curLatLng = {
+          latitude: currentUser.position.lat,
+          longitude: currentUser.position.lng,
+        };
+        var otherLatLng = {
+          latitude: onlineUsersObj[i].position.lat,
+          longitude: onlineUsersObj[i].position.lng,
+        };
+        var distance = geolib.getDistance(curLatLng, otherLatLng);
+        if (distance <= radius) {
+          nearbyUsers.push(onlineUsersObj[i]);
+        }
+      }
+      callback(err, nearbyUsers);
     }
-    return nearbyUsers;
   }
 
   app.get('/user/:userid/nearby', function(req, res) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var userId = parseInt(req.params.userid, 10);
-    var radius = parseInt(req.query.radius, 10);
+    var userId = req.params.userid;
+    var radius = req.query.radius;
     if (!_.isNumber(radius) || _.isNaN(radius)) {
       radius = 10000; // default radius
     }
     if (fromUser === userId) {
       // Send response.
-      res.send(getNearbyUsers(radius, userId));
+      getNearbyUsers(radius, new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not get nearby users");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();
     }
   });
 
-  function getNotifications(userId) {
-    var notifications = readAllCollection('notifications');
-    notifications = _.filter(notifications, function(o) { return o.requestee == userId;});
-    notifications = notifications.map((noti) => {
-      noti.requester = readDocument("users", noti.requester);
-      return noti;
-    });
-    notifications = notifications.map((noti) => {
-      noti.chatSession = readDocument("chatSessions", noti.chatSession);
-      return noti;
-    });
-    return notifications;
-  }
+  function getNotifications(userId, callback) {
+    db.collection('notifications').find({ requestee: userId}).toArray(notificationsCallback);
+    function notificationsCallback(err, notificationsObj) {
+      var resolved = [];
+      var noti = {};
+      function resolveRequester(i) {
+        if (i === resolved.length) {
+          return callback(err, resolved);
+        }
+        noti = notificationsObj[i];
+        db.collection('users').findOne({ _id: noti.requester }, userCallback);
+        function userCallback(err, userObj) {
+          if (err) {
+            return callback(err);
+          }
+          noti.requester = userObj;
+          resolveChatSession(i);
+        }
+      }
+      function resolveChatSession(i) {
+        db.collection('chatSessions').findOne({ _id: noti.chatSession }, chatSessionCallback);
+        function chatSessionCallback(err, chatSession) {
+          if (err) {
+            return callback(err);
+          }
+          noti.chatSession = chatSession;
+          resolved.push(noti);
+          resolveRequester(i + 1);
+        }
+      }
+      return resolveRequester(0);
+    }
+  };
 
   app.get('/user/:userid/notification', function(req, res) {
     var fromUser = getUserIdFromToken(req.get('Authorization'));
-    var userId = parseInt(req.params.userid, 10);
+    var userId = req.params.userid;
     if (fromUser === userId) {
       // Send response.
-      res.send(getNotifications(userId));
+      getNotifications(new ObjectID(userId), function(err, data) {
+        if (err) {
+          // A database error happened.
+          // Internal Error: 500.
+          res.status(500).send("Database error: " + err);
+        } else if (data === null) {
+          res.status(400).send("Could not get notifications");
+        } else {
+          // Send data.
+          res.send(data);
+        }
+      });
     } else {
       // 401: Unauthorized request.
       res.status(401).end();

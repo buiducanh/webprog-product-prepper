@@ -233,7 +233,7 @@ export function postNotifications(requester, requestee, cb) {
 }
 
 export function getOnlineUsers(cb) {
-  var url = '/user/' + localStorage.getItem('userId') + '/online';
+  var url = '/onlineusers' + '?user=' + localStorage.getItem('userId');
   sendXHR('GET', url, {}, (xhr) => {
     cb(JSON.parse(xhr.responseText));
   });
