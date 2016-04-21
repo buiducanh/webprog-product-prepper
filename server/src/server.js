@@ -109,7 +109,7 @@ MongoClient.connect(url, function(err, db) {
     res.send(getAllUserData());
   });
 
-  // Ngan || Thanh || Tri (WIP)
+  // Ngan || Thanh || Tri (done, not tested)
   function getInterviewSession(interviewId) {
     // var interviewItem = readDocument('interviewSessions', interviewId);
     // // Resolve participants
@@ -122,27 +122,12 @@ MongoClient.connect(url, function(err, db) {
         if (err) {
           return sendDatabaseError(err);
         }
-        // Resolve interviewer
-        resolveUserObjects(interviewItem.interviewer, function(err, interviewer) {
-          if (err) {
-            return sendDatabaseError(res, err);
-          }
-          interviewItem.interviewer = interviewer[0];
-          // Resolve interviewee
-          resolveUserObjects(interviewItem.interviewee, function (err, interviewee) {
+        var interviews = [interviewItem];
+        resolveInterviews(interviews, function(err, resolved) {
             if (err) {
-              return sendDatabaseError(res, err);
+              return sendDatabaseError(err);
             }
-          interviewItem.interviewee = interviewee[0];
-          // Resolve problem
-          db.collection('problems').findOne({ _id: interviewItem.problem }, function(err, problemObj) {
-            if (err) {
-              return sendDatabaseError(res, err);
-            }
-            interviewItem.problem = problemObj;
-            res.send(interviewItem);
-            });
-          });
+            return resolved[0];
         });
       });
     }
