@@ -131,7 +131,7 @@ MongoClient.connect(url, function(err, db) {
     // return interviewItem;
     db.collection('interviewSessions').findOne({ _id: interviewId }, function(err, interviewItem) {
         if (err) {
-          return sendDatabaseError(err);
+          return callback(err);
         }
         var interviews = [interviewItem];
         resolveInterviews(interviews, function(err, resolved) {
@@ -144,9 +144,36 @@ MongoClient.connect(url, function(err, db) {
     }
 
   // Ngan || Thanh || Tri  (WIP)
-  function postInterviewSession(interviewerId, cb) {
+  function postInterviewSession(interviewerId, callback) {
+    // //TODO random role????
+    // var interviewItem =
+    // {
+    //   "problem": 1,
+    //   "feedback": undefined,
+    //   "interviewer": interviewerId,
+    //   "interviewee": intervieweeId,
+    //   "timestamp": time,
+    //   "duration": "",
+    //   "code" : "",
+    //   "result": "WIP"
+    // };
+    // interviewItem = addDocument('interviewSessions', interviewItem);
+    //
+    // var interviewee = readDocument("users", intervieweeId);
+    // var interviewer = readDocument("users", interviewerId);
+    // interviewee.interview.push(interviewItem._id);
+    // interviewer.interview.push(interviewItem._id);
+    // writeDocument("users", interviewee);
+    // writeDocument("users", interviewer);
+    //
+    // // Resolve participants
+    // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
+    // interviewItem.interviewee = readDocument('users', interviewItem.interviewee);
+    // // Resolve problem
+    // interviewItem.problem = readDocument('problems', interviewItem.problem);
+    // return interviewItem;
     var time = new Date().getTime();
-    var intervieweeId = generateObjectID(2); // TODO random this number
+    var intervieweeId = new ObjectID("000000000000000000000002"); // TODO random this number
     var interviewItem =
     {
       "problem": generateObjectID(1),
@@ -158,11 +185,11 @@ MongoClient.connect(url, function(err, db) {
       "code" : "",
       "result": "WIP"
     };
-    db.collection('interviewSessions').insertOne(interviewItem, function(err, result) {
+    db.collection('interviewSessions').insertOne(interviewItem, function(err, resultObj) {
       if (err) {
-        return sendDatabaseError(err);
+        return callback(err);
       }
-      var interviewItemId = result.insertedId;
+      var interviewItemId = resultObj.insertedId;
       interviewItem._id = interviewItemId;
       // Update interviewer's interview array
       db.collection('users').updateOne({ _id: interviewerId },
@@ -177,31 +204,44 @@ MongoClient.connect(url, function(err, db) {
         if (err) {
           return sendDatabaseError(err);
         }
+        // Include with the document's inserted id
+        var interviewItemId = resultObj.insertedId;
+        interviewItem._id = interviewItemId;
+        // Update interviewer's interview array
+        db.collection('users').updateOne({ _id: interviewerId },
+        {
+          $push: {
+            interview: interviewItemId
+          }
+        },
+        function(err) {
+          if (err) {
+            return callback(err);
+          }
           // Update interviewee's interview array
           db.collection('users').updateOne({ _id: intervieweeId },
           {
             $push: {
-              interview: {
-                interviewItemId
-              }
+              interview: interviewItemId
             }
           },
           function(err) {
             if (err) {
-              return sendDatabaseError(err);
+              return callback(err);
             }
             // Resolve interview item and return
             var interviews = [interviewItem];
             resolveInterviews(interviews, function(err, resolved) {
               if (err) {
-                return sendDatabaseError(err);
+                return callback(err);
               }
-              cb(null, resolved[0]);
+              return callback(null, resolved[0]);
             });
           });
         });
       });
-    }
+    });  
+  }
 
   // Ngan || Thanh || Tri  (FIXED)
   app.post('/interview', validate({body: InterviewSessionSchema}), function(req, res) {
@@ -263,7 +303,7 @@ MongoClient.connect(url, function(err, db) {
             resolveInterviewee(i);
           }
         });
-      };
+      }
     }
     function resolveInterviewee(i) {
       db.collection('users').findOne({ _id: interview.interviewee}, function(err, userObj) {
