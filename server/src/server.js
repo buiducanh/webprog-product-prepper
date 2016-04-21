@@ -111,7 +111,7 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // Ngan || Thanh || Tri (done, not tested)
-  function getInterviewSession(interviewId) {
+  function getInterviewSession(interviewId, callback) {
     // var interviewItem = readDocument('interviewSessions', interviewId);
     // // Resolve participants
     // interviewItem.interviewer = readDocument('users', interviewItem.interviewer);
@@ -121,23 +121,20 @@ MongoClient.connect(url, function(err, db) {
     // return interviewItem;
     db.collection('interviewSessions').findOne({ _id: interviewId }, function(err, interviewItem) {
         if (err) {
-          return sendDatabaseError(err);
+          return callback(err);
         }
         var interviews = [interviewItem];
         resolveInterviews(interviews, function(err, resolved) {
             if (err) {
-              return sendDatabaseError(err);
+              return callback(err);
             }
-            return resolved[0];
+            return callback(null, resolved[0]);
         });
       });
     }
 
   // Ngan || Thanh || Tri  (WIP)
-  function postInterviewSession(interviewerId) {
-    // // Get the current UNIX time.
-    // var time = new Date().getTime();
-    // var intervieweeId = 2; // TODO random this number
+  function postInterviewSession(interviewerId, callback) {
     // //TODO random role????
     // var interviewItem =
     // {
@@ -166,10 +163,10 @@ MongoClient.connect(url, function(err, db) {
     // interviewItem.problem = readDocument('problems', interviewItem.problem);
     // return interviewItem;
     var time = new Date().getTime();
-    var intervieweeId = generateObjectID(2); // TODO random this number
+    var intervieweeId = new ObjectID("000000000000000000000002"); // TODO random this number
     var interviewItem =
     {
-      "problem": 1,
+      "problem": new ObjectID("000000000000000000000001"),
       "feedback": undefined,
       "interviewer": interviewerId,
       "interviewee": intervieweeId,
@@ -178,55 +175,43 @@ MongoClient.connect(url, function(err, db) {
       "code" : "",
       "result": "WIP"
     };
-    db.collection('interviewSessions').insertOne(interviewItem, function(err, result) {
+    db.collection('interviewSessions').insertOne(interviewItem, function(err, resultObj) {
       if (err) {
-        return sendDatabaseError(err);
+        return callback(err);
       }
-      // db.collection('users').findOne({ _id: intervieweeId }, function(err, interviewee) {
-      //   if (err) {
-      //     return callback(err);
-      //   }
-        //interviewee.interview.push(interviewItem._id);
-        var interviewItemId = result.insertedId;
+        // Include with the document's inserted id
+        var interviewItemId = resultObj.insertedId;
         interviewItem._id = interviewItemId;
         // Update interviewer's interview array
         db.collection('users').updateOne({ _id: interviewerId },
         {
           $push: {
-            interview: {
-              interviewItemId
-            }
+            interview: interviewItemId
           }
         },
         function(err) {
           if (err) {
-            return sendDatabaseError(err);
+            return callback(err);
           }
-        // db.collection('users').findOne({ _id: interviewerId }, function(err, interviewer) {
-        //   if (err) {
-        //     return callback(err);
-        //   }
-          //interviewer.interview.push(interviewItem._id);
           // Update interviewee's interview array
           db.collection('users').updateOne({ _id: intervieweeId },
           {
             $push: {
-              interview: {
-                interviewItemId
-              }
+              interview: interviewItemId
             }
           },
           function(err) {
             if (err) {
-              return sendDatabaseError(err);
+              return callback(err);
             }
             // Resolve interview item and return
             var interviews = [interviewItem];
             resolveInterviews(interviews, function(err, resolved) {
               if (err) {
-                return sendDatabaseError(err);
+                return callback(err);
               }
-              return resolved[0];
+              console.log(resolved[0]);
+              return callback(null, resolved[0]);
             });
           });
         });
@@ -310,7 +295,7 @@ MongoClient.connect(url, function(err, db) {
             resolveInterviewee(i);
           }
         });
-      };
+      }
     }
     function resolveInterviewee(i) {
       db.collection('users').findOne({ _id: interview.interviewee}, function(err, userObj) {
