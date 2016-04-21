@@ -231,9 +231,7 @@ MongoClient.connect(url, function(err, db) {
       db.collection('users').updateOne({ _id: interviewerId },
       {
         $push: {
-          interview: {
-            interviewItemId
-          }
+          interview: interviewItemId
         }
       },
       function(err) {
@@ -243,8 +241,8 @@ MongoClient.connect(url, function(err, db) {
         // Include with the document's inserted id
         var interviewItemId = resultObj.insertedId;
         interviewItem._id = interviewItemId;
-        // Update interviewer's interview array
-        db.collection('users').updateOne({ _id: interviewerId },
+        // Update interviewee's interview array
+        db.collection('users').updateOne({ _id: intervieweeId },
         {
           $push: {
             interview: interviewItemId
