@@ -19,9 +19,9 @@ var writeDocument = database.writeDocument;
 var addDocument = database.addDocument;
 var readAllCollection = database.readAllCollection;
 var geolib = require('geolib');
-var mongo_express = require('mongo-express/lib/middleware');
+// var mongo_express = require('mongo-express/lib/middleware');
 // Import the default Mongo Express configuration
-var mongo_express_config = require('mongo-express/config.default.js');
+// var mongo_express_config = require('mongo-express/config.default.js');
 var MongoDB = require('mongodb');
 var MongoClient = MongoDB.MongoClient;
 var ObjectID = MongoDB.ObjectID;
@@ -52,7 +52,7 @@ MongoClient.connect(url, function(err, db) {
   });
 
   // ROUTES
-  app.use('/mongo_express', mongo_express(mongo_express_config));
+  // app.use('/mongo_express', mongo_express(mongo_express_config));
   /**
    * Get the user ID from a token. Returns -1 (an invalid ID) if it fails.
    */
