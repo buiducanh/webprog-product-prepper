@@ -49,7 +49,8 @@ export default class Interview extends React.Component {
     // we have to wait until it's ready
     this.webrtc.on('readyToCall', function () {
       // you can name it anything
-      this.webrtc.joinRoom('your awesome room name');
+      var roomName = prompt('Please enter a voice chat room name', 'your awesome room name');
+      this.webrtc.joinRoom(roomName);
     }.bind(this));
   }
 
