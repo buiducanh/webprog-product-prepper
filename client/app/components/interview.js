@@ -36,6 +36,25 @@ export default class Interview extends React.Component {
   }
 
   componentDidUpdate() {
+    var ICEServers = {
+      iceServers: [
+        {
+          url: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com'
+        },
+        {
+            url: 'turn:192.158.29.39:3478?transport=udp',
+            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            username: '28224511:1379330808'
+        },
+        {
+            url: 'turn:192.158.29.39:3478?transport=tcp',
+            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            username: '28224511:1379330808'
+        }
+      ]
+    }
     this.webrtc = new SimpleWebRTC({
       // the id/element dom element that will hold "our" video
       localVideoEl: 'localVideo',
@@ -43,7 +62,8 @@ export default class Interview extends React.Component {
       remoteVideosEl: 'remotesVideos',
       // immediately ask for camera access
       autoRequestMedia: true,
-      media: { video: true, audio: true}
+      media: { video: true, audio: true},
+      peerConnectionConfig: ICEServers
       // url: 'http://project-webrtc.herokuapp.com'
     });
     // we have to wait until it's ready
