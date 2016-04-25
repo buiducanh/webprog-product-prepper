@@ -4,6 +4,7 @@ import Questions from "./interviewquestions";
 import CodeEditor from "./codeeditor";
 import {getInterviewSession} from '../server';
 
+window.webrtc = {};
 
 
 export default class Interview extends React.Component {
@@ -55,7 +56,7 @@ export default class Interview extends React.Component {
         }
       ]
     }
-    this.webrtc = new SimpleWebRTC({
+    webrtc = new SimpleWebRTC({
       // the id/element dom element that will hold "our" video
       localVideoEl: 'localVideo',
       // the id/element dom element that will hold remote videos
@@ -67,10 +68,10 @@ export default class Interview extends React.Component {
       // url: 'http://project-webrtc.herokuapp.com'
     });
     // we have to wait until it's ready
-    this.webrtc.on('readyToCall', function () {
+    webrtc.on('readyToCall', function () {
       // you can name it anything
       var roomName = prompt('Please enter a voice chat room name', 'your awesome room name');
-      this.webrtc.joinRoom(roomName);
+      webrtc.joinRoom(roomName);
     }.bind(this));
   }
 
@@ -86,10 +87,10 @@ export default class Interview extends React.Component {
     this.muted = (this.muted) ? false : true;
     console.log("toggle micro" + this.muted);
     if (this.muted) {
-      this.webrtc.mute();
+      webrtc.mute();
     }
     else {
-      this.webrtc.unmute();
+      webrtc.unmute();
     }
   }
 
@@ -98,10 +99,10 @@ export default class Interview extends React.Component {
     this.video = (this.video) ? false : true;
     console.log("toggle video " + this.video);
     if (this.video) {
-      this.webrtc.resumeVideo();
+      webrtc.resumeVideo();
     }
     else {
-      this.webrtc.pauseVideo();
+      webrtc.pauseVideo();
     }
   }
 
@@ -122,8 +123,8 @@ export default class Interview extends React.Component {
   }
 
   componentWillUnmount() {
-    this.webrtc.stopLocalVideo();
-    this.webrtc.leaveRoom();
-    this.webrtc.disconnect();
+    webrtc.stopLocalVideo();
+    webrtc.leaveRoom();
+    webrtc.disconnect();
   }
 }
