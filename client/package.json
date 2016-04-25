@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "webpack-dev-server --content-base build",
+    "build": "webpack",
     "watch": "webpack --watch"
   },
   "devDependencies": {

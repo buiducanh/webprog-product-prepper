@@ -266,7 +266,7 @@ if(require.main === module) {
   // Called directly, via 'node src/resetdatabase.js'.
   // Connect to the database, and reset it!
   var MongoClient = require('mongodb').MongoClient;
-  var url = 'mongodb://localhost:27017/' + databaseName;
+  var url = 'mongodb://admin:pass@ds053184.mlab.com:53184/' + databaseName;
   MongoClient.connect(url, function(err, db) {
     if (err) {
       throw new Error("Could not connect to database: " + err);

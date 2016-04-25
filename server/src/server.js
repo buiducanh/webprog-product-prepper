@@ -25,7 +25,7 @@ var mongo_express_config = require('mongo-express/config.default.js');
 var MongoDB = require('mongodb');
 var MongoClient = MongoDB.MongoClient;
 var ObjectID = MongoDB.ObjectID;
-var url = 'mongodb://localhost:27017/prepper';
+var url = 'mongodb://admin:pass@ds053184.mlab.com:53184/prepper';
 var ResetDatabase = require('./resetdatabase');
 
 MongoClient.connect(url, function(err, db) {
