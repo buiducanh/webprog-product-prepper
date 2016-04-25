@@ -27,6 +27,7 @@ var MongoClient = MongoDB.MongoClient;
 var ObjectID = MongoDB.ObjectID;
 var url = 'mongodb://admin:pass@ds053184.mlab.com:53184/prepper';
 var ResetDatabase = require('./resetdatabase');
+var port = parseInt(process.env.PORT || 3000, 10);
 
 MongoClient.connect(url, function(err, db) {
   // CONFIGS
@@ -1143,7 +1144,7 @@ MongoClient.connect(url, function(err, db) {
    */
 
   // Starts the server on port 3000!
-  app.listen(3000, function () {
-    console.log('Prepper listening on port 3000!');
+  app.listen(port, function () {
+    console.log('Prepper listening on port ' + port + '!');
   });
 });
