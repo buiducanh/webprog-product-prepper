@@ -1,0 +1,12 @@
+{
+  "name": "team-project-client",
+  "version": "0.0.1",
+  "description": "Build support for the client-side of CS326 projects.",
+  "author": "Anh Bui <abc@cs.umass.edu>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "webpack-dev-server --content-base build",
+    "build": "(cd client && npm install && npm run build); (cd server && npm install)",
+    "watch": "webpack --watch"
+  }
+}
