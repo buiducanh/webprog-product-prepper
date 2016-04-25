@@ -24,6 +24,7 @@ export default class Interview extends React.Component {
       }
     }};
   }
+
   refresh() {
     getInterviewSession(this.props.params.interviewId, (interviewData) => {
       this.setState({interview: interviewData});
@@ -32,6 +33,24 @@ export default class Interview extends React.Component {
 
   componentDidMount() {
     this.refresh();
+  }
+
+  componentDidUpdate() {
+    this.webrtc = new SimpleWebRTC({
+      // the id/element dom element that will hold "our" video
+      localVideoEl: 'localVideo',
+      // the id/element dom element that will hold remote videos
+      remoteVideosEl: 'remotesVideos',
+      // immediately ask for camera access
+      autoRequestMedia: true,
+      media: { video: true, audio: true}
+      // url: 'http://project-webrtc.herokuapp.com'
+    });
+    // we have to wait until it's ready
+    this.webrtc.on('readyToCall', function () {
+      // you can name it anything
+      this.webrtc.joinRoom('your awesome room name');
+    }.bind(this));
   }
 
   onVolume(e) {
@@ -66,21 +85,6 @@ export default class Interview extends React.Component {
   }
 
   render() {
-    this.webrtc = new SimpleWebRTC({
-      // the id/element dom element that will hold "our" video
-      localVideoEl: 'localVideo',
-      // the id/element dom element that will hold remote videos
-      remoteVideosEl: 'remotesVideos',
-      // immediately ask for camera access
-      autoRequestMedia: true,
-      media: { video: true, audio: true}
-      // url: 'http://project-webrtc.herokuapp.com'
-    });
-    // we have to wait until it's ready
-    this.webrtc.on('readyToCall', function () {
-      // you can name it anything
-      this.webrtc.joinRoom('your awesome room name');
-    }.bind(this));
     return (
       <div className="component-container">
         <div className="row">
