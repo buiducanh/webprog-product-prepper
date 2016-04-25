@@ -63,9 +63,10 @@ export default class Interview extends React.Component {
       remoteVideosEl: 'remotesVideos',
       // immediately ask for camera access
       autoRequestMedia: true,
+      debug: true,
       media: { video: true, audio: true},
-      peerConnectionConfig: ICEServers
-      // url: 'http://project-webrtc.herokuapp.com'
+      peerConnectionConfig: ICEServers,
+      url: 'http://project-webrtc.herokuapp.com'
     });
     // we have to wait until it's ready
     webrtc.on('readyToCall', function () {
