@@ -5,8 +5,12 @@
   "author": "Anh Bui <abc@cs.umass.edu>",
   "license": "MIT",
   "scripts": {
+    "start": "(cd server && node src/server.js)",
     "serve": "webpack-dev-server --content-base build",
     "build": "(cd client && npm install && npm run build); (cd server && npm install)",
+    "heroku-prebuild": "(cd client && npm install && npm run build) && (cd server && npm install)",
+    "heroku-postbuild": "",
     "watch": "webpack --watch"
-  }
+  },
+  "cacheDirectories": ["client/node_modules", "server/node_modules"]
 }
