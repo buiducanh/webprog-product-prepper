@@ -80,7 +80,7 @@ export default class Interview extends React.Component {
     e.preventDefault();
     this.volume = (this.volume === 0) ? 1 : 0;
     console.log("toggle volume" + this.volume);
-    this.webrtc.setVolumeForAll(this.volume);
+    webrtc.setVolumeForAll(this.volume);
   }
 
   onMicro(e) {
