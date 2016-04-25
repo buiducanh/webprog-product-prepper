@@ -94,3 +94,15 @@ body {
 .chat-history {
   overflow: scroll;
 }
+
+.remotesVideos {
+    position: relative;
+    width: 267px;
+    height: 200px;
+}
+.remotesVideos video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
