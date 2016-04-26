@@ -842,6 +842,7 @@ MongoClient.connect(url, function(err, db) {
       if (err) {
         return callback(err);
       }
+      chatMessageObj = chatMessageObj.ops[0];
       db.collection('chatSession').updateOne({ _id: chatSessionId }, {
         $push: {
           chatMessages: chatMessageObj._id
@@ -881,6 +882,7 @@ MongoClient.connect(url, function(err, db) {
           res.status(400).send("Could not post chat message");
         } else {
           // Send data.
+          // console.log(data);
           res.send(data);
         }
       });
