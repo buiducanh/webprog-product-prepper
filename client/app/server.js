@@ -191,8 +191,8 @@ export function updateNotificationStatus(notificationId, status, cb) {
 export function postChatMessage(value, chatSessionId, userId, cb) {
   var chatMessage = {
     "content": value ? value : "",
-    "owner": parseInt(userId, 10),
-    "chatSessionId": parseInt(chatSessionId, 10)
+    "owner": userId,
+    "chatSessionId": chatSessionId
   };
   var url = '/chatmessage';
   sendXHR('POST', url, chatMessage, (xhr) => {
