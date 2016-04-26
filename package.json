@@ -1,7 +1,7 @@
 {
   "name": "team-project-client",
   "version": "0.0.1",
-  "description": "Build support for the client-side of CS326 projects.",
+  "description": " Build support for the client-side of CS326 projects.",
   "author": "Anh Bui <abc@cs.umass.edu>",
   "license": "MIT",
   "scripts": {
